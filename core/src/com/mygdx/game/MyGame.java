@@ -7,6 +7,7 @@ import com.mygdx.game.utiles.Render;
 
 public class MyGame extends Game {
 	
+	//JUEGO EN NUEVA VERSION
 	
 	
 	SpriteBatch batch;
