@@ -12,6 +12,7 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setTitle("JavaSouls");
 		config.setWindowedMode(Config.ANCHO, Config.ALTO);
+		
 		new Lwjgl3Application(new MyGame(), config);
 	}
 }

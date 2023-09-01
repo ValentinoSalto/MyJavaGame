@@ -26,9 +26,11 @@ public class Knight3 {
     private Animation<TextureRegion> idleAnimation;
     private Animation<TextureRegion> walkingLeftAnimation;
     private Animation<TextureRegion> walkingRightAnimation;
+    private Animation<TextureRegion> attackAnimation;
     private TextureRegion [] regionsMovement_idle;
     private TextureRegion [] regionsMovement_walking_left;
     private TextureRegion [] regionsMovement_walking_right;
+    private TextureRegion [] regionsMovement_attack;
     private float time;
     private TextureRegion currentFrame;
     // Define aquí las demás animaciones para los otros estados (JUMP, RUN, ATTACK, COVER)
@@ -41,12 +43,13 @@ public class Knight3 {
         this.y = y;
         this.alto = alto;
         this.ancho = ancho;
+       
 
         // Carga las texturas para las animaciones
         Texture idleTexture = new Texture(Gdx.files.internal("Personajes/Knight_1/Idle.png"));
         Texture walkingLeftTexture = new Texture(Gdx.files.internal("Personajes/Knight_1/Walk_left.png"));
         Texture walkingRightTexture = new Texture(Gdx.files.internal("Personajes/Knight_1/Walk.png"));
-        //Texture attackTexture = new Texture(Gdx.files.internal("Personajes/Knight_1/"));
+        Texture attackTexture = new Texture(Gdx.files.internal("Personajes/Knight_1/Attack 1.png"));
         // Carga las texturas para las otras animaciones (JUMP, RUN, ATTACK, COVER)
         // ...
 
@@ -57,8 +60,8 @@ public class Knight3 {
         regionsMovement_walking_left = new TextureRegion[8];
         TextureRegion[][] walkingRightFrames = TextureRegion.split(walkingRightTexture, walkingRightTexture.getWidth()/8, walkingRightTexture.getHeight());
         regionsMovement_walking_right = new TextureRegion[8];
-        //TextureRegion[][] attackFrames = TextureRegion.split(attackTexture, attackTexture.getWidth()/8,attackTexture.getHeight());
-        
+        TextureRegion[][] attackFrames = TextureRegion.split(attackTexture, attackTexture.getWidth()/5,attackTexture.getHeight());
+        regionsMovement_attack = new TextureRegion[5];
         // Divide las texturas para las otras animaciones (JUMP, RUN, ATTACK, COVER)
         // ...
 
@@ -89,6 +92,12 @@ public class Knight3 {
     		 walkingRightAnimation = new Animation<>(1 / 10f, walkingRightFrames[0]);
     		time = 0f;
         }
+        //Animacion ATTACK
+        for (int i = 0; i < 5; i++) {
+        	regionsMovement_attack[i] = attackFrames[0][i];
+    		attackAnimation = new Animation<>(1 / 10f, attackFrames[0]);
+    		time = 0f;
+        }
         
         
        
@@ -110,7 +119,9 @@ public class Knight3 {
   		currentFrame = (TextureRegion) idleAnimation.getKeyFrame(time,true);
         // Dibuja el sprite correspondiente a la animación del estado actual
     	spr.draw(batch);
-      
+    	 // Obtiene la posición X y el ancho del personaje
+        float X = spr.getX();
+        float ANCHO = spr.getWidth();
         
 
     }
@@ -130,6 +141,10 @@ public class Knight3 {
                 spr.setRegion(walkingRightAnimation.getKeyFrame(time, true));
                 // Mueve al personaje hacia la derecha
                 x += 3;
+                break;
+            case ATTACK:
+                spr.setRegion(attackAnimation.getKeyFrame(time, true));
+                        
                 break;
             // Agrega las animaciones para los otros estados (JUMP, RUN, ATTACK, COVER)
             // ...
@@ -154,10 +169,31 @@ public class Knight3 {
                 return walkingLeftAnimation;
             case WALKING_RIGHT:
                 return walkingRightAnimation;
+            case ATTACK:
+                return attackAnimation;
             // Devuelve las animaciones para los otros estados (JUMP, RUN, ATTACK, COVER)
             // ...
             default:
                 return idleAnimation;
         }
+    }
+    // Método para obtener la posición X del personaje
+    public float getX() {
+        return x;
+    }
+
+    // Método para obtener la posición Y del personaje
+    public float getY() {
+        return y;
+    }
+
+    // Método para obtener el ancho del personaje
+    public float getWidth() {
+        return alto;
+    }
+
+    // Método para obtener la altura del personaje
+    public float getHeight() {
+        return ancho;
     }
 }

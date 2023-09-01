@@ -7,6 +7,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.mygdx.game.recursos.Ghost;
 import com.mygdx.game.recursos.Knight3;
@@ -24,6 +28,9 @@ public class ScreenGame implements Screen{
 	//creo la camara
 	private OrthographicCamera cam;
 	
+	//para el mapa
+		private TiledMap mapa; //info del mapa
+		private TiledMapRenderer mapaRenderer;
 	
 	@Override
 	public void show() { 
@@ -31,6 +38,11 @@ public class ScreenGame implements Screen{
 		
 		// creo la camara
 		cam = new OrthographicCamera(Config.ANCHO, Config.ALTO);
+		//cargo el archivo del mapa
+		mapa = new TmxMapLoader().load("Mapas/Firelink/Firelink.tmx");
+				
+		//creo el renderer del mapa
+		mapaRenderer = new OrthogonalTiledMapRenderer(mapa);
         
 		/*personaje = new Imagen(Recursos.CABALLERO);		
 		personaje.setSize(Config.PERSONAJEANCHO, Config.PERSONAJEALTO);
@@ -66,6 +78,15 @@ public class ScreenGame implements Screen{
 		cam.update();
 		Render.batch.setProjectionMatrix(cam.combined);
 		
+		//setea vista del mapa
+		mapaRenderer.setView(cam);
+		mapaRenderer.render();
+		// Actualiza la posición de la cámara para que siga al personaje
+        cam.position.set(knight.getX() + knight.getWidth() / 2, knight.getY() + knight.getHeight() / 2, 0);
+        cam.update();
+        Render.batch.setProjectionMatrix(cam.combined);
+
+
 
         // Maneja las entradas del teclado para cambiar el estado del personaje
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -74,8 +95,9 @@ public class ScreenGame implements Screen{
             knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_RIGHT);
         } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
         	knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);
-        } else if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+        } else if (Gdx.input.isButtonPressed(Input.Keys.P)) {
         	knight.cambiarEstado(Knight3.EstadoPersonaje.ATTACK);
+        	System.out.println("ataca");
         } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
         	knight.cambiarEstado(Knight3.EstadoPersonaje.COVER);
         } else {
@@ -87,7 +109,7 @@ public class ScreenGame implements Screen{
         // Actualiza la animación del personaje según el estado actual
         ghost.updateAnimation(delta);
 
-		
+
 	
 					
         b.begin();
@@ -98,7 +120,7 @@ public class ScreenGame implements Screen{
 			
 		b.end();
 		
-		// Inicia el dibujado de líneas
+		/*// Inicia el dibujado de líneas
 		sr.begin(ShapeType.Line);
 			sr.setColor(255, 0, 0, 1); // Establece el color de la línea (blanco en este caso)
 
@@ -107,7 +129,7 @@ public class ScreenGame implements Screen{
 
 		// Finaliza el dibujado de líneas
 		sr.end();
-		
+		*/
 		
 	}
 	
@@ -138,7 +160,7 @@ public class ScreenGame implements Screen{
 
 	@Override
 	public void dispose() {
-		
+		mapa.dispose();
 		
 	}
 
