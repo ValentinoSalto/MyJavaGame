@@ -3,22 +3,17 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.mygdx.game.pantallas.ScreenHud;
 import com.mygdx.game.pantallas.ScreenMenu;
 import com.mygdx.game.utiles.Render;
 
 public class MyGame extends Game {
 	
 	//JUEGO EN NUEVA VERSION
-	
-	
-   
 
 	SpriteBatch batch;
 	// Ejemplo de cómo configurar un FitViewport en tu juego
 	
-
-
-
 	
 	@Override
 	public void create () {
@@ -28,15 +23,13 @@ public class MyGame extends Game {
 		Render.batch = new SpriteBatch();
 		this.setScreen(new ScreenMenu()); //Muestro pantalla de carga.
 		batch = new SpriteBatch();
-
-       
+		
 
 		
 		
 	}
 	
-
-
+	 
 	@Override
 	public void render () {
 	
