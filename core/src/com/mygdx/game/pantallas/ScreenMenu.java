@@ -130,6 +130,7 @@ public class ScreenMenu implements Screen{
             	Render.app.setScreen(new ScreenGame());
             	backgroundMusic.dispose();
             	
+            	
                 
             }
         });
@@ -217,7 +218,7 @@ public class ScreenMenu implements Screen{
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 		
 	}
-
+	
 	@Override
 	public void render(float delta) {
 		

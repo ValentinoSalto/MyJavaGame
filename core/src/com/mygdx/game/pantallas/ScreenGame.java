@@ -2,11 +2,12 @@ package com.mygdx.game.pantallas;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -21,12 +22,18 @@ public class ScreenGame implements Screen{
 
 	Image personaje;
 	SpriteBatch b;
+	SpriteBatch h;
+	private OrthographicCamera hudCamera;
+	private BitmapFont font;
+	private int vida = 100; // Ejemplo: Inicializa la vida a 100
+	private int muertes = 0; // Ejemplo: Inicializa el contador de muertes a 0
 	private Knight3 knight;
 	private Ghost ghost;
 	ShapeRenderer sr; // Agrega un objeto ShapeRenderer
 	
-	//creo la camara
-	private OrthographicCamera cam;
+	
+	
+	private OrthographicCamera cam; //creo la camara
 	
 	//para el mapa
 		private TiledMap mapa; //info del mapa
@@ -36,19 +43,27 @@ public class ScreenGame implements Screen{
 	public void show() { 
 		
 		
-		// creo la camara
-		cam = new OrthographicCamera(Config.ANCHO, Config.ALTO);
-		//cargo el archivo del mapa
-		mapa = new TmxMapLoader().load("Mapas/Firelink/Firelink.tmx");
+		
+		cam = new OrthographicCamera(Config.ANCHO, Config.ALTO); // creo la camara
+		
+		// Inicializa la cámara del HUD
+	    hudCamera = new OrthographicCamera();
+	    hudCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+	
+		
+		mapa = new TmxMapLoader().load("Mapas/Firelink/Firelink.tmx");//cargo el archivo del mapa
 				
-		//creo el renderer del mapa
-		mapaRenderer = new OrthogonalTiledMapRenderer(mapa);
+		
+		mapaRenderer = new OrthogonalTiledMapRenderer(mapa);//creo el renderer del mapa
+		
+		// Inicializa la fuente (ajusta los parámetros según tus preferencias)
+		font = new BitmapFont();
+	    font.setColor(Color.WHITE); // Configura el color de la fuente
+	    font.getData().setScale(1.5f); // Escala el tamaño de la fuente
         
-		/*personaje = new Imagen(Recursos.CABALLERO);		
-		personaje.setSize(Config.PERSONAJEANCHO, Config.PERSONAJEALTO);
-		personaje.setPosition(Config.X, Config.Y);
-		*/
+		
 		b = Render.batch;
+		h= Render.batch;
 		sr = new ShapeRenderer(); // Inicializa el ShapeRenderer
 		
 		
@@ -71,9 +86,10 @@ public class ScreenGame implements Screen{
 
 	@Override
 	public void render(float delta) {
+		
 		// Limpio la pantalla (solamente para ver bien el caballero despues va a tener un fondo)
 		
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		cam.update();
 		Render.batch.setProjectionMatrix(cam.combined);
@@ -81,11 +97,14 @@ public class ScreenGame implements Screen{
 		//setea vista del mapa
 		mapaRenderer.setView(cam);
 		mapaRenderer.render();
+		
 		// Actualiza la posición de la cámara para que siga al personaje
         cam.position.set(knight.getX() + knight.getWidth() / 2, knight.getY() + knight.getHeight() / 2, 0);
         cam.update();
-        Render.batch.setProjectionMatrix(cam.combined);
-
+       
+        
+       
+        
 
 
         // Maneja las entradas del teclado para cambiar el estado del personaje
@@ -104,21 +123,37 @@ public class ScreenGame implements Screen{
         	knight.cambiarEstado(Knight3.EstadoPersonaje.IDLE);
         }
 
-        // Actualiza la animación del personaje según el estado actual
-        knight.updateAnimation(delta);
-        // Actualiza la animación del personaje según el estado actual
-        ghost.updateAnimation(delta);
+        
+        knight.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+       
+        ghost.updateAnimation(delta);  // Actualiza la animación del personaje según el estado actual
 
-
+        
 	
 					
         b.begin();
-		
-			knight.render(b);
+        	Render.batch.setProjectionMatrix(cam.combined);  
+        	knight.render(b);
 			ghost.render(b);
+			
+			Render.batch.setProjectionMatrix(hudCamera.combined);  // Configura el SpriteBatch para la cámara del HUD
+			// Configura el color de fuente y dibuja la información de "Vida"
+			font.setColor(Color.WHITE); // Configura el color de fuente (blanco en este ejemplo)
+			font.draw(b, "Vida: " + vida, 10, 700); // Dibuja la vida en la esquina superior izquierda
+
+			// Dibuja la información de "Muertes"
+			font.draw(b, "Muertes: ", 10, 670); // Dibuja las muertes en la esquina superior derecha
 	
+        	
+		
+			
+			
 			
 		b.end();
+		
+		
+		
+		
 		
 		/*// Inicia el dibujado de líneas
 		sr.begin(ShapeType.Line);
