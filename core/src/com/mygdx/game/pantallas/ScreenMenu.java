@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -18,14 +17,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.recursos.Imagen;
 import com.mygdx.game.utiles.Config;
 import com.mygdx.game.utiles.Recursos;
 import com.mygdx.game.utiles.Render;
-import com.badlogic.gdx.utils.Scaling;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 
 public class ScreenMenu implements Screen{
 	
@@ -129,7 +124,7 @@ public class ScreenMenu implements Screen{
                 // Realiza las acciones del botón cuando es clickeado
             	Render.app.setScreen(new ScreenGame());
             	backgroundMusic.dispose();
-            	
+            	stage.dispose();
             	
                 
             }
@@ -264,8 +259,8 @@ public class ScreenMenu implements Screen{
 
 	@Override
 	public void dispose() {
-		backgroundMusic.dispose();
 		
+		backgroundMusic.dispose();
 		
 	}
 

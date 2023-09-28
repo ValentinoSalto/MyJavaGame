@@ -43,7 +43,8 @@ public class ScreenGame implements Screen{
 	public void show() { 
 		
 		
-		
+		// Restringe el cursor del mouse a no ser visible
+	    Gdx.input.setCursorCatched(true);
 		cam = new OrthographicCamera(Config.ANCHO, Config.ALTO); // creo la camara
 		
 		// Inicializa la cámara del HUD
@@ -83,7 +84,8 @@ public class ScreenGame implements Screen{
        
 		
     }*/
-
+	
+	
 	@Override
 	public void render(float delta) {
 		
@@ -108,18 +110,23 @@ public class ScreenGame implements Screen{
 
 
         // Maneja las entradas del teclado para cambiar el estado del personaje
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_LEFT);
-        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+        } 
+        else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_RIGHT);
-        } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+        } 
+        else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
         	knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);
-        } else if (Gdx.input.isButtonPressed(Input.Keys.P)) {
+        } 
+        else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
         	knight.cambiarEstado(Knight3.EstadoPersonaje.ATTACK);
         	System.out.println("ataca");
-        } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+        } 
+        else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
         	knight.cambiarEstado(Knight3.EstadoPersonaje.COVER);
-        } else {
+        } 
+        else {
         	knight.cambiarEstado(Knight3.EstadoPersonaje.IDLE);
         }
 
@@ -140,9 +147,7 @@ public class ScreenGame implements Screen{
 			// Configura el color de fuente y dibuja la información de "Vida"
 			font.setColor(Color.WHITE); // Configura el color de fuente (blanco en este ejemplo)
 			font.draw(b, "Vida: " + vida, 10, 700); // Dibuja la vida en la esquina superior izquierda
-
-			// Dibuja la información de "Muertes"
-			font.draw(b, "Muertes: ", 10, 670); // Dibuja las muertes en la esquina superior derecha
+			font.draw(b, "Muertes: "+ muertes, 10, 670); // Dibuja las muertes en la esquina superior derecha
 	
         	
 		
@@ -189,6 +194,10 @@ public class ScreenGame implements Screen{
 
 	@Override
 	public void hide() {
+
+		// Restaura la visibilidad del cursor del mouse cuando se oculta la pantalla
+		Gdx.input.setCursorCatched(false);
+		// ... otros limpiezas y cambios de pantalla
 		
 		
 	}
