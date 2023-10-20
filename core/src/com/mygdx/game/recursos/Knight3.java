@@ -27,16 +27,20 @@ public class Knight3 {
     private Animation<TextureRegion> walkingLeftAnimation;
     private Animation<TextureRegion> walkingRightAnimation;
     private Animation<TextureRegion> attackAnimation;
+    private Animation<TextureRegion> coverAnimation;
     private TextureRegion [] regionsMovement_idle;
     private TextureRegion [] regionsMovement_walking_left;
     private TextureRegion [] regionsMovement_walking_right;
     private TextureRegion [] regionsMovement_attack;
+    private TextureRegion [] regionsMovement_cover;
     private float time;
     private TextureRegion currentFrame;
     // Define aquí las demás animaciones para los otros estados (JUMP, RUN, ATTACK, COVER)
     // ...
 
     private EstadoPersonaje estadoActual;
+    
+    
 
     public Knight3(float x, float y, float ancho, float alto) {
         this.x = x;
@@ -50,6 +54,7 @@ public class Knight3 {
         Texture walkingLeftTexture = new Texture(Gdx.files.internal("Personajes/Knight_1/Walk_left.png"));
         Texture walkingRightTexture = new Texture(Gdx.files.internal("Personajes/Knight_1/Walk.png"));
         Texture attackTexture = new Texture(Gdx.files.internal("Personajes/Knight_1/Attack 1.png"));
+        Texture coverTexture = new Texture(Gdx.files.internal("Personajes/Knight_1/Protect.png"));
         // Carga las texturas para las otras animaciones (JUMP, RUN, ATTACK, COVER)
         // ...
 
@@ -62,6 +67,8 @@ public class Knight3 {
         regionsMovement_walking_right = new TextureRegion[8];
         TextureRegion[][] attackFrames = TextureRegion.split(attackTexture, attackTexture.getWidth()/5,attackTexture.getHeight());
         regionsMovement_attack = new TextureRegion[5];
+        TextureRegion[][] coverFrames = TextureRegion.split(coverTexture, coverTexture.getWidth()/1,coverTexture.getHeight());
+        regionsMovement_cover = new TextureRegion[1];
         // Divide las texturas para las otras animaciones (JUMP, RUN, ATTACK, COVER)
         // ...
 
@@ -98,6 +105,14 @@ public class Knight3 {
     		attackAnimation = new Animation<>(1 / 10f, attackFrames[0]);
     		time = 0f;
         }
+        //Animacion COVER
+        for (int i = 0; i < 1; i++) {
+        	regionsMovement_attack[i] = coverFrames[0][i];
+    		coverAnimation = new Animation<>(1 / 10f, coverFrames[0]);
+    		time = 0f;
+        }
+        
+        
         
         
        
@@ -146,6 +161,11 @@ public class Knight3 {
                 spr.setRegion(attackAnimation.getKeyFrame(time, true));
                         
                 break;
+            case COVER:
+            	spr.setRegion(coverAnimation.getKeyFrame(time, true));
+            	
+            	break;
+             
             // Agrega las animaciones para los otros estados (JUMP, RUN, ATTACK, COVER)
             // ...
         }
@@ -171,6 +191,8 @@ public class Knight3 {
                 return walkingRightAnimation;
             case ATTACK:
                 return attackAnimation;
+            case COVER:
+            	return coverAnimation;
             // Devuelve las animaciones para los otros estados (JUMP, RUN, ATTACK, COVER)
             // ...
             default:

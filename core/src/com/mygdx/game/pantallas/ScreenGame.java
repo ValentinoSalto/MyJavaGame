@@ -29,6 +29,7 @@ public class ScreenGame implements Screen{
 	private int muertes = 0; // Ejemplo: Inicializa el contador de muertes a 0
 	private Knight3 knight;
 	private Ghost ghost;
+	boolean bloqueoActivo;
 	ShapeRenderer sr; // Agrega un objeto ShapeRenderer
 	
 	
@@ -79,13 +80,13 @@ public class ScreenGame implements Screen{
 	}
 	
 	
-
-	/*private void update(float delta) {
-       
-		
-    }*/
-	
-	
+		//Funcion para restarle vida al personaje //modificar a gusto dependiendo del personaje
+	  private void restarVidaAlKnight() {
+		  /*    for(int i=0; i>=1 ;i++) {
+	        	vida -=  20;
+	        }
+	     */   
+	    }
 	@Override
 	public void render(float delta) {
 		
@@ -104,27 +105,53 @@ public class ScreenGame implements Screen{
         cam.position.set(knight.getX() + knight.getWidth() / 2, knight.getY() + knight.getHeight() / 2, 0);
         cam.update();
        
-        
+        // Obtener posiciones actuales
+        float knightX = knight.getX();
+        float knightY = knight.getY();
+        float ghostX = ghost.getX();
+        float ghostY = ghost.getY();
        
-        
+        if (knightX == ghostX ) {
+            // Están en la misma posición
+            // Realiza la acción, como restar vida
+            restarVidaAlKnight();
+        }
 
 
         // Maneja las entradas del teclado para cambiar el estado del personaje
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_LEFT);
         } 
-        else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+        else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_RIGHT);
         } 
         else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
         	knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);
         } 
-        else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
-        	knight.cambiarEstado(Knight3.EstadoPersonaje.ATTACK);
-        	System.out.println("ataca");
+        else if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        	
+        	
+        		knight.cambiarEstado(Knight3.EstadoPersonaje.ATTACK);
+            	System.out.println("ataca");
+            
+        	
         } 
         else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-        	knight.cambiarEstado(Knight3.EstadoPersonaje.COVER);
+        	if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+                // Inicia la acción de bloqueo
+                bloqueoActivo = true;
+                // Cambia el estado del personaje a COVER
+                knight.cambiarEstado(Knight3.EstadoPersonaje.COVER);
+                
+                
+                
+            } else {
+                // Si el clic derecho no está presionado, detiene la acción de bloqueo
+                bloqueoActivo = false;
+                // Cambia el estado del personaje a IDLE (o cualquier otro estado apropiado)
+                knight.cambiarEstado(Knight3.EstadoPersonaje.IDLE);
+            }
+        	
         } 
         else {
         	knight.cambiarEstado(Knight3.EstadoPersonaje.IDLE);
@@ -150,7 +177,7 @@ public class ScreenGame implements Screen{
 			font.draw(b, "Muertes: "+ muertes, 10, 670); // Dibuja las muertes en la esquina superior derecha
 	
         	
-		
+			
 			
 			
 			

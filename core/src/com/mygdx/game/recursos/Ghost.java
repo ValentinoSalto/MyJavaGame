@@ -160,4 +160,23 @@ public class Ghost {
                 return idleAnimation;
         }
     }
+    // Método para obtener la posición X del personaje
+    public float getX() {
+        return x;
+    }
+
+    // Método para obtener la posición Y del personaje
+    public float getY() {
+        return y;
+    }
+
+    // Método para obtener el ancho del personaje
+    public float getWidth() {
+        return alto;
+    }
+
+    // Método para obtener la altura del personaje
+    public float getHeight() {
+        return ancho;
+    }
 }
