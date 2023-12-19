@@ -33,12 +33,10 @@ public class ScreenGame implements Screen{
 	ShapeRenderer sr; // Agrega un objeto ShapeRenderer
 	
 	
-	
 	private OrthographicCamera cam; //creo la camara
-	
-	//para el mapa
-		private TiledMap mapa; //info del mapa
-		private TiledMapRenderer mapaRenderer;
+    private TiledMap mapa; //info del mapa
+    private TiledMapRenderer mapaRenderer; //render del mapa
+
 	
 	@Override
 	public void show() { 
@@ -53,10 +51,13 @@ public class ScreenGame implements Screen{
 	    hudCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	
 		
-		mapa = new TmxMapLoader().load("Mapas/Firelink/Firelink.tmx");//cargo el archivo del mapa
-				
-		
-		mapaRenderer = new OrthogonalTiledMapRenderer(mapa);//creo el renderer del mapa
+	 // Carga el mapa desde Tiled
+        mapa = new TmxMapLoader().load("Mapas/Firelink/Firelink.tmx");
+        mapaRenderer = new OrthogonalTiledMapRenderer(mapa); //crea el render
+        
+     // Ajusta la cámara del mapa para que ocupe toda la pantalla
+        cam.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
 		
 		// Inicializa la fuente (ajusta los parámetros según tus preferencias)
 		font = new BitmapFont();
@@ -69,7 +70,7 @@ public class ScreenGame implements Screen{
 		sr = new ShapeRenderer(); // Inicializa el ShapeRenderer
 		
 		
-        knight = new Knight3(100,100, 200, 200);
+        knight = new Knight3(100,100, 100, 100);
         ghost = new Ghost(500,100, 200, 200);
         
         
@@ -80,12 +81,12 @@ public class ScreenGame implements Screen{
 	}
 	
 	
-		//Funcion para restarle vida al personaje //modificar a gusto dependiendo del personaje
+	//Funcion para restarle vida al personaje //modificar a gusto dependiendo del personaje
 	  private void restarVidaAlKnight() {
-		  /*    for(int i=0; i>=1 ;i++) {
+		      for(int i=0; i>=1 ;i++) {
 	        	vida -=  20;
 	        }
-	     */   
+	        
 	    }
 	@Override
 	public void render(float delta) {
@@ -97,9 +98,10 @@ public class ScreenGame implements Screen{
 		cam.update();
 		Render.batch.setProjectionMatrix(cam.combined);
 		
-		//setea vista del mapa
-		mapaRenderer.setView(cam);
-		mapaRenderer.render();
+		
+		// Establece la vista del mapa
+        mapaRenderer.setView(cam);
+        mapaRenderer.render();
 		
 		// Actualiza la posición de la cámara para que siga al personaje
         cam.position.set(knight.getX() + knight.getWidth() / 2, knight.getY() + knight.getHeight() / 2, 0);
@@ -110,8 +112,8 @@ public class ScreenGame implements Screen{
         float knightY = knight.getY();
         float ghostX = ghost.getX();
         float ghostY = ghost.getY();
-       
-        if (knightX == ghostX ) {
+        float tolerancia = 10.0f;
+        if (Math.abs(knightX - ghostX) < tolerancia && Math.abs(knightY - ghostY) < tolerancia ) {
             // Están en la misma posición
             // Realiza la acción, como restar vida
             restarVidaAlKnight();
@@ -124,6 +126,11 @@ public class ScreenGame implements Screen{
         } 
         else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_RIGHT);
+        }
+  
+        
+        else if (Gdx.input.isKeyPressed(Input.Keys.A + Input.Keys.SHIFT_LEFT)) {
+            knight.cambiarEstado(Knight3.EstadoPersonaje.RUN_LEFT);
         } 
         else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
         	knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);
