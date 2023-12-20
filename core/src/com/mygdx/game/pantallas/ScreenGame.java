@@ -12,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.mygdx.game.recursos.Ghost;
 import com.mygdx.game.recursos.Knight3;
@@ -45,6 +46,7 @@ public class ScreenGame implements Screen{
 		// Restringe el cursor del mouse a no ser visible
 	    Gdx.input.setCursorCatched(true);
 		cam = new OrthographicCamera(Config.ANCHO, Config.ALTO); // creo la camara
+		cam.setToOrtho(false, Config.ANCHO, Config.ALTO);
 		
 		// Inicializa la cámara del HUD
 	    hudCamera = new OrthographicCamera();
@@ -52,11 +54,11 @@ public class ScreenGame implements Screen{
 	
 		
 	 // Carga el mapa desde Tiled
-        mapa = new TmxMapLoader().load("Mapas/Firelink/Firelink.tmx");
+        mapa = new TmxMapLoader().load("Mapas/Inicio/Iniciomapa.tmx");
         mapaRenderer = new OrthogonalTiledMapRenderer(mapa); //crea el render
         
      // Ajusta la cámara del mapa para que ocupe toda la pantalla
-        cam.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+       
 
 		
 		// Inicializa la fuente (ajusta los parámetros según tus preferencias)
@@ -70,7 +72,7 @@ public class ScreenGame implements Screen{
 		sr = new ShapeRenderer(); // Inicializa el ShapeRenderer
 		
 		
-        knight = new Knight3(100,100, 100, 100);
+        knight = new Knight3(100,190, 100, 100);
         ghost = new Ghost(500,100, 200, 200);
         
         
@@ -103,10 +105,32 @@ public class ScreenGame implements Screen{
         mapaRenderer.setView(cam);
         mapaRenderer.render();
 		
-		// Actualiza la posición de la cámara para que siga al personaje
+        // Actualiza la posición de la cámara para que siga al personaje
         cam.position.set(knight.getX() + knight.getWidth() / 2, knight.getY() + knight.getHeight() / 2, 0);
         cam.update();
+      
        
+		
+        
+     // Ajusta la vista del mapa
+        float mapWidth = mapa.getProperties().get("width", Integer.class) * mapa.getProperties().get("tilewidth", Integer.class);
+        float mapHeight = mapa.getProperties().get("height", Integer.class) * mapa.getProperties().get("tileheight", Integer.class);
+
+        float viewportWidth = cam.viewportWidth * cam.zoom;
+        float viewportHeight = cam.viewportHeight * cam.zoom;
+
+        float minX = viewportWidth / 2;
+        float maxX = mapWidth - viewportWidth / 2;
+        float minY = viewportHeight / 2;
+        float maxY = mapHeight - viewportHeight / 2;
+
+        float cameraX = MathUtils.clamp(cam.position.x, minX, maxX);
+        float cameraY = MathUtils.clamp(cam.position.y, minY, maxY);
+
+        cam.position.set(cameraX, cameraY, 0);
+        cam.update();
+        
+    
         // Obtener posiciones actuales
         float knightX = knight.getX();
         float knightY = knight.getY();
@@ -123,17 +147,16 @@ public class ScreenGame implements Screen{
         // Maneja las entradas del teclado para cambiar el estado del personaje
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_LEFT);
+           
         } 
         else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_RIGHT);
+            
         }
-  
-        
-        else if (Gdx.input.isKeyPressed(Input.Keys.A + Input.Keys.SHIFT_LEFT)) {
-            knight.cambiarEstado(Knight3.EstadoPersonaje.RUN_LEFT);
-        } 
+         
         else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
         	knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);
+        	
         } 
         else if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
         	

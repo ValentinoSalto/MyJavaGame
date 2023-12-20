@@ -1,0 +1,50 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "Iniciomapa.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "Fondo 2.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Fondo2.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Iniciomapa.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 605.9999999999999,
+                "y": 369.33333333333326
+            }
+        },
+        "Objetos.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "C:/Users/Valen/Desktop/Juego2/assets/Mapas/Inicio",
+    "map.height": 22,
+    "map.lastUsedFormat": "tmx",
+    "map.width": 40,
+    "openFiles": [
+        "Iniciomapa.tmx",
+        "Fondo2.tsx",
+        "Fondo 2.tsx",
+        "Objetos.tsx"
+    ],
+    "project": "Mapa 1.tiled-project",
+    "recentFiles": [
+        "Objetos.tsx",
+        "Fondo 2.tsx",
+        "Fondo2.tsx",
+        "Iniciomapa.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}

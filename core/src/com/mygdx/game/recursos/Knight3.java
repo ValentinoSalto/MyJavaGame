@@ -151,6 +151,7 @@ public class Knight3 {
                 	spr.setRegion(runLeftAnimation.getKeyFrame(time, true));
                 	cambiarEstado(Knight3.EstadoPersonaje.RUN_LEFT);
                 	x-=6;
+                	
                 }
                 break;
                 
