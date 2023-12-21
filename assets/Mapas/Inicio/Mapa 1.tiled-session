@@ -18,10 +18,10 @@
         },
         "Iniciomapa.tmx": {
             "scale": 0.75,
-            "selectedLayer": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 605.9999999999999,
-                "y": 369.33333333333326
+                "x": -35.33333333333333,
+                "y": 367.99999999999994
             }
         },
         "Objetos.tsx": {
