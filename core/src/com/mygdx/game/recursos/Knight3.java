@@ -44,13 +44,13 @@ public class Knight3 {
 		this.alto = alto;
 		this.ancho = ancho;
 
-		Texture idleTexture = new Texture(Gdx.files.internal("Personajes/Hero/Combat Ready Idle.png"));
-		Texture walkingRightTexture = new Texture(Gdx.files.internal("Personajes/Hero/Walk.png"));
-		Texture walkingLeftTexture = new Texture(Gdx.files.internal("Personajes/Hero/Walk2.png"));
-		Texture runTexture = new Texture(Gdx.files.internal("Personajes/Hero/Run.png"));
-		Texture runLeftTexture = new Texture(Gdx.files.internal("Personajes/Hero/Run2.png"));
-		Texture attackTexture = new Texture(Gdx.files.internal("Personajes/Hero/Attack 1.png"));
-		Texture coverTexture = new Texture(Gdx.files.internal("Personajes/Hero/Shield Raise.png"));
+		Texture idleTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Combat Ready Idle.png"));
+		Texture walkingRightTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Walk.png"));
+		Texture walkingLeftTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Walk2.png"));
+		Texture runTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Run.png"));
+		Texture runLeftTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Run2.png"));
+		Texture attackTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Attack 1.png"));
+		Texture coverTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Shield Raise.png"));
 
 		TextureRegion[][] idleFrames = TextureRegion.split(idleTexture, idleTexture.getWidth() / 5,
 				idleTexture.getHeight());

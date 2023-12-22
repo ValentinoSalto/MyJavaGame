@@ -25,7 +25,7 @@ public class ScreenGame implements Screen {
 	Image personaje;
 	SpriteBatch b;
 	SpriteBatch h;
-	private OrthographicCamera hudCamera;
+	private OrthographicCamera hudCamera; // creo la camara del hud
 	private BitmapFont font;
 	private int vida = 100; // Ejemplo: Inicializa la vida a 100
 	private int muertes = 0; // Ejemplo: Inicializa el contador de muertes a 0
@@ -51,7 +51,7 @@ public class ScreenGame implements Screen {
 		hudCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		// Carga el mapa desde Tiled
-		mapa = new TmxMapLoader().load("Mapas/Inicio/Iniciomapa.tmx");
+		mapa = new TmxMapLoader().load("Mapas/Bienvenido/Bienvenido.tmx");
 		mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
 
 		// Ajusta la cámara del mapa para que ocupe toda la pantalla
@@ -65,8 +65,8 @@ public class ScreenGame implements Screen {
 		h = Render.batch;
 		sr = new ShapeRenderer(); // Inicializa el ShapeRenderer
 
-		knight = new Knight3(600, 190, 100, 100);
-		ghost = new Ghost(500, 100, 200, 200);
+		knight = new Knight3(600, 170, 100, 100);
+		ghost = new Ghost(500, 160, 200, 200);
 
 	}
 
@@ -94,10 +94,6 @@ public class ScreenGame implements Screen {
 		mapaRenderer.setView(cam);
 		mapaRenderer.render();
 
-		// Actualiza la posición de la cámara para que siga al personaje
-		cam.position.set(knight.getX() + knight.getWidth() / 2, knight.getY() + knight.getHeight() / 2, 0);
-		cam.update();
-
 		// Ajusta la vista del mapa
 		float mapWidth = mapa.getProperties().get("width", Integer.class)
 				* mapa.getProperties().get("tilewidth", Integer.class);
@@ -117,6 +113,10 @@ public class ScreenGame implements Screen {
 
 		cam.position.set(cameraX, cameraY, 0);
 		cam.update();
+		
+		// Actualiza la posición de la cámara para que siga al personaje
+				cam.position.set(knight.getX() + knight.getWidth() / 2,360, 0);
+				cam.update();
 
 		// Obtener posiciones actuales
 		float knightX = knight.getX();

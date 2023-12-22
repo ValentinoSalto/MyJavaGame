@@ -18,10 +18,10 @@
         },
         "Iniciomapa.tmx": {
             "scale": 0.75,
-            "selectedLayer": 1,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": -35.33333333333333,
-                "y": 367.99999999999994
+                "x": 686.6666666666667,
+                "y": 290.66666666666663
             }
         },
         "Objetos.tsx": {
@@ -35,16 +35,14 @@
     "map.width": 40,
     "openFiles": [
         "Iniciomapa.tmx",
-        "Fondo2.tsx",
-        "Fondo 2.tsx",
         "Objetos.tsx"
     ],
     "project": "Mapa 1.tiled-project",
     "recentFiles": [
         "Objetos.tsx",
-        "Fondo 2.tsx",
+        "Iniciomapa.tmx",
         "Fondo2.tsx",
-        "Iniciomapa.tmx"
+        "Fondo 2.tsx"
     ],
     "tileset.lastUsedFormat": "tsx"
 }
