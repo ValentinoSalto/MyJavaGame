@@ -71,6 +71,8 @@ public class ScreenGame implements Screen {
 	private void changeToNewScenario() {
 		// Cargar el nuevo escenario y ajustar la posición del personaje
 		// Por ejemplo, puedes cargar otro mapa con TiledMapLoader
+		mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 2.tmx");
+		mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
 		// y ajustar la posición del personaje en función del nuevo escenario
 		// ...
 		System.out.println("Salio del limite");
