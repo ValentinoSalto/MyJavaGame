@@ -38,6 +38,46 @@ public class ScreenGame implements Screen {
 	private TiledMap mapa; // info del mapa
 	private TiledMapRenderer mapaRenderer; // render del mapa
 
+	private void checkBoundaryTransition() {
+		float knightX = knight.getX();
+		float knightY = knight.getY();
+		float knightWidth = knight.getWidth();
+		float knightHeight = knight.getHeight();
+
+		// Definir límites de transición
+		float leftBoundary = 0;
+		float rightBoundary = Config.ANCHO;
+		float bottomBoundary = 0;
+		float topBoundary = Config.ALTO;
+
+		// Verificar si el personaje ha salido de los límites
+		if (knightX + knightWidth < leftBoundary) {
+			// Personaje salió por la izquierda
+			changeToNewScenario();
+		} else if (knightX > rightBoundary) {
+			// Personaje salió por la derecha
+			changeToNewScenario();
+		} else if (knightY + knightHeight < bottomBoundary) {
+			// Personaje salió por abajo
+			changeToNewScenario();
+		} else if (knightY > topBoundary) {
+			// Personaje salió por arriba
+			changeToNewScenario();
+		}
+	}
+
+	
+
+	private void changeToNewScenario() {
+		// Cargar el nuevo escenario y ajustar la posición del personaje
+		// Por ejemplo, puedes cargar otro mapa con TiledMapLoader
+		// y ajustar la posición del personaje en función del nuevo escenario
+		// ...
+		System.out.println("Salio del limite");
+		// Restablecer la posición inicial del personaje en el nuevo escenario
+		//knight.setPosition(newKnightX, newKnightY);
+	}
+
 	@Override
 	public void show() {
 
@@ -51,7 +91,7 @@ public class ScreenGame implements Screen {
 		hudCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		// Carga el mapa desde Tiled
-		mapa = new TmxMapLoader().load("Mapas/Bienvenido/Bienvenido.tmx");
+		mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 1.tmx");
 		mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
 
 		// Ajusta la cámara del mapa para que ocupe toda la pantalla
@@ -65,8 +105,8 @@ public class ScreenGame implements Screen {
 		h = Render.batch;
 		sr = new ShapeRenderer(); // Inicializa el ShapeRenderer
 
-		knight = new Knight3(600, 170, 100, 100);
-		ghost = new Ghost(500, 160, 200, 200);
+		knight = new Knight3(200, 145, 100, 100);
+		ghost = new Ghost(700, 145, 200, 200);
 
 	}
 
@@ -113,17 +153,23 @@ public class ScreenGame implements Screen {
 
 		cam.position.set(cameraX, cameraY, 0);
 		cam.update();
-		
-		// Actualiza la posición de la cámara para que siga al personaje
-				cam.position.set(knight.getX() + knight.getWidth() / 2,360, 0);
-				cam.update();
 
+		// Actualiza la posición de la cámara para que siga al personaje
+		/*
+		 * cam.position.set(knight.getX() + knight.getWidth() / 2,360, 0); cam.update();
+		 */
+		
+		// Manejar el cambio de escenario
+        checkBoundaryTransition();
+
+		
 		// Obtener posiciones actuales
 		float knightX = knight.getX();
 		float knightY = knight.getY();
 		float ghostX = ghost.getX();
 		float ghostY = ghost.getY();
 		float tolerancia = 10.0f;
+
 		if (Math.abs(knightX - ghostX) < tolerancia && Math.abs(knightY - ghostY) < tolerancia) {
 			// Están en la misma posición
 			// Realiza la acción, como restar vida
