@@ -15,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.mygdx.game.recursos.Boss1;
 import com.mygdx.game.recursos.Ghost;
 import com.mygdx.game.recursos.Knight3;
 import com.mygdx.game.utiles.Config;
@@ -32,6 +33,7 @@ public class ScreenGame implements Screen {
 	private Knight3 knight;
 	private Ghost ghost;
 	private Ghost ghost2;
+	private Boss1 boss;
 	boolean bloqueoActivo;
 	ShapeRenderer sr; // Agrega un objeto ShapeRenderer
 	private int numeroEscenario = 1 ;
@@ -131,6 +133,8 @@ public class ScreenGame implements Screen {
 		knight = new Knight3(200, 145, 100, 100);
 		ghost = new Ghost(500, 145, 200, 200);
 		ghost2 = new Ghost(800, 145, 200, 200);
+		boss = new Boss1(900, 117, 300, 300);
+		
 		
 		
 
@@ -244,14 +248,16 @@ public class ScreenGame implements Screen {
 		b.begin();
 		Render.batch.setProjectionMatrix(cam.combined);
 		knight.render(b);
+		
 		if(numeroEscenario == 1||numeroEscenario == 2 ) {
 			ghost.render(b);
-		}
-		
-		
+		}  
 		if (numeroEscenario == 2) {
 			ghost2.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 			ghost2.render(b);
+		} else if (numeroEscenario == 3){
+			boss.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+			boss.render(b);
 		}
 
 		Render.batch.setProjectionMatrix(hudCamera.combined); // Configura el SpriteBatch para la cámara del HUD
