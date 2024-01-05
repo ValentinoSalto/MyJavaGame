@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class Knight3 {
 
 	public enum EstadoPersonaje {
-		IDLE, WALKING_LEFT, WALKING_RIGHT, JUMP, RUN_RIGHT, RUN_LEFT, ATTACK, COVER, HURT
+		IDLE, WALKING_LEFT, WALKING_RIGHT, JUMP, FALL,  RUN_RIGHT, RUN_LEFT, ATTACK, COVER, HURT
 	}
 
 	private Sprite spr;
@@ -24,6 +24,9 @@ public class Knight3 {
 	private Animation<TextureRegion> runLeftAnimation;
 	private Animation<TextureRegion> attackAnimation;
 	private Animation<TextureRegion> coverAnimation;
+	private Animation<TextureRegion> jumpAnimation;
+	private Animation<TextureRegion> fallAnimation;
+	
 	private TextureRegion[] regionsMovement_idle;
 	private TextureRegion[] regionsMovement_walking_left;
 	private TextureRegion[] regionsMovement_walking_right;
@@ -31,6 +34,8 @@ public class Knight3 {
 	private TextureRegion[] regionsMovement_runLeft;
 	private TextureRegion[] regionsMovement_attack;
 	private TextureRegion[] regionsMovement_cover;
+	private TextureRegion[] regionsMovement_jump;
+	private TextureRegion[] regionsMovement_fall;
 	private float time;
 	private TextureRegion currentFrame;
 
@@ -51,6 +56,8 @@ public class Knight3 {
 		Texture runLeftTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Run2.png"));
 		Texture attackTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Attack 1.png"));
 		Texture coverTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Shield Raise.png"));
+		Texture jumpTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/jump.png"));
+		Texture fallTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/fall.png"));
 
 		TextureRegion[][] idleFrames = TextureRegion.split(idleTexture, idleTexture.getWidth() / 5,
 				idleTexture.getHeight());
@@ -79,6 +86,14 @@ public class Knight3 {
 		TextureRegion[][] coverFrames = TextureRegion.split(coverTexture, coverTexture.getWidth() / 5,
 				coverTexture.getHeight());
 		regionsMovement_cover = new TextureRegion[5];
+		
+		TextureRegion[][] jumpFrames = TextureRegion.split(jumpTexture, jumpTexture.getWidth() / 5,
+				jumpTexture.getHeight());
+		regionsMovement_jump = new TextureRegion[5];
+		
+		TextureRegion[][] fallFrames = TextureRegion.split(fallTexture, fallTexture.getWidth() / 5,
+				fallTexture.getHeight());
+		regionsMovement_fall = new TextureRegion[5];
 
 		for (int i = 0; i < 5; i++) {
 			regionsMovement_idle[i] = idleFrames[0][i];
@@ -119,6 +134,18 @@ public class Knight3 {
 		for (int i = 0; i < 5; i++) {
 			regionsMovement_cover[i] = coverFrames[0][i];
 			coverAnimation = new Animation<>(1 / 10f, coverFrames[0]);
+			time = 0f;
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			regionsMovement_jump[i] = jumpFrames[0][i];
+			jumpAnimation = new Animation<>(1 / 10f, jumpFrames[0]);
+			time = 0f;
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			regionsMovement_fall[i] = fallFrames[0][i];
+			fallAnimation = new Animation<>(1 / 10f, fallFrames[0]);
 			time = 0f;
 		}
 
@@ -239,6 +266,10 @@ public class Knight3 {
 			return attackAnimation;
 		case COVER:
 			return coverAnimation;
+		case JUMP:
+			return jumpAnimation;
+		case FALL:
+			return fallAnimation;
 		default:
 			return idleAnimation;
 		}

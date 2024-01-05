@@ -1,5 +1,5 @@
-package com.mygdx.game.pantallas;
 
+package com.mygdx.game.pantallas;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -20,7 +20,7 @@ import com.mygdx.game.recursos.Knight3;
 import com.mygdx.game.utiles.Config;
 import com.mygdx.game.utiles.Render;
 
-public class ScreenGame implements Screen {
+public class ScreenGame3 implements Screen {
 
 	Image personaje;
 	SpriteBatch b;
@@ -31,6 +31,7 @@ public class ScreenGame implements Screen {
 	private int muertes = 0; // Ejemplo: Inicializa el contador de muertes a 0
 	private Knight3 knight;
 	private Ghost ghost;
+	private Ghost ghost2;
 	boolean bloqueoActivo;
 	ShapeRenderer sr; // Agrega un objeto ShapeRenderer
 
@@ -38,47 +39,25 @@ public class ScreenGame implements Screen {
 	private TiledMap mapa; // info del mapa
 	private TiledMapRenderer mapaRenderer; // render del mapa
 
-	private void checkBoundaryTransition() {
+	private void chequeaLimiteCambio() {
 		float knightX = knight.getX();
 		float knightY = knight.getY();
 		float knightWidth = knight.getWidth();
 		float knightHeight = knight.getHeight();
 
 		// Definir límites de transición
-		float leftBoundary = 0;
-		float rightBoundary = Config.ANCHO;
-		float bottomBoundary = 0;
-		float topBoundary = Config.ALTO;
-
-		// Verificar si el personaje ha salido de los límites
-		if (knightX + knightWidth < leftBoundary) {
-			// Personaje salió por la izquierda
-			
-		} else if (knightX > rightBoundary) {
-			// Personaje salió por la derecha
-			 Render.app.setScreen(new ScreenGame2());
-		} else if (knightY + knightHeight < bottomBoundary) {
-			// Personaje salió por abajo
-			
-		} else if (knightY > topBoundary) {
-			// Personaje salió por arriba
-			
-		}
-	}
-
+		float limiteIzquierdo = 0;
+		float limiteDerecho = Config.ANCHO;
 	
 
-	/*private void changeToNewScenario() {
-		// Cargar el nuevo escenario y ajustar la posición del personaje
-		// Por ejemplo, puedes cargar otro mapa con TiledMapLoader
-		mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 2.tmx");
-		mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
-		// y ajustar la posición del personaje en función del nuevo escenario
-		// ...
-		System.out.println("Salio del limite");
-		// Restablecer la posición inicial del personaje en el nuevo escenario
-		//knight.setPosition(newKnightX, newKnightY);
-	}*/
+		//Cambia de escenario
+		if (knightX > limiteDerecho) {
+			// Personaje salió por la derecha
+			 Render.app.setScreen(new ScreenGame3());
+		} 
+	}
+	
+	
 
 	@Override
 	public void show() {
@@ -93,7 +72,7 @@ public class ScreenGame implements Screen {
 		hudCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		// Carga el mapa desde Tiled
-		mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 1.tmx");
+		mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 2.tmx");
 		mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
 
 		// Ajusta la cámara del mapa para que ocupe toda la pantalla
@@ -107,12 +86,14 @@ public class ScreenGame implements Screen {
 		h = Render.batch;
 		sr = new ShapeRenderer(); // Inicializa el ShapeRenderer
 
-		knight = new Knight3(200, 145, 100, 100);
-		ghost = new Ghost(500, 145, 200, 200);
+		knight = new Knight3(100, 145, 100, 100);
+		ghost = new Ghost(200, 145, 200, 200);
+		ghost2 = new Ghost(800, 145, 200, 200);
 
 	}
 
 	// Funcion para restarle vida al personaje //modificar a gusto dependiendo del
+	
 	// personaje
 	private void restarVidaAlKnight() {
 		for (int i = 0; i >= 1; i++) {
@@ -162,7 +143,7 @@ public class ScreenGame implements Screen {
 		 */
 		
 		// Manejar el cambio de escenario
-        checkBoundaryTransition();
+        chequeaLimiteCambio();
 
 		
 		// Obtener posiciones actuales
@@ -216,11 +197,14 @@ public class ScreenGame implements Screen {
 		knight.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 
 		ghost.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
-
+		
+		ghost2.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+		
 		b.begin();
 		Render.batch.setProjectionMatrix(cam.combined);
 		knight.render(b);
 		ghost.render(b);
+		ghost2.render(b);
 
 		Render.batch.setProjectionMatrix(hudCamera.combined); // Configura el SpriteBatch para la cámara del HUD
 		// Configura el color de fuente y dibuja la información de "Vida"
@@ -239,6 +223,8 @@ public class ScreenGame implements Screen {
 		 * 
 		 * // Finaliza el dibujado de líneas sr.end();
 		 */
+		
+		
 
 	}
 
@@ -273,4 +259,4 @@ public class ScreenGame implements Screen {
 
 	}
 
-}
+} 

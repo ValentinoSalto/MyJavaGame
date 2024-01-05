@@ -137,6 +137,11 @@ public class Ghost {
         // Actualiza la posición del sprite
         spr.setPosition(x, y);
     }
+    
+    public void setPosition(float newX, float newY) {
+		x = newX;
+		y = newY;
+	}
 
     public void cambiarEstado(EstadoPersonaje nuevoEstado) {
         // Cambia el estado del personaje y actualiza la animación
@@ -144,6 +149,8 @@ public class Ghost {
         // Reinicia la animación para que comience desde el inicio al cambiar de estado
         spr.setRegion(getAnimationForCurrentState().getKeyFrame(0));
     }
+    
+    
 
     private Animation<TextureRegion> getAnimationForCurrentState() {
         // Devuelve la animación correspondiente al estado actual
