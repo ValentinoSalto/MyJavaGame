@@ -20,6 +20,7 @@ public class Ghost {
     }
 
     private Sprite spr;
+    private Sprite spr2;
     private float alto, ancho;
     private float x, y;
     private Animation<TextureRegion> idleAnimation;
@@ -30,6 +31,7 @@ public class Ghost {
     private TextureRegion [] regionsMovement_walking_right;
     private float time;
     private TextureRegion currentFrame;
+    private Texture idleTexture;
     // Define aquí las demás animaciones para los otros estados (JUMP, RUN, ATTACK, COVER)
     // ...
 
@@ -40,9 +42,9 @@ public class Ghost {
         this.y = y;
         this.alto = alto;
         this.ancho = ancho;
-
+        
         // Carga las texturas para las animaciones
-        Texture idleTexture = new Texture(Gdx.files.internal("Personajes/Ghost-Files/PNG/ghost-idle.png"));
+        idleTexture = new Texture(Gdx.files.internal("Personajes/Ghost-Files/PNG/ghost-idle.png"));
         //Texture walkingLeftTexture = new Texture(Gdx.files.internal("Personajes/Knight_2/Walk_left.png"));
         //Texture walkingRightTexture = new Texture(Gdx.files.internal("Personajes/Knight_2/Walk.png"));
         //Texture attackTexture = new Texture(Gdx.files.internal("Personajes/Knight_1/"));
@@ -185,5 +187,15 @@ public class Ghost {
     // Método para obtener la altura del personaje
     public float getHeight() {
         return ancho;
+    }
+    
+    public void dispose() {
+        // Libera los recursos asociados al sprite, texturas, etc.
+        // Aquí deberías realizar cualquier limpieza necesaria.
+
+        // Por ejemplo, para la textura idleTexture
+    	
+        idleTexture.dispose();
+        
     }
 }

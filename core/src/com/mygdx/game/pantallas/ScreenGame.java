@@ -31,9 +31,11 @@ public class ScreenGame implements Screen {
 	private int muertes = 0; // Ejemplo: Inicializa el contador de muertes a 0
 	private Knight3 knight;
 	private Ghost ghost;
+	private Ghost ghost2;
 	boolean bloqueoActivo;
 	ShapeRenderer sr; // Agrega un objeto ShapeRenderer
-
+	private int numeroEscenario = 1 ;
+	
 	private OrthographicCamera cam; // creo la camara
 	private TiledMap mapa; // info del mapa
 	private TiledMapRenderer mapaRenderer; // render del mapa
@@ -56,7 +58,7 @@ public class ScreenGame implements Screen {
 			
 		} else if (knightX > rightBoundary) {
 			// Personaje salió por la derecha
-			 Render.app.setScreen(new ScreenGame2());
+			 changeToNextScenario();
 		} else if (knightY + knightHeight < bottomBoundary) {
 			// Personaje salió por abajo
 			
@@ -68,17 +70,36 @@ public class ScreenGame implements Screen {
 
 	
 
-	/*private void changeToNewScenario() {
+	private void changeToNextScenario() {
+		
+		if(numeroEscenario == 1) {
 		// Cargar el nuevo escenario y ajustar la posición del personaje
 		// Por ejemplo, puedes cargar otro mapa con TiledMapLoader
 		mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 2.tmx");
 		mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
-		// y ajustar la posición del personaje en función del nuevo escenario
-		// ...
-		System.out.println("Salio del limite");
-		// Restablecer la posición inicial del personaje en el nuevo escenario
-		//knight.setPosition(newKnightX, newKnightY);
-	}*/
+		
+		numeroEscenario = 2;
+		
+		// Restablecer la posición inicial del los personajes en el nuevo escenario
+		knight.setPosition(100, 145);
+		ghost.setPosition(200, 145);
+	
+		
+		} else if(numeroEscenario == 2){
+			// Cargar el nuevo escenario y ajustar la posición del personaje
+			// Por ejemplo, puedes cargar otro mapa con TiledMapLoader
+			mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 3.tmx");
+			mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
+			
+			numeroEscenario = 3;
+			
+			// Restablecer la posición inicial del los personajes en el nuevo escenario
+			knight.setPosition(100, 145);
+				
+			
+		}
+	}
+	
 
 	@Override
 	public void show() {
@@ -109,6 +130,9 @@ public class ScreenGame implements Screen {
 
 		knight = new Knight3(200, 145, 100, 100);
 		ghost = new Ghost(500, 145, 200, 200);
+		ghost2 = new Ghost(800, 145, 200, 200);
+		
+		
 
 	}
 
@@ -220,7 +244,15 @@ public class ScreenGame implements Screen {
 		b.begin();
 		Render.batch.setProjectionMatrix(cam.combined);
 		knight.render(b);
-		ghost.render(b);
+		if(numeroEscenario == 1||numeroEscenario == 2 ) {
+			ghost.render(b);
+		}
+		
+		
+		if (numeroEscenario == 2) {
+			ghost2.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+			ghost2.render(b);
+		}
 
 		Render.batch.setProjectionMatrix(hudCamera.combined); // Configura el SpriteBatch para la cámara del HUD
 		// Configura el color de fuente y dibuja la información de "Vida"
@@ -271,6 +303,17 @@ public class ScreenGame implements Screen {
 	public void dispose() {
 		mapa.dispose();
 
+	}
+	
+	public void eliminarGhost(Ghost ghost) {
+	    ghost.dispose();  // Libera recursos asociados con el ghost (texturas, etc.)
+	    // Elimina la referencia al ghost
+	    if (ghost == this.ghost) {
+	        this.ghost = null;
+	    } else if (ghost == this.ghost2) {
+	        this.ghost2 = null;
+	    }
+	    // Otros pasos que puedas necesitar
 	}
 
 }

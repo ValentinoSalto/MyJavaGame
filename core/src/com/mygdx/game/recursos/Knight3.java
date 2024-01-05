@@ -36,6 +36,7 @@ public class Knight3 {
 	private TextureRegion[] regionsMovement_cover;
 	private TextureRegion[] regionsMovement_jump;
 	private TextureRegion[] regionsMovement_fall;
+	private Texture idleTexture;
 	private float time;
 	private TextureRegion currentFrame;
 
@@ -49,7 +50,7 @@ public class Knight3 {
 		this.alto = alto;
 		this.ancho = ancho;
 
-		Texture idleTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Combat Ready Idle.png"));
+		idleTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Combat Ready Idle.png"));
 		Texture walkingRightTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Walk.png"));
 		Texture walkingLeftTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Walk2.png"));
 		Texture runTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Run.png"));
@@ -155,6 +156,15 @@ public class Knight3 {
 		spr.setPosition(x, y);
 		spr.setSize(ancho, alto);
 	}
+	
+
+    public void dispose() {
+        // Libera los recursos asociados al sprite, texturas, etc.
+        // Aquí deberías realizar cualquier limpieza necesaria.
+
+        // Por ejemplo, para la textura idleTexture
+        idleTexture.dispose();
+    }
 
 	public void render(SpriteBatch batch) {
 		time += Gdx.graphics.getDeltaTime();
@@ -163,6 +173,8 @@ public class Knight3 {
 		float X = spr.getX();
 		float ANCHO = spr.getWidth();
 	}
+	
+	
 
 	public void updateAnimation(float delta) {
 		switch (estadoActual) {
@@ -234,7 +246,9 @@ public class Knight3 {
 			spr.setRegion(currentAnimation.getKeyFrame(time, true));
 		}
 	}
-
+	
+	
+	
 	public void cambiarEstado(EstadoPersonaje nuevoEstado) {
 		estadoActual = nuevoEstado;
 		spr.setRegion(getAnimationForCurrentState().getKeyFrame(0));
@@ -243,6 +257,7 @@ public class Knight3 {
 			iniciarAtaque();
 		}
 	}
+	
 
 	private void iniciarAtaque() {
 		ataqueIniciado = true;
@@ -274,7 +289,11 @@ public class Knight3 {
 			return idleAnimation;
 		}
 	}
-
+	
+	public void setPosition(float newX, float newY) {
+        x = newX;
+        y = newY;
+    }
 	public float getX() {
 		return x;
 	}
@@ -290,4 +309,6 @@ public class Knight3 {
 	public float getHeight() {
 		return ancho;
 	}
+	
+	
 }
