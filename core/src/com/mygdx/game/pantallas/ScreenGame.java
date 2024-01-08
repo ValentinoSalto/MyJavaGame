@@ -16,6 +16,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.mygdx.game.recursos.Boss1;
+import com.mygdx.game.recursos.Fondo;
 import com.mygdx.game.recursos.Ghost;
 import com.mygdx.game.recursos.Knight3;
 import com.mygdx.game.utiles.Config;
@@ -38,6 +39,9 @@ public class ScreenGame implements Screen {
 	ShapeRenderer sr; // Agrega un objeto ShapeRenderer
 	private int numeroEscenario = 1 ;
 	
+	private Fondo fondo1;
+	private Fondo fondo2;
+	private Fondo fondo3;
 	private OrthographicCamera cam; // creo la camara
 	private TiledMap mapa; // info del mapa
 	private TiledMapRenderer mapaRenderer; // render del mapa
@@ -114,10 +118,16 @@ public class ScreenGame implements Screen {
 		// Inicializa la cámara del HUD
 		hudCamera = new OrthographicCamera();
 		hudCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
+		
+		// Crear el fondo
+	    fondo1 = new Fondo("Mapas/Mapa1/background_layer_1.png");
+	    fondo2 = new Fondo("Mapas/Mapa1/background_layer_2.png");
+	    fondo3 = new Fondo("Mapas/Mapa1/background_layer_3.png");
 		// Carga el mapa desde Tiled
 		mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 1.tmx");
 		mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
+		
+		
 
 		// Ajusta la cámara del mapa para que ocupe toda la pantalla
 
@@ -159,10 +169,6 @@ public class ScreenGame implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		cam.update();
 		Render.batch.setProjectionMatrix(cam.combined);
-
-		// Establece la vista del mapa
-		mapaRenderer.setView(cam);
-		mapaRenderer.render();
 
 		// Ajusta la vista del mapa
 		float mapWidth = mapa.getProperties().get("width", Integer.class)
@@ -246,25 +252,38 @@ public class ScreenGame implements Screen {
 		ghost.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 
 		b.begin();
-		Render.batch.setProjectionMatrix(cam.combined);
-		knight.render(b);
+			
+			//Dibuja el fondo
+		 	fondo1.render(b);
+		 	fondo2.render(b);
+		 	fondo3.render(b);
+		 	
+		b.end();
 		
-		if(numeroEscenario == 1||numeroEscenario == 2 ) {
-			ghost.render(b);
-		}  
-		if (numeroEscenario == 2) {
-			ghost2.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
-			ghost2.render(b);
-		} else if (numeroEscenario == 3){
-			boss.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
-			boss.render(b);
-		}
-
-		Render.batch.setProjectionMatrix(hudCamera.combined); // Configura el SpriteBatch para la cámara del HUD
-		// Configura el color de fuente y dibuja la información de "Vida"
-		font.setColor(Color.WHITE); // Configura el color de fuente (blanco en este ejemplo)
-		font.draw(b, "Vida: " + vida, 10, 700); // Dibuja la vida en la esquina superior izquierda
-		font.draw(b, "Muertes: " + muertes, 10, 670); // Dibuja las muertes en la esquina superior derecha
+		b.begin();	
+		 	// Establece la vista del mapa
+			mapaRenderer.setView(cam);
+			mapaRenderer.render();
+			
+			Render.batch.setProjectionMatrix(cam.combined);
+			knight.render(b);
+			
+			if(numeroEscenario == 1||numeroEscenario == 2 ) {
+				ghost.render(b);
+			}  
+			if (numeroEscenario == 2) {
+				ghost2.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+				ghost2.render(b);
+			} else if (numeroEscenario == 3){
+				boss.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+				boss.render(b);
+			}
+	
+			Render.batch.setProjectionMatrix(hudCamera.combined); // Configura el SpriteBatch para la cámara del HUD
+			// Configura el color de fuente y dibuja la información de "Vida"
+			font.setColor(Color.WHITE); // Configura el color de fuente (blanco en este ejemplo)
+			font.draw(b, "Vida: " + vida, 10, 700); // Dibuja la vida en la esquina superior izquierda
+			font.draw(b, "Muertes: " + muertes, 10, 670); // Dibuja las muertes en la esquina superior derecha
 
 		b.end();
 
