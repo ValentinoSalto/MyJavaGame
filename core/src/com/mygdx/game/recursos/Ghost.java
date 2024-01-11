@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 
 public class Ghost {
 
@@ -152,6 +153,40 @@ public class Ghost {
         spr.setRegion(getAnimationForCurrentState().getKeyFrame(0));
     }
     
+    public void seguirKnight(Knight3 knight, float delta) {
+        // Lógica para seguir al Knight
+        float knightX = knight.getX();
+        float knightY = knight.getY();
+
+        // Calcula las diferencias en las coordenadas X e Y
+        float deltaX = knightX - getX();
+        float deltaY = knightY - getY();
+
+        // Calcula el ángulo hacia el Knight
+        float angleToKnight = MathUtils.atan2(deltaY, deltaX);
+
+        // Calcula la nueva posición del Ghost
+        float speed = 100; // Ajusta la velocidad según sea necesario
+        float newX = getX() + speed * MathUtils.cos(angleToKnight) * delta;
+        float newY = getY() + speed * MathUtils.sin(angleToKnight) * delta;
+
+        // Actualiza la posición del Ghost
+        setPosition(newX, newY);
+    }
+    
+    public void atacarKnight(Knight3 knight) {
+        float distanciaAtaque = 10; // Ajusta la distancia de ataque según sea necesario
+
+        float distancia = Math.abs(knight.getX() - x);
+
+        if (distancia < distanciaAtaque) {
+            System.out.println("Dentro del rango de ataque");
+            // El Knight está dentro del rango de ataque, realiza la acción de ataque
+            // Puedes, por ejemplo, restarle vida al Knight
+            knight.restarVida(0); // Ajusta la cantidad de daño según sea necesario
+            
+        }
+    }
     
 
     private Animation<TextureRegion> getAnimationForCurrentState() {

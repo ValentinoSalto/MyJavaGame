@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class Knight3 {
 
 	public enum EstadoPersonaje {
-		IDLE, WALKING_LEFT, WALKING_RIGHT, JUMP, FALL,  RUN_RIGHT, RUN_LEFT, ATTACK, COVER, HURT
+		IDLE, WALKING_LEFT, WALKING_RIGHT, JUMP, FALL, RUN_RIGHT, RUN_LEFT, ATTACK, COVER, HURT
 	}
 
 	private Sprite spr;
@@ -26,7 +26,7 @@ public class Knight3 {
 	private Animation<TextureRegion> coverAnimation;
 	private Animation<TextureRegion> jumpAnimation;
 	private Animation<TextureRegion> fallAnimation;
-	
+
 	private TextureRegion[] regionsMovement_idle;
 	private TextureRegion[] regionsMovement_walking_left;
 	private TextureRegion[] regionsMovement_walking_right;
@@ -43,12 +43,14 @@ public class Knight3 {
 	private boolean ataqueIniciado;
 	private float tiempoAtaque;
 	private EstadoPersonaje estadoActual;
-
+	public int vida =100;
+	
 	public Knight3(float x, float y, float ancho, float alto) {
 		this.x = x;
 		this.y = y;
 		this.alto = alto;
 		this.ancho = ancho;
+		
 
 		idleTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Combat Ready Idle.png"));
 		Texture walkingRightTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Walk.png"));
@@ -87,11 +89,11 @@ public class Knight3 {
 		TextureRegion[][] coverFrames = TextureRegion.split(coverTexture, coverTexture.getWidth() / 5,
 				coverTexture.getHeight());
 		regionsMovement_cover = new TextureRegion[5];
-		
+
 		TextureRegion[][] jumpFrames = TextureRegion.split(jumpTexture, jumpTexture.getWidth() / 5,
 				jumpTexture.getHeight());
 		regionsMovement_jump = new TextureRegion[5];
-		
+
 		TextureRegion[][] fallFrames = TextureRegion.split(fallTexture, fallTexture.getWidth() / 5,
 				fallTexture.getHeight());
 		regionsMovement_fall = new TextureRegion[5];
@@ -137,13 +139,13 @@ public class Knight3 {
 			coverAnimation = new Animation<>(1 / 10f, coverFrames[0]);
 			time = 0f;
 		}
-		
+
 		for (int i = 0; i < 5; i++) {
 			regionsMovement_jump[i] = jumpFrames[0][i];
 			jumpAnimation = new Animation<>(1 / 10f, jumpFrames[0]);
 			time = 0f;
 		}
-		
+
 		for (int i = 0; i < 5; i++) {
 			regionsMovement_fall[i] = fallFrames[0][i];
 			fallAnimation = new Animation<>(1 / 10f, fallFrames[0]);
@@ -156,15 +158,14 @@ public class Knight3 {
 		spr.setPosition(x, y);
 		spr.setSize(ancho, alto);
 	}
-	
 
-    public void dispose() {
-        // Libera los recursos asociados al sprite, texturas, etc.
-        // Aquí deberías realizar cualquier limpieza necesaria.
+	public void dispose() {
+		// Libera los recursos asociados al sprite, texturas, etc.
+		// Aquí deberías realizar cualquier limpieza necesaria.
 
-        // Por ejemplo, para la textura idleTexture
-        idleTexture.dispose();
-    }
+		// Por ejemplo, para la textura idleTexture
+		idleTexture.dispose();
+	}
 
 	public void render(SpriteBatch batch) {
 		time += Gdx.graphics.getDeltaTime();
@@ -173,8 +174,6 @@ public class Knight3 {
 		float X = spr.getX();
 		float ANCHO = spr.getWidth();
 	}
-	
-	
 
 	public void updateAnimation(float delta) {
 		switch (estadoActual) {
@@ -246,9 +245,7 @@ public class Knight3 {
 			spr.setRegion(currentAnimation.getKeyFrame(time, true));
 		}
 	}
-	
-	
-	
+
 	public void cambiarEstado(EstadoPersonaje nuevoEstado) {
 		estadoActual = nuevoEstado;
 		spr.setRegion(getAnimationForCurrentState().getKeyFrame(0));
@@ -257,13 +254,23 @@ public class Knight3 {
 			iniciarAtaque();
 		}
 	}
-	
 
 	private void iniciarAtaque() {
 		ataqueIniciado = true;
 		tiempoAtaque = 0f;
 
 	}
+
+	public void restarVida(int cantidad) {
+		
+		for(int i=1; i==1;i++) {
+			vida -= cantidad;
+		}
+		
+		
+		
+	}
+	
 
 	private Animation<TextureRegion> getAnimationForCurrentState() {
 		switch (estadoActual) {
@@ -289,11 +296,12 @@ public class Knight3 {
 			return idleAnimation;
 		}
 	}
-	
+
 	public void setPosition(float newX, float newY) {
-        x = newX;
-        y = newY;
-    }
+		x = newX;
+		y = newY;
+	}
+
 	public float getX() {
 		return x;
 	}
@@ -309,6 +317,5 @@ public class Knight3 {
 	public float getHeight() {
 		return ancho;
 	}
-	
-	
+
 }

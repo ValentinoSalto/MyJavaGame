@@ -29,7 +29,7 @@ public class ScreenGame implements Screen {
 	SpriteBatch h;
 	private OrthographicCamera hudCamera; // creo la camara del hud
 	private BitmapFont font;
-	private int vida = 100; // Ejemplo: Inicializa la vida a 100
+	//private int vida = 100; // Ejemplo: Inicializa la vida a 100
 	private int muertes = 0; // Ejemplo: Inicializa el contador de muertes a 0
 	private Knight3 knight;
 	private Ghost ghost;
@@ -101,6 +101,8 @@ public class ScreenGame implements Screen {
 			
 			// Restablecer la posición inicial del los personajes en el nuevo escenario
 			knight.setPosition(100, 145);
+			ghost.dispose();
+			ghost2.dispose();
 				
 			
 		}
@@ -150,14 +152,7 @@ public class ScreenGame implements Screen {
 
 	}
 
-	// Funcion para restarle vida al personaje //modificar a gusto dependiendo del
-	// personaje
-	private void restarVidaAlKnight() {
-		for (int i = 0; i >= 1; i++) {
-			vida -= 20;
-		}
-
-	}
+	
 
 	@Override
 	public void render(float delta) {
@@ -206,11 +201,7 @@ public class ScreenGame implements Screen {
 		float ghostY = ghost.getY();
 		float tolerancia = 10.0f;
 
-		if (Math.abs(knightX - ghostX) < tolerancia && Math.abs(knightY - ghostY) < tolerancia) {
-			// Están en la misma posición
-			// Realiza la acción, como restar vida
-			restarVidaAlKnight();
-		}
+		
 
 		// Maneja las entradas del teclado para cambiar el estado del personaje
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -282,8 +273,17 @@ public class ScreenGame implements Screen {
 			Render.batch.setProjectionMatrix(hudCamera.combined); // Configura el SpriteBatch para la cámara del HUD
 			// Configura el color de fuente y dibuja la información de "Vida"
 			font.setColor(Color.WHITE); // Configura el color de fuente (blanco en este ejemplo)
-			font.draw(b, "Vida: " + vida, 10, 700); // Dibuja la vida en la esquina superior izquierda
+			font.draw(b, "Vida: " + knight.vida, 10, 700); // Dibuja la vida en la esquina superior izquierda
 			font.draw(b, "Muertes: " + muertes, 10, 670); // Dibuja las muertes en la esquina superior derecha
+			
+			ghost.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
+			ghost.atacarKnight(knight);  
+			ghost2.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
+			ghost2.atacarKnight(knight);  
+			
+			if(knight.vida == 0) {
+				Render.app.setScreen(new ScreenMenu());
+			}
 
 		b.end();
 
