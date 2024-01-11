@@ -213,7 +213,11 @@ public class ScreenGame implements Screen {
 		}
 
 		else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-			knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);
+			
+			if(!knight.jumping) {
+				knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);				
+			}
+			System.out.println("salto");
 
 		} else if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
 
@@ -284,7 +288,7 @@ public class ScreenGame implements Screen {
 			if(knight.vida == 0) {
 				Render.app.setScreen(new ScreenMenu());
 			}
-
+			
 		b.end();
 
 		/*

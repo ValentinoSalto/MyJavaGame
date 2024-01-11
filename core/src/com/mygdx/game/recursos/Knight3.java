@@ -15,6 +15,7 @@ public class Knight3 {
 	}
 
 	private Sprite spr;
+	private Sprite spr2;
 	private float alto, ancho;
 	private float x, y;
 	private Animation<TextureRegion> idleAnimation;
@@ -45,13 +46,21 @@ public class Knight3 {
 	private EstadoPersonaje estadoActual;
 	public int vida =100;
 	
+	private static final float GRAVITY = -1000f;
+	private static final float JUMP_SPEED = 400f;
+
+	private float velocityY;
+	public boolean jumping;
+	
 	public Knight3(float x, float y, float ancho, float alto) {
+		
 		this.x = x;
 		this.y = y;
 		this.alto = alto;
 		this.ancho = ancho;
 		
-
+		//CARGA LAS TEXTURAS
+		
 		idleTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Combat Ready Idle.png"));
 		Texture walkingRightTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Walk.png"));
 		Texture walkingLeftTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Walk2.png"));
@@ -61,60 +70,45 @@ public class Knight3 {
 		Texture coverTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Shield Raise.png"));
 		Texture jumpTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/jump.png"));
 		Texture fallTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/fall.png"));
+		
+		
+		//LOGICA DE LAS ANIMACIONES
 
 		TextureRegion[][] idleFrames = TextureRegion.split(idleTexture, idleTexture.getWidth() / 5,
 				idleTexture.getHeight());
 		regionsMovement_idle = new TextureRegion[5];
-
-		TextureRegion[][] walkingLeftFrames = TextureRegion.split(walkingLeftTexture, walkingLeftTexture.getWidth() / 6,
-				walkingLeftTexture.getHeight());
-		regionsMovement_walking_left = new TextureRegion[6];
-
-		TextureRegion[][] walkingRightFrames = TextureRegion.split(walkingRightTexture,
-				walkingRightTexture.getWidth() / 6, walkingRightTexture.getHeight());
-		regionsMovement_walking_right = new TextureRegion[6];
-
-		TextureRegion[][] runFrames = TextureRegion.split(runTexture, runTexture.getWidth() / 6,
-				runTexture.getHeight());
-		regionsMovement_run = new TextureRegion[6];
-
-		TextureRegion[][] runLeftFrames = TextureRegion.split(runLeftTexture, runLeftTexture.getWidth() / 6,
-				runLeftTexture.getHeight());
-		regionsMovement_runLeft = new TextureRegion[6];
-
-		TextureRegion[][] attackFrames = TextureRegion.split(attackTexture, attackTexture.getWidth() / 10,
-				attackTexture.getHeight());
-		regionsMovement_attack = new TextureRegion[10];
-
-		TextureRegion[][] coverFrames = TextureRegion.split(coverTexture, coverTexture.getWidth() / 5,
-				coverTexture.getHeight());
-		regionsMovement_cover = new TextureRegion[5];
-
-		TextureRegion[][] jumpFrames = TextureRegion.split(jumpTexture, jumpTexture.getWidth() / 5,
-				jumpTexture.getHeight());
-		regionsMovement_jump = new TextureRegion[5];
-
-		TextureRegion[][] fallFrames = TextureRegion.split(fallTexture, fallTexture.getWidth() / 5,
-				fallTexture.getHeight());
-		regionsMovement_fall = new TextureRegion[5];
-
+		
 		for (int i = 0; i < 5; i++) {
 			regionsMovement_idle[i] = idleFrames[0][i];
 			idleAnimation = new Animation<>(1 / 5f, idleFrames[0]);
 			time = 0f;
 		}
 
+
+		TextureRegion[][] walkingLeftFrames = TextureRegion.split(walkingLeftTexture, walkingLeftTexture.getWidth() / 6,
+				walkingLeftTexture.getHeight());
+		regionsMovement_walking_left = new TextureRegion[6];
+
 		for (int i = 0; i < 6; i++) {
 			regionsMovement_walking_left[i] = walkingLeftFrames[0][i];
 			walkingLeftAnimation = new Animation<>(1 / 10f, walkingLeftFrames[0]);
 			time = 0f;
 		}
+		
 
+		TextureRegion[][] walkingRightFrames = TextureRegion.split(walkingRightTexture,
+				walkingRightTexture.getWidth() / 6, walkingRightTexture.getHeight());
+		regionsMovement_walking_right = new TextureRegion[6];
+		
 		for (int i = 0; i < 6; i++) {
 			regionsMovement_walking_right[i] = walkingRightFrames[0][i];
 			walkingRightAnimation = new Animation<>(1 / 10f, walkingRightFrames[0]);
 			time = 0f;
 		}
+
+		TextureRegion[][] runFrames = TextureRegion.split(runTexture, runTexture.getWidth() / 6,
+				runTexture.getHeight());
+		regionsMovement_run = new TextureRegion[6];
 
 		for (int i = 0; i < 6; i++) {
 			regionsMovement_run[i] = runFrames[0][i];
@@ -122,35 +116,57 @@ public class Knight3 {
 			time = 0f;
 		}
 
+		TextureRegion[][] runLeftFrames = TextureRegion.split(runLeftTexture, runLeftTexture.getWidth() / 6,
+				runLeftTexture.getHeight());
+		regionsMovement_runLeft = new TextureRegion[6];
+		
 		for (int i = 0; i < 6; i++) {
 			regionsMovement_runLeft[i] = runLeftFrames[0][i];
 			runLeftAnimation = new Animation<>(1 / 10f, runLeftFrames[0]);
 			time = 0f;
 		}
 
+
+		TextureRegion[][] attackFrames = TextureRegion.split(attackTexture, attackTexture.getWidth() / 10,
+				attackTexture.getHeight());
+		regionsMovement_attack = new TextureRegion[10];
+		
 		for (int i = 0; i < 10; i++) {
 			regionsMovement_attack[i] = attackFrames[0][i];
 			attackAnimation = new Animation<>(1 / 20f, attackFrames[0]);
 			time = 0f;
 		}
 
+		TextureRegion[][] coverFrames = TextureRegion.split(coverTexture, coverTexture.getWidth() / 5,
+				coverTexture.getHeight());
+		regionsMovement_cover = new TextureRegion[5];
+		
 		for (int i = 0; i < 5; i++) {
 			regionsMovement_cover[i] = coverFrames[0][i];
 			coverAnimation = new Animation<>(1 / 10f, coverFrames[0]);
 			time = 0f;
 		}
 
+		TextureRegion[][] jumpFrames = TextureRegion.split(jumpTexture, jumpTexture.getWidth() / 5,
+				jumpTexture.getHeight());
+		regionsMovement_jump = new TextureRegion[5];
+		
 		for (int i = 0; i < 5; i++) {
 			regionsMovement_jump[i] = jumpFrames[0][i];
 			jumpAnimation = new Animation<>(1 / 10f, jumpFrames[0]);
 			time = 0f;
 		}
 
+		TextureRegion[][] fallFrames = TextureRegion.split(fallTexture, fallTexture.getWidth() / 5,
+				fallTexture.getHeight());
+		regionsMovement_fall = new TextureRegion[5];
+		
 		for (int i = 0; i < 5; i++) {
 			regionsMovement_fall[i] = fallFrames[0][i];
 			fallAnimation = new Animation<>(1 / 10f, fallFrames[0]);
 			time = 0f;
 		}
+
 
 		estadoActual = EstadoPersonaje.IDLE;
 
@@ -162,7 +178,7 @@ public class Knight3 {
 	public void dispose() {
 		// Libera los recursos asociados al sprite, texturas, etc.
 		// Aquí deberías realizar cualquier limpieza necesaria.
-
+		spr = spr2;
 		// Por ejemplo, para la textura idleTexture
 		idleTexture.dispose();
 	}
@@ -219,6 +235,22 @@ public class Knight3 {
 		case COVER:
 			spr.setRegion(coverAnimation.getKeyFrame(time, true));
 			break;
+		case JUMP:
+            velocityY += GRAVITY * delta;
+            y += velocityY * delta;
+            if (y <= 0) {
+                y = 0;
+                cambiarEstado(EstadoPersonaje.IDLE);
+            }
+            break;
+        case FALL:
+            velocityY += GRAVITY * delta;
+            y += velocityY * delta;
+            if (y <= 0) {
+                y = 0;
+                cambiarEstado(EstadoPersonaje.IDLE);
+            }   
+            break;
 		}
 
 		spr.setPosition(x, y);
@@ -253,6 +285,22 @@ public class Knight3 {
 		if (nuevoEstado == EstadoPersonaje.ATTACK) {
 			iniciarAtaque();
 		}
+		if (nuevoEstado == EstadoPersonaje.JUMP) {
+	        iniciarSalto();
+	    }
+	}
+	
+	private void iniciarSalto() {
+	    if (!jumping) {
+	        jumping = true;
+	        velocityY = JUMP_SPEED;
+	    }
+	}
+
+	public void caer() {
+	    if (estadoActual != EstadoPersonaje.JUMP) {
+	        cambiarEstado(EstadoPersonaje.FALL);
+	    }
 	}
 
 	private void iniciarAtaque() {
