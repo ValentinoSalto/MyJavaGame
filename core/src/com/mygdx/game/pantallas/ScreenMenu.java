@@ -122,9 +122,11 @@ public class ScreenMenu implements Screen{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 // Realiza las acciones del botón cuando es clickeado
+            	ScreenGame.numeroEscenario = 1;
             	Render.app.setScreen(new ScreenGame());
             	backgroundMusic.dispose();
-            	stage.dispose();
+            	stage.dispose();	
+            	
             	
                 
             }

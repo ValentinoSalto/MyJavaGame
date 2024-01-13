@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
+import com.mygdx.game.recursos.Knight3.EstadoPersonaje;
 
 public class Boss1 {
 
@@ -32,6 +34,9 @@ public class Boss1 {
     private float time;
     private TextureRegion currentFrame;
     private Texture idleTexture;
+    
+    private float tiempoEntreAtaques = 1f; // 1 segundo de espera entre ataques
+	public static float tiempoDesdeUltimoAtaque = 0f;
     // Define aquí las demás animaciones para los otros estados (JUMP, RUN, ATTACK, COVER)
     // ...
 
@@ -45,19 +50,31 @@ public class Boss1 {
         
         // Carga las texturas para las animaciones
         idleTexture = new Texture(Gdx.files.internal("Personajes/HoodedKnight/hooded knight idle.png"));
+        Texture walkingRightTexture = new Texture(Gdx.files.internal("Personajes/HoodedKnight/run-idle transition.png" ));
         //Texture walkingLeftTexture = new Texture(Gdx.files.internal("Personajes/Knight_2/Walk_left.png"));
-        //Texture walkingRightTexture = new Texture(Gdx.files.internal("Personajes/Knight_2/Walk.png"));
-        //Texture attackTexture = new Texture(Gdx.files.internal("Personajes/Knight_1/"));
-        // Carga las texturas para las otras animaciones (JUMP, RUN, ATTACK, COVER)
-        // ...
+       
+       
 
         // Divide las texturas en regiones para las animaciones
         TextureRegion[][] idleFrames = TextureRegion.split(idleTexture, idleTexture.getWidth()/8, idleTexture.getHeight());
         regionsMovement_idle = new TextureRegion[8];
-        /*TextureRegion[][] walkingLeftFrames = TextureRegion.split(walkingLeftTexture, walkingLeftTexture.getWidth()/8, walkingLeftTexture.getHeight());
-        regionsMovement_walking_left = new TextureRegion[8];
-        TextureRegion[][] walkingRightFrames = TextureRegion.split(walkingRightTexture, walkingRightTexture.getWidth()/8, walkingRightTexture.getHeight());
-        regionsMovement_walking_right = new TextureRegion[8];*/
+        
+        //Animacion IDLE
+        for (int i = 0; i < 8; i++) {
+    		regionsMovement_idle[i] = idleFrames[0][i];
+        	idleAnimation = new Animation<>(1 / 6f, idleFrames[0]);
+    		time = 0f;
+        }
+        
+        TextureRegion[][] walkingRightFrames = TextureRegion.split(walkingRightTexture,walkingRightTexture.getWidth() / 2, walkingRightTexture.getHeight());
+		regionsMovement_walking_right = new TextureRegion[2];
+
+		for (int i = 0; i < 2; i++) {
+			regionsMovement_walking_right[i] = walkingRightFrames[0][i];
+			walkingRightAnimation = new Animation<>(1 / 10f, walkingRightFrames[0]);
+			time = 0f;
+		}
+       
         //TextureRegion[][] attackFrames = TextureRegion.split(attackTexture, attackTexture.getWidth()/8,attackTexture.getHeight());
         
         // Divide las texturas para las otras animaciones (JUMP, RUN, ATTACK, COVER)
@@ -72,12 +89,7 @@ public class Boss1 {
          
          
         // Crea las animaciones con las regiones correspondientes 
-        //Animacion IDLE
-        for (int i = 0; i < 8; i++) {
-    		regionsMovement_idle[i] = idleFrames[0][i];
-        	idleAnimation = new Animation<>(1 / 6f, idleFrames[0]);
-    		time = 0f;
-        }
+      
         /*
         //Animacion WALKING LEFT
         for (int i = 0; i < 8; i++) {
@@ -125,13 +137,12 @@ public class Boss1 {
                 break;
             case WALKING_LEFT:
                 spr.setRegion(walkingLeftAnimation.getKeyFrame(time, true));
-                // Mueve al personaje hacia la izquierda
-                x -= 3;
+               
                 break;
             case WALKING_RIGHT:
                 spr.setRegion(walkingRightAnimation.getKeyFrame(time, true));
-                // Mueve al personaje hacia la derecha
-                x += 3;
+               
+              
                 break;
             // Agrega las animaciones para los otros estados (JUMP, RUN, ATTACK, COVER)
             // ...
@@ -152,6 +163,51 @@ public class Boss1 {
         spr.setRegion(getAnimationForCurrentState().getKeyFrame(0));
     }
     
+    public void seguirKnight(Knight3 knight, float delta) {
+		// Lógica para seguir al Knight
+		float knightX = knight.getX();
+		float knightY = knight.getY();
+
+		// Calcula las diferencias en las coordenadas X e Y
+		float deltaX = knightX - getX();
+		float deltaY = knightY - getY();
+
+		// Calcula el ángulo hacia el Knight
+		float angleToKnight = MathUtils.atan2(deltaY, deltaX);
+
+		// Calcula la nueva posición del Ghost
+		float speed = 50; // Ajusta la velocidad según sea necesario
+		float newX = getX() + speed * MathUtils.cos(angleToKnight) * delta;
+		float newY = getY() + speed * MathUtils.sin(angleToKnight) * delta;
+
+		// Actualiza la posición del boss
+		
+		setPosition(newX, y);
+		
+		if(newX > knight.getX()) {
+			cambiarEstado(EstadoPersonaje.WALKING_RIGHT);
+		} else {
+			cambiarEstado(EstadoPersonaje.WALKING_LEFT);
+		}
+	}
+    
+    public void atacarKnight(Knight3 knight) {
+		float distanciaAtaque = 20; // Ajusta la distancia de ataque según sea necesario
+
+		float distancia = Math.abs(knight.getX() - x);
+
+		if (distancia < distanciaAtaque) {
+			// Verifica el tiempo desde el último ataque
+			if (tiempoDesdeUltimoAtaque >= tiempoEntreAtaques) {
+				// Resta vida al Knight
+				knight.restarVida(20); // Ajusta la cantidad de daño según sea necesario
+
+				// Reinicia el temporizador
+				tiempoDesdeUltimoAtaque = 0f;
+			}
+		}
+
+	}
     
 
     private Animation<TextureRegion> getAnimationForCurrentState() {

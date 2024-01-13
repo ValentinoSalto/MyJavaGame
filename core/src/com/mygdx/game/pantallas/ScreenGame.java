@@ -29,16 +29,16 @@ public class ScreenGame implements Screen {
 	SpriteBatch h;
 	private OrthographicCamera hudCamera; // creo la camara del hud
 	private BitmapFont font;
-	//private int vida = 100; // Ejemplo: Inicializa la vida a 100
 	private int muertes = 0; // Ejemplo: Inicializa el contador de muertes a 0
 	private Knight3 knight;
-	private Ghost ghost;
+	private Ghost ghost1;
 	private Ghost ghost2;
+	private Ghost ghost3;
 	private Boss1 boss;
 	boolean bloqueoActivo;
 	ShapeRenderer sr; // Agrega un objeto ShapeRenderer
-	private int numeroEscenario = 1 ;
-	
+	public static int numeroEscenario = 0;
+
 	private Fondo fondo1;
 	private Fondo fondo2;
 	private Fondo fondo3;
@@ -46,68 +46,60 @@ public class ScreenGame implements Screen {
 	private TiledMap mapa; // info del mapa
 	private TiledMapRenderer mapaRenderer; // render del mapa
 
-	private void checkBoundaryTransition() {
+	private void chequearLimites() {
 		float knightX = knight.getX();
 		float knightY = knight.getY();
 		float knightWidth = knight.getWidth();
 		float knightHeight = knight.getHeight();
 
 		// Definir límites de transición
-		float leftBoundary = 0;
-		float rightBoundary = Config.ANCHO;
-		float bottomBoundary = 0;
-		float topBoundary = Config.ALTO;
+		float limiteIzquierdo = 0;
+		float limiteDerecho = Config.ANCHO;
+		float limiteInferior = 0;
+		float limiteSuperior = Config.ALTO;
 
 		// Verificar si el personaje ha salido de los límites
-		if (knightX + knightWidth < leftBoundary) {
+		if (knightX + knightWidth < limiteIzquierdo) {
 			// Personaje salió por la izquierda
-			
-		} else if (knightX > rightBoundary) {
+
+		} else if (knightX > limiteDerecho) {
 			// Personaje salió por la derecha
-			 changeToNextScenario();
-		} else if (knightY + knightHeight < bottomBoundary) {
+			cambiarEscenario();
+		} else if (knightY + knightHeight < limiteInferior) {
 			// Personaje salió por abajo
-			
-		} else if (knightY > topBoundary) {
+
+		} else if (knightY > limiteSuperior) {
 			// Personaje salió por arriba
-			
+
 		}
 	}
 
-	
+	private void cambiarEscenario() {
 
-	private void changeToNextScenario() {
-		
-		if(numeroEscenario == 1) {
-		// Cargar el nuevo escenario y ajustar la posición del personaje
-		// Por ejemplo, puedes cargar otro mapa con TiledMapLoader
-		mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 2.tmx");
-		mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
-		
-		numeroEscenario = 2;
-		
-		// Restablecer la posición inicial del los personajes en el nuevo escenario
-		knight.setPosition(100, 145);
-		ghost.setPosition(200, 145);
-	
-		
-		} else if(numeroEscenario == 2){
+		if (numeroEscenario == 1) {
+			// Cargar el nuevo escenario y ajustar la posición del personaje
+			// Por ejemplo, puedes cargar otro mapa con TiledMapLoader
+			mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 2.tmx");
+			mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
+
+			numeroEscenario = 2;
+
+			// Restablecer la posición inicial del los personajes en el nuevo escenario
+			knight.setPosition(100, 145);
+
+		} else if (numeroEscenario == 2) {
 			// Cargar el nuevo escenario y ajustar la posición del personaje
 			// Por ejemplo, puedes cargar otro mapa con TiledMapLoader
 			mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 3.tmx");
 			mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
-			
+
 			numeroEscenario = 3;
-			
+
 			// Restablecer la posición inicial del los personajes en el nuevo escenario
 			knight.setPosition(100, 145);
-			ghost.dispose();
-			ghost2.dispose();
-				
-			
+
 		}
 	}
-	
 
 	@Override
 	public void show() {
@@ -120,16 +112,14 @@ public class ScreenGame implements Screen {
 		// Inicializa la cámara del HUD
 		hudCamera = new OrthographicCamera();
 		hudCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		
+
 		// Crear el fondo
-	    fondo1 = new Fondo("Mapas/Mapa1/background_layer_1.png");
-	    fondo2 = new Fondo("Mapas/Mapa1/background_layer_2.png");
-	    fondo3 = new Fondo("Mapas/Mapa1/background_layer_3.png");
+		fondo1 = new Fondo("Mapas/Mapa1/background_layer_1.png");
+		fondo2 = new Fondo("Mapas/Mapa1/background_layer_2.png");
+		fondo3 = new Fondo("Mapas/Mapa1/background_layer_3.png");
 		// Carga el mapa desde Tiled
 		mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 1.tmx");
 		mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
-		
-		
 
 		// Ajusta la cámara del mapa para que ocupe toda la pantalla
 
@@ -143,16 +133,12 @@ public class ScreenGame implements Screen {
 		sr = new ShapeRenderer(); // Inicializa el ShapeRenderer
 
 		knight = new Knight3(200, 145, 100, 100);
-		ghost = new Ghost(500, 145, 200, 200);
-		ghost2 = new Ghost(800, 145, 200, 200);
+		ghost1 = new Ghost(500, 145, 200, 200);
+		ghost2 = new Ghost(500, 145, 200, 200);
+		ghost3 = new Ghost(800, 145, 200, 200);
 		boss = new Boss1(900, 117, 300, 300);
-		
-		
-		
 
 	}
-
-	
 
 	@Override
 	public void render(float delta) {
@@ -189,19 +175,9 @@ public class ScreenGame implements Screen {
 		/*
 		 * cam.position.set(knight.getX() + knight.getWidth() / 2,360, 0); cam.update();
 		 */
-		
+
 		// Manejar el cambio de escenario
-        checkBoundaryTransition();
-
-		
-		// Obtener posiciones actuales
-		float knightX = knight.getX();
-		float knightY = knight.getY();
-		float ghostX = ghost.getX();
-		float ghostY = ghost.getY();
-		float tolerancia = 10.0f;
-
-		
+		chequearLimites();
 
 		// Maneja las entradas del teclado para cambiar el estado del personaje
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -209,13 +185,13 @@ public class ScreenGame implements Screen {
 
 		} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 			knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_RIGHT);
-
+			
 		}
 
 		else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-			
-			if(!knight.jumping) {
-				knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);				
+
+			if (!knight.jumping) {
+				knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);
 			}
 			System.out.println("salto");
 
@@ -244,51 +220,67 @@ public class ScreenGame implements Screen {
 
 		knight.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 
-		ghost.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+		b.begin();
+
+		// Dibuja el fondo
+		fondo1.render(b);
+		fondo2.render(b);
+		fondo3.render(b);
+
+		b.end();
 
 		b.begin();
-			
-			//Dibuja el fondo
-		 	fondo1.render(b);
-		 	fondo2.render(b);
-		 	fondo3.render(b);
-		 	
-		b.end();
-		
-		b.begin();	
-		 	// Establece la vista del mapa
-			mapaRenderer.setView(cam);
-			mapaRenderer.render();
-			
-			Render.batch.setProjectionMatrix(cam.combined);
-			knight.render(b);
-			
-			if(numeroEscenario == 1||numeroEscenario == 2 ) {
-				ghost.render(b);
-			}  
-			if (numeroEscenario == 2) {
-				ghost2.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
-				ghost2.render(b);
-			} else if (numeroEscenario == 3){
-				boss.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
-				boss.render(b);
-			}
-	
-			Render.batch.setProjectionMatrix(hudCamera.combined); // Configura el SpriteBatch para la cámara del HUD
-			// Configura el color de fuente y dibuja la información de "Vida"
-			font.setColor(Color.WHITE); // Configura el color de fuente (blanco en este ejemplo)
-			font.draw(b, "Vida: " + knight.vida, 10, 700); // Dibuja la vida en la esquina superior izquierda
-			font.draw(b, "Muertes: " + muertes, 10, 670); // Dibuja las muertes en la esquina superior derecha
-			
-			ghost.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
-			ghost.atacarKnight(knight);  
+
+		// Establece la vista del mapa
+		mapaRenderer.setView(cam);
+		mapaRenderer.render();
+
+		Render.batch.setProjectionMatrix(cam.combined);
+		knight.render(b);
+
+		if (numeroEscenario == 1) {
+
+			ghost1.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+			ghost1.render(b);
+			ghost1.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
+			ghost1.atacarKnight(knight);
+		}
+		if (numeroEscenario == 2) {
+			ghost1.dispose();
+			ghost2.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+			ghost2.render(b);
 			ghost2.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
-			ghost2.atacarKnight(knight);  
-			
-			if(knight.vida == 0) {
-				Render.app.setScreen(new ScreenMenu());
-			}
-			
+			ghost2.atacarKnight(knight);
+
+			ghost3.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+			ghost3.render(b);			
+			ghost3.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
+			ghost3.atacarKnight(knight);
+
+		} else if (numeroEscenario == 3) {
+			boss.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+			boss.render(b);
+			boss.seguirKnight(knight, delta);
+			ghost3.dispose();
+			ghost2.dispose();
+
+		}
+		
+		// Actualiza el temporizador
+        Ghost.tiempoDesdeUltimoAtaque += delta;
+        // Actualiza el temporizador
+        Boss1.tiempoDesdeUltimoAtaque += delta;
+
+		Render.batch.setProjectionMatrix(hudCamera.combined); // Configura el SpriteBatch para la cámara del HUD
+		// Configura el color de fuente y dibuja la información de "Vida"
+		font.setColor(Color.WHITE); // Configura el color de fuente (blanco en este ejemplo)
+		font.draw(b, "Vida: " + knight.vida, 10, 700); // Dibuja la vida en la esquina superior izquierda
+		font.draw(b, "Muertes: " + muertes, 10, 670); // Dibuja las muertes en la esquina superior derecha
+
+		if (knight.vida == 0) {
+			Render.app.setScreen(new ScreenMenu());
+		}
+
 		b.end();
 
 		/*
@@ -332,17 +324,6 @@ public class ScreenGame implements Screen {
 	public void dispose() {
 		mapa.dispose();
 
-	}
-	
-	public void eliminarGhost(Ghost ghost) {
-	    ghost.dispose();  // Libera recursos asociados con el ghost (texturas, etc.)
-	    // Elimina la referencia al ghost
-	    if (ghost == this.ghost) {
-	        this.ghost = null;
-	    } else if (ghost == this.ghost2) {
-	        this.ghost2 = null;
-	    }
-	    // Otros pasos que puedas necesitar
 	}
 
 }

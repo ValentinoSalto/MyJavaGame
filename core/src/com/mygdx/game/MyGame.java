@@ -1,6 +1,7 @@
 package com.mygdx.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.pantallas.ScreenLoad;
 import com.mygdx.game.pantallas.ScreenMenu;
 import com.mygdx.game.utiles.Render;
@@ -22,7 +23,7 @@ public class MyGame extends Game {
 		Render.batch = new SpriteBatch();
 		this.setScreen(new ScreenMenu()); //Muestro pantalla de carga.
 		batch = new SpriteBatch();
-	
+		
 
 		
 		
