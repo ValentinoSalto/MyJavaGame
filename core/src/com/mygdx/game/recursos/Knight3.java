@@ -7,6 +7,13 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.game.recursos.Knight3.EstadoPersonaje;
 
 public class Knight3 {
 
@@ -17,7 +24,8 @@ public class Knight3 {
 	private Sprite spr;
 	private Sprite spr2;
 	private float alto, ancho;
-	private float x, y;
+	public float x;
+	public float y;
 	private Animation<TextureRegion> idleAnimation;
 	private Animation<TextureRegion> walkingLeftAnimation;
 	private Animation<TextureRegion> walkingRightAnimation;
@@ -46,11 +54,13 @@ public class Knight3 {
 	private EstadoPersonaje estadoActual;
 	public int vida = 100;
 	public boolean bloqueando = false;
-	private static final float GRAVITY = -1000f;
-	private static final float JUMP_SPEED = 400f;
-
-	private float velocityY;
 	public boolean jumping;
+	private boolean spacePressed = false;
+	private static final float GROUND_LEVEL = 145;
+	public static final float GRAVITY = -800; // Ajusta según la gravedad deseada
+	public static final float JUMP_SPEED = 500; // Ajusta según la velocidad de salto deseada
+
+	public float ySpeed = 0;
 
 	public Knight3(float x, float y, float ancho, float alto) {
 
@@ -93,7 +103,6 @@ public class Knight3 {
 			time = 0f;
 		}
 
-		
 		TextureRegion[][] walkingRightFrames = TextureRegion.split(walkingRightTexture,
 				walkingRightTexture.getWidth() / 6, walkingRightTexture.getHeight());
 		regionsMovement_walking_right = new TextureRegion[6];
@@ -113,7 +122,7 @@ public class Knight3 {
 			runAnimation = new Animation<>(1 / 10f, runFrames[0]);
 			time = 0f;
 		}
-		
+
 		TextureRegion[][] runLeftFrames = TextureRegion.split(runLeftTexture, runLeftTexture.getWidth() / 6,
 				runLeftTexture.getHeight());
 		regionsMovement_runLeft = new TextureRegion[6];
@@ -144,21 +153,21 @@ public class Knight3 {
 			time = 0f;
 		}
 
-		TextureRegion[][] jumpFrames = TextureRegion.split(jumpTexture, jumpTexture.getWidth() / 5,
+		TextureRegion[][] jumpFrames = TextureRegion.split(jumpTexture, jumpTexture.getWidth() / 4,
 				jumpTexture.getHeight());
-		regionsMovement_jump = new TextureRegion[5];
+		regionsMovement_jump = new TextureRegion[4];
 
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 4; i++) {
 			regionsMovement_jump[i] = jumpFrames[0][i];
 			jumpAnimation = new Animation<>(1 / 10f, jumpFrames[0]);
 			time = 0f;
 		}
 
-		TextureRegion[][] fallFrames = TextureRegion.split(fallTexture, fallTexture.getWidth() / 5,
+		TextureRegion[][] fallFrames = TextureRegion.split(fallTexture, fallTexture.getWidth() / 4,
 				fallTexture.getHeight());
-		regionsMovement_fall = new TextureRegion[5];
+		regionsMovement_fall = new TextureRegion[4];
 
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 4; i++) {
 			regionsMovement_fall[i] = fallFrames[0][i];
 			fallAnimation = new Animation<>(1 / 10f, fallFrames[0]);
 			time = 0f;
@@ -177,22 +186,30 @@ public class Knight3 {
 		spr = spr2;
 		// Por ejemplo, para la textura idleTexture
 		idleTexture.dispose();
+
 	}
 
 	public void render(SpriteBatch batch) {
 		time += Gdx.graphics.getDeltaTime();
 		currentFrame = (TextureRegion) idleAnimation.getKeyFrame(time, true);
+
 		spr.draw(batch);
 		float X = spr.getX();
 		float ANCHO = spr.getWidth();
+
+	}
+
+	public void update() {
+
 	}
 
 	public void updateAnimation(float delta) {
-		
+
 		switch (estadoActual) {
 		case IDLE:
 			spr.setRegion(idleAnimation.getKeyFrame(time, true));
 			bloqueando = false;
+			y=145;
 			break;
 
 		case WALKING_LEFT:
@@ -216,9 +233,53 @@ public class Knight3 {
 				spr.setRegion(runLeftAnimation.getKeyFrame(time, true));
 				cambiarEstado(Knight3.EstadoPersonaje.RUN_RIGHT);
 				x += 6;
-				
+
 			}
 			break;
+
+		case JUMP:
+			spacePressed=true;
+			
+            if (!jumping && spacePressed && y == GROUND_LEVEL) {
+                ySpeed = JUMP_SPEED;
+                jumping = true;
+                spacePressed = false; // Reinicia la variable después de iniciar el salto
+            }
+
+            if (jumping) {
+                // Aplica la velocidad vertical durante el salto
+                y += ySpeed * delta;
+
+                // Reduce la velocidad vertical debido a la gravedad
+                ySpeed += GRAVITY * delta;
+
+                if (y <= GROUND_LEVEL) {
+                    y = GROUND_LEVEL;
+                    ySpeed = 0;
+                    jumping = false;
+                    cambiarEstado(EstadoPersonaje.FALL); // Cambia al estado de caída
+                } else {
+                    spr.setRegion(jumpAnimation.getKeyFrame(time, true));
+                }
+            }
+            break;
+
+        case FALL:
+            // Simula la caída
+            ySpeed += GRAVITY * delta;
+            y += ySpeed * delta;
+
+            if (y < GROUND_LEVEL) {
+                y = GROUND_LEVEL;
+                ySpeed = 0;
+                jumping = false;
+                cambiarEstado(EstadoPersonaje.IDLE); // Puedes cambiar el estado al aterrizar
+            } else {
+                spr.setRegion(fallAnimation.getKeyFrame(time, true));
+            }
+            
+            
+            break;
 
 		/*
 		 * case RUN_RIGHT: spr.setRegion(runAnimation.getKeyFrame(time, true)); x += 6;
@@ -236,22 +297,7 @@ public class Knight3 {
 			spr.setRegion(coverAnimation.getKeyFrame(time, true));
 			bloqueando = true;
 			break;
-		case JUMP:
-			velocityY += GRAVITY * delta;
-			y += velocityY * delta;
-			if (y <= 0) {
-				y = 0;
-				cambiarEstado(EstadoPersonaje.IDLE);
-			}
-			break;
-		case FALL:
-			velocityY += GRAVITY * delta;
-			y += velocityY * delta;
-			if (y <= 0) {
-				y = 0;
-				cambiarEstado(EstadoPersonaje.IDLE);
-			}
-			break;
+
 		}
 
 		spr.setPosition(x, y);
@@ -286,22 +332,7 @@ public class Knight3 {
 		if (nuevoEstado == EstadoPersonaje.ATTACK) {
 			iniciarAtaque();
 		}
-		if (nuevoEstado == EstadoPersonaje.JUMP) {
-			iniciarSalto();
-		}
-	}
 
-	private void iniciarSalto() {
-		if (!jumping) {
-			jumping = true;
-			velocityY = JUMP_SPEED;
-		}
-	}
-
-	public void caer() {
-		if (estadoActual != EstadoPersonaje.JUMP) {
-			cambiarEstado(EstadoPersonaje.FALL);
-		}
 	}
 
 	private void iniciarAtaque() {
@@ -311,11 +342,11 @@ public class Knight3 {
 	}
 
 	public void restarVida(int cantidad) {
-		
-		if(!bloqueando)
-		for (int i = 1; i == 1; i++) {
-			vida -= cantidad;
-		}
+
+		if (!bloqueando)
+			for (int i = 1; i == 1; i++) {
+				vida -= cantidad;
+			}
 
 	}
 
@@ -364,6 +395,5 @@ public class Knight3 {
 	public float getHeight() {
 		return ancho;
 	}
-	
-	
+
 }

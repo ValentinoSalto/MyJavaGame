@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -19,6 +20,7 @@ import com.mygdx.game.recursos.Boss1;
 import com.mygdx.game.recursos.Fondo;
 import com.mygdx.game.recursos.Ghost;
 import com.mygdx.game.recursos.Knight3;
+import com.mygdx.game.recursos.Knight3.EstadoPersonaje;
 import com.mygdx.game.utiles.Config;
 import com.mygdx.game.utiles.Render;
 
@@ -185,15 +187,12 @@ public class ScreenGame implements Screen {
 
 		} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 			knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_RIGHT);
-			
+
 		}
 
 		else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
 
-			if (!knight.jumping) {
-				knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);
-			}
-			System.out.println("salto");
+			knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);
 
 		} else if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
 
@@ -253,7 +252,7 @@ public class ScreenGame implements Screen {
 			ghost2.atacarKnight(knight);
 
 			ghost3.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
-			ghost3.render(b);			
+			ghost3.render(b);
 			ghost3.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
 			ghost3.atacarKnight(knight);
 
@@ -265,11 +264,11 @@ public class ScreenGame implements Screen {
 			ghost2.dispose();
 
 		}
-		
+
 		// Actualiza el temporizador
-        Ghost.tiempoDesdeUltimoAtaque += delta;
-        // Actualiza el temporizador
-        Boss1.tiempoDesdeUltimoAtaque += delta;
+		Ghost.tiempoDesdeUltimoAtaque += delta;
+		// Actualiza el temporizador
+		Boss1.tiempoDesdeUltimoAtaque += delta;
 
 		Render.batch.setProjectionMatrix(hudCamera.combined); // Configura el SpriteBatch para la cámara del HUD
 		// Configura el color de fuente y dibuja la información de "Vida"

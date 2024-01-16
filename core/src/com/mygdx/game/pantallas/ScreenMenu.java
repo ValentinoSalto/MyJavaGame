@@ -132,8 +132,39 @@ public class ScreenMenu implements Screen{
             }
         });
         
-        final TextButton configButton = new TextButton("CONFIG", skin);
+        final TextButton multiButton = new TextButton("MULTIJUGADOR", skin);
+        multiButton.addListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+            	select.play();
+                Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand); // Cambia el cursor a la mano (Hand) cuando el mouse entra en el botón
+                multiButton.setStyle(buttonStyleHover); // Cambia el estilo del botón al estilo con fondo blanco cuando el cursor está sobre él
+                System.out.println("START");
+                multiButton.setText("< MULTIJUGADOR >");               
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow); // Restaura el cursor predeterminado (flecha) cuando el mouse sale del botón
+                multiButton.setStyle(buttonStyle); // Restaura el estilo normal del botón cuando el cursor sale de él
+                multiButton.setText("MULTIJUGADOR");
+                select.dispose();
+            }
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // Realiza las acciones del botón cuando es clickeado
+            	ScreenGame.numeroEscenario = 1;
+            	Render.app.setScreen(new ScreenGame());
+            	backgroundMusic.dispose();
+            	stage.dispose();	
+            	
+            	
+                
+            }
+        });
         
+        final TextButton configButton = new TextButton("CONFIG", skin);
 
         configButton.addListener(new ClickListener() {
             @Override
@@ -199,6 +230,7 @@ public class ScreenMenu implements Screen{
 
 		// Agrega los botones a la tabla
         table.add(playButton).uniform().padBottom(40).row();
+        table.add(multiButton).uniform().padBottom(40).row();
         table.add(configButton).uniform().padBottom(40).row();
         table.add(exitButton).uniform();
       /* table.add(startButtonLabel).uniform().padBottom(40).row();

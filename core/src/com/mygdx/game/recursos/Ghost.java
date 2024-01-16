@@ -34,6 +34,7 @@ public class Ghost {
 	private boolean disposed;
 	private float tiempoEntreAtaques = 1f; // 1 segundo de espera entre ataques
 	public static float tiempoDesdeUltimoAtaque = 0f;
+	public int vida = 20;
 	// Define aquí las demás animaciones para los otros estados (JUMP, RUN, ATTACK,
 	// COVER)
 	// ...
@@ -178,7 +179,7 @@ public class Ghost {
 			// Verifica el tiempo desde el último ataque
 			if (tiempoDesdeUltimoAtaque >= tiempoEntreAtaques) {
 				// Resta vida al Knight
-				knight.restarVida(10); // Ajusta la cantidad de daño según sea necesario
+				knight.restarVida(0); // Ajusta la cantidad de daño según sea necesario
 
 				// Reinicia el temporizador
 				tiempoDesdeUltimoAtaque = 0f;
