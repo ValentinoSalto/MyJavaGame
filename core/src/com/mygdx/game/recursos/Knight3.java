@@ -18,7 +18,7 @@ import com.mygdx.game.recursos.Knight3.EstadoPersonaje;
 public class Knight3 {
 
 	public enum EstadoPersonaje {
-		IDLE, WALKING_LEFT, WALKING_RIGHT, JUMP, FALL, RUN_RIGHT, RUN_LEFT, ATTACK, COVER, HURT
+		IDLE, WALKING_LEFT, WALKING_RIGHT, JUMP, FALL, RUN_RIGHT, RUN_LEFT, ATTACK, COVER, COVER_RIGHT, COVER_LEFT, HURT
 	}
 
 	private Sprite spr;
@@ -33,6 +33,8 @@ public class Knight3 {
 	private Animation<TextureRegion> runLeftAnimation;
 	private Animation<TextureRegion> attackAnimation;
 	private Animation<TextureRegion> coverAnimation;
+	private Animation<TextureRegion> coverWalkRightAnimation;
+	private Animation<TextureRegion> coverWalkLeftAnimation;
 	private Animation<TextureRegion> jumpAnimation;
 	private Animation<TextureRegion> fallAnimation;
 
@@ -43,6 +45,8 @@ public class Knight3 {
 	private TextureRegion[] regionsMovement_runLeft;
 	private TextureRegion[] regionsMovement_attack;
 	private TextureRegion[] regionsMovement_cover;
+	private TextureRegion[] regionsMovement_coverWalkRight;
+	private TextureRegion[] regionsMovement_coverWalkLeft;
 	private TextureRegion[] regionsMovement_jump;
 	private TextureRegion[] regionsMovement_fall;
 	private Texture idleTexture;
@@ -78,10 +82,14 @@ public class Knight3 {
 		Texture runLeftTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Run2.png"));
 		Texture attackTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Attack 1.png"));
 		Texture coverTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Shield Raise.png"));
+		Texture coverWalkRightTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Shield Raise Walk.png"));
+		Texture coverWalkLeftTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Shield Raise Walk2.png"));
 		Texture jumpTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/jump.png"));
 		Texture fallTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/fall.png"));
 
 		// LOGICA DE LAS ANIMACIONES
+
+		// IDLE
 
 		TextureRegion[][] idleFrames = TextureRegion.split(idleTexture, idleTexture.getWidth() / 5,
 				idleTexture.getHeight());
@@ -93,6 +101,7 @@ public class Knight3 {
 			time = 0f;
 		}
 
+		// CAMINAR HACIA LA IZQUIERDA
 		TextureRegion[][] walkingLeftFrames = TextureRegion.split(walkingLeftTexture, walkingLeftTexture.getWidth() / 6,
 				walkingLeftTexture.getHeight());
 		regionsMovement_walking_left = new TextureRegion[6];
@@ -102,6 +111,8 @@ public class Knight3 {
 			walkingLeftAnimation = new Animation<>(1 / 10f, walkingLeftFrames[0]);
 			time = 0f;
 		}
+
+		// CAMINAR HACIA LA DERECHA
 
 		TextureRegion[][] walkingRightFrames = TextureRegion.split(walkingRightTexture,
 				walkingRightTexture.getWidth() / 6, walkingRightTexture.getHeight());
@@ -113,6 +124,8 @@ public class Knight3 {
 			time = 0f;
 		}
 
+		// CORRER HACIA LA DERECHA
+
 		TextureRegion[][] runFrames = TextureRegion.split(runTexture, runTexture.getWidth() / 6,
 				runTexture.getHeight());
 		regionsMovement_run = new TextureRegion[6];
@@ -122,6 +135,8 @@ public class Knight3 {
 			runAnimation = new Animation<>(1 / 10f, runFrames[0]);
 			time = 0f;
 		}
+
+		// CORRER HACIA LA IZQUIERDA
 
 		TextureRegion[][] runLeftFrames = TextureRegion.split(runLeftTexture, runLeftTexture.getWidth() / 6,
 				runLeftTexture.getHeight());
@@ -133,6 +148,8 @@ public class Knight3 {
 			time = 0f;
 		}
 
+		// ATACAR
+
 		TextureRegion[][] attackFrames = TextureRegion.split(attackTexture, attackTexture.getWidth() / 10,
 				attackTexture.getHeight());
 		regionsMovement_attack = new TextureRegion[10];
@@ -142,6 +159,8 @@ public class Knight3 {
 			attackAnimation = new Animation<>(1 / 20f, attackFrames[0]);
 			time = 0f;
 		}
+
+		// CUBRIR
 
 		TextureRegion[][] coverFrames = TextureRegion.split(coverTexture, coverTexture.getWidth() / 5,
 				coverTexture.getHeight());
@@ -153,6 +172,32 @@ public class Knight3 {
 			time = 0f;
 		}
 
+		// CUBRIR CAMINANDO A LA DERECHA
+
+		TextureRegion[][] coverWalkRightFrames = TextureRegion.split(coverWalkRightTexture,
+				coverWalkRightTexture.getWidth() / 6, coverWalkRightTexture.getHeight());
+		regionsMovement_coverWalkRight = new TextureRegion[6];
+
+		for (int i = 0; i < 6; i++) {
+			regionsMovement_coverWalkRight[i] = coverWalkRightFrames[0][i];
+			coverWalkRightAnimation = new Animation<>(1 / 10f, coverWalkRightFrames[0]);
+			time = 0f;
+		}
+
+		// CUBRIR CAMINANDO A LA IZQUIERDA
+
+		TextureRegion[][] coverWalkLeftFrames = TextureRegion.split(coverWalkLeftTexture,
+				coverWalkLeftTexture.getWidth() / 6, coverWalkLeftTexture.getHeight());
+		regionsMovement_coverWalkLeft = new TextureRegion[6];
+
+		for (int i = 0; i < 6; i++) {
+			regionsMovement_coverWalkLeft[i] = coverWalkLeftFrames[0][i];
+			coverWalkLeftAnimation = new Animation<>(1 / 10f, coverWalkLeftFrames[0]);
+			time = 0f;
+		}
+
+		// SALTAR
+
 		TextureRegion[][] jumpFrames = TextureRegion.split(jumpTexture, jumpTexture.getWidth() / 4,
 				jumpTexture.getHeight());
 		regionsMovement_jump = new TextureRegion[4];
@@ -162,6 +207,8 @@ public class Knight3 {
 			jumpAnimation = new Animation<>(1 / 10f, jumpFrames[0]);
 			time = 0f;
 		}
+
+		// CAER
 
 		TextureRegion[][] fallFrames = TextureRegion.split(fallTexture, fallTexture.getWidth() / 4,
 				fallTexture.getHeight());
@@ -209,7 +256,7 @@ public class Knight3 {
 		case IDLE:
 			spr.setRegion(idleAnimation.getKeyFrame(time, true));
 			bloqueando = false;
-			y=145;
+			y = 145;
 			break;
 
 		case WALKING_LEFT:
@@ -238,48 +285,47 @@ public class Knight3 {
 			break;
 
 		case JUMP:
-			spacePressed=true;
-			
-            if (!jumping && spacePressed && y == GROUND_LEVEL) {
-                ySpeed = JUMP_SPEED;
-                jumping = true;
-                spacePressed = false; // Reinicia la variable después de iniciar el salto
-            }
+			spacePressed = true;
 
-            if (jumping) {
-                // Aplica la velocidad vertical durante el salto
-                y += ySpeed * delta;
+			if (!jumping && spacePressed && y == GROUND_LEVEL) {
+				ySpeed = JUMP_SPEED;
+				jumping = true;
+				spacePressed = false; // Reinicia la variable después de iniciar el salto
+			}
 
-                // Reduce la velocidad vertical debido a la gravedad
-                ySpeed += GRAVITY * delta;
+			if (jumping) {
+				// Aplica la velocidad vertical durante el salto
+				y += ySpeed * delta;
 
-                if (y <= GROUND_LEVEL) {
-                    y = GROUND_LEVEL;
-                    ySpeed = 0;
-                    jumping = false;
-                    cambiarEstado(EstadoPersonaje.FALL); // Cambia al estado de caída
-                } else {
-                    spr.setRegion(jumpAnimation.getKeyFrame(time, true));
-                }
-            }
-            break;
+				// Reduce la velocidad vertical debido a la gravedad
+				ySpeed += GRAVITY * delta;
 
-        case FALL:
-            // Simula la caída
-            ySpeed += GRAVITY * delta;
-            y += ySpeed * delta;
+				if (y <= GROUND_LEVEL) {
+					y = GROUND_LEVEL;
+					ySpeed = 0;
+					jumping = false;
+					cambiarEstado(EstadoPersonaje.FALL); // Cambia al estado de caída
+				} else {
+					spr.setRegion(jumpAnimation.getKeyFrame(time, true));
+				}
+			}
+			break;
 
-            if (y < GROUND_LEVEL) {
-                y = GROUND_LEVEL;
-                ySpeed = 0;
-                jumping = false;
-                cambiarEstado(EstadoPersonaje.IDLE); // Puedes cambiar el estado al aterrizar
-            } else {
-                spr.setRegion(fallAnimation.getKeyFrame(time, true));
-            }
-            
-            
-            break;
+		case FALL:
+			// Simula la caída
+			ySpeed += GRAVITY * delta;
+			y += ySpeed * delta;
+
+			if (y < GROUND_LEVEL) {
+				y = GROUND_LEVEL;
+				ySpeed = 0;
+				jumping = false;
+				cambiarEstado(EstadoPersonaje.IDLE); // Puedes cambiar el estado al aterrizar
+			} else {
+				spr.setRegion(fallAnimation.getKeyFrame(time, true));
+			}
+
+			break;
 
 		/*
 		 * case RUN_RIGHT: spr.setRegion(runAnimation.getKeyFrame(time, true)); x += 6;
@@ -296,6 +342,29 @@ public class Knight3 {
 		case COVER:
 			spr.setRegion(coverAnimation.getKeyFrame(time, true));
 			bloqueando = true;
+
+			if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+
+				spr.setRegion(coverWalkLeftAnimation.getKeyFrame(time, true));
+				cambiarEstado(EstadoPersonaje.COVER_LEFT);
+				bloqueando = true;
+				x -= 3;
+				
+			} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+
+				spr.setRegion(coverWalkRightAnimation.getKeyFrame(time, true));
+				cambiarEstado(EstadoPersonaje.COVER_RIGHT);
+				bloqueando = true;
+				x += 3;
+			}
+			break;
+		case COVER_RIGHT:
+			spr.setRegion(coverWalkRightAnimation.getKeyFrame(time, true));
+			
+			break;
+		case COVER_LEFT:
+			spr.setRegion(coverWalkLeftAnimation.getKeyFrame(time, true));
+			
 			break;
 
 		}
@@ -366,6 +435,10 @@ public class Knight3 {
 			return attackAnimation;
 		case COVER:
 			return coverAnimation;
+		case COVER_RIGHT:
+			return coverWalkRightAnimation;
+		case COVER_LEFT:
+			return coverWalkLeftAnimation;
 		case JUMP:
 			return jumpAnimation;
 		case FALL:

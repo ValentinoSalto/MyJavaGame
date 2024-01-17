@@ -38,6 +38,7 @@ public class ScreenGame implements Screen {
 	private Ghost ghost3;
 	private Boss1 boss;
 	boolean bloqueoActivo;
+
 	ShapeRenderer sr; // Agrega un objeto ShapeRenderer
 	public static int numeroEscenario = 0;
 
@@ -182,15 +183,15 @@ public class ScreenGame implements Screen {
 		chequearLimites();
 
 		// Maneja las entradas del teclado para cambiar el estado del personaje
-		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.A)&&!knight.bloqueando) {
 			knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_LEFT);
 
-		} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+		} else if (Gdx.input.isKeyPressed(Input.Keys.D)&&!knight.bloqueando) {
 			knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_RIGHT);
 
 		}
 
-		else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+		else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)&&!knight.bloqueando) {
 
 			knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);
 
@@ -212,7 +213,6 @@ public class ScreenGame implements Screen {
 				// Cambia el estado del personaje a IDLE (o cualquier otro estado apropiado)
 				knight.cambiarEstado(Knight3.EstadoPersonaje.IDLE);
 			}
-
 		} else {
 			knight.cambiarEstado(Knight3.EstadoPersonaje.IDLE);
 		}
