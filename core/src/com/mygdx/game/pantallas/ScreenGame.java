@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -19,8 +18,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.mygdx.game.recursos.Boss1;
 import com.mygdx.game.recursos.Fondo;
 import com.mygdx.game.recursos.Ghost;
+import com.mygdx.game.recursos.Hoguera;
 import com.mygdx.game.recursos.Knight3;
-import com.mygdx.game.recursos.Knight3.EstadoPersonaje;
 import com.mygdx.game.utiles.Config;
 import com.mygdx.game.utiles.Render;
 
@@ -37,6 +36,8 @@ public class ScreenGame implements Screen {
 	private Ghost ghost2;
 	private Ghost ghost3;
 	private Boss1 boss;
+	private Hoguera hoguera1;
+	private Hoguera hoguera2;
 	boolean bloqueoActivo;
 
 	ShapeRenderer sr; // Agrega un objeto ShapeRenderer
@@ -140,6 +141,9 @@ public class ScreenGame implements Screen {
 		ghost2 = new Ghost(500, 145, 200, 200);
 		ghost3 = new Ghost(800, 145, 200, 200);
 		boss = new Boss1(900, 117, 300, 300);
+		hoguera1 = new Hoguera(50, 145, 20, 100);
+		hoguera2 = new Hoguera(600, 145, 20, 100);
+		
 
 	}
 
@@ -225,7 +229,7 @@ public class ScreenGame implements Screen {
 		fondo1.render(b);
 		fondo2.render(b);
 		fondo3.render(b);
-
+		
 		b.end();
 
 		b.begin();
@@ -238,13 +242,17 @@ public class ScreenGame implements Screen {
 		knight.render(b);
 
 		if (numeroEscenario == 1) {
-
+			
+			hoguera1.render(b);
 			ghost1.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 			ghost1.render(b);
 			ghost1.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
 			ghost1.atacarKnight(knight);
+			
 		}
 		if (numeroEscenario == 2) {
+			
+			hoguera2.render(b);
 			ghost1.dispose();
 			ghost2.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 			ghost2.render(b);
@@ -254,8 +262,9 @@ public class ScreenGame implements Screen {
 			ghost3.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 			ghost3.render(b);
 			ghost3.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
-			ghost3.atacarKnight(knight);
-
+			ghost3.atacarKnight(knight);		
+			
+			
 		} else if (numeroEscenario == 3) {
 			boss.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 			boss.render(b);
