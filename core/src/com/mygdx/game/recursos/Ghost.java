@@ -35,6 +35,7 @@ public class Ghost {
 	private float tiempoEntreAtaques = 1f; // 1 segundo de espera entre ataques
 	public static float tiempoDesdeUltimoAtaque = 0f;
 	public int vida = 20;
+	public boolean detectado = false;
 	// Define aquí las demás animaciones para los otros estados (JUMP, RUN, ATTACK,
 	// COVER)
 	// ...
@@ -53,8 +54,8 @@ public class Ghost {
 		Texture attackTexture = new Texture(Gdx.files.internal("Personajes/Ghost-Files/PNG/ghost-shriek.png"));
 
 		// Divide las texturas en regiones para las animaciones
-		
-		//IDLE
+
+		// IDLE
 		TextureRegion[][] idleFrames = TextureRegion.split(idleTexture, idleTexture.getWidth() / 7,
 				idleTexture.getHeight());
 		regionsMovement_idle = new TextureRegion[7];
@@ -64,7 +65,7 @@ public class Ghost {
 			idleAnimation = new Animation<>(1 / 6f, idleFrames[0]);
 			time = 0f;
 		}
-		
+
 		// WALKIN LEFT
 		TextureRegion[][] walkingLeftFrames = TextureRegion.split(walkingLeftTexture, walkingLeftTexture.getWidth() / 7,
 				walkingLeftTexture.getHeight());
@@ -99,7 +100,7 @@ public class Ghost {
 		currentFrame = (TextureRegion) idleAnimation.getKeyFrame(time, true);
 		// Dibuja el sprite correspondiente a la animación del estado actual
 		spr.draw(batch);
-		
+
 	}
 
 	public void updateAnimation(float delta) {
@@ -111,12 +112,12 @@ public class Ghost {
 		case WALKING_LEFT:
 			spr.setRegion(walkingLeftAnimation.getKeyFrame(time, true));
 			// Mueve al personaje hacia la izquierda
-			
+
 			break;
 		case WALKING_RIGHT:
 			spr.setRegion(walkingRightAnimation.getKeyFrame(time, true));
 			// Mueve al personaje hacia la derecha
-			
+
 			break;
 		case ATTACK:
 			spr.setRegion(attackAnimation.getKeyFrame(time, true));
@@ -160,8 +161,15 @@ public class Ghost {
 		float newX = getX() + speed * MathUtils.cos(angleToKnight) * delta;
 		float newY = getY() + speed * MathUtils.sin(angleToKnight) * delta;
 
+		if (knight.x >= 150) {
+			detectado = true;
+		}
+
 		// Actualiza la posición del Ghost
-		setPosition(newX, newY);
+		if (detectado) {
+			setPosition(newX, newY);
+
+		}
 
 		if (newX < knight.getX()) {
 			cambiarEstado(EstadoPersonaje.WALKING_LEFT);
@@ -227,11 +235,11 @@ public class Ghost {
 	public void dispose() {
 		// Libera los recursos asociados al sprite, texturas, etc.
 		// Aquí deberías realizar cualquier limpieza necesaria.
-
+		detectado=false;
 		// Dispose de la textura, ajusta según tus necesidades
 		if (idleTexture != null) {
 			idleTexture.dispose();
-
+			
 		}
 
 		// Establece el estado "disposed"

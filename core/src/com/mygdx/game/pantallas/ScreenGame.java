@@ -89,7 +89,7 @@ public class ScreenGame implements Screen {
 			numeroEscenario = 2;
 
 			// Restablecer la posición inicial del los personajes en el nuevo escenario
-			knight.setPosition(100, 145);
+			knight.setPosition(20, 145);
 
 		} else if (numeroEscenario == 2) {
 			// Cargar el nuevo escenario y ajustar la posición del personaje
@@ -136,12 +136,12 @@ public class ScreenGame implements Screen {
 		h = Render.batch;
 		sr = new ShapeRenderer(); // Inicializa el ShapeRenderer
 
-		knight = new Knight3(200, 145, 100, 100);
+		knight = new Knight3(20, 145, 100, 100);
 		ghost1 = new Ghost(500, 145, 200, 200);
 		ghost2 = new Ghost(500, 145, 200, 200);
 		ghost3 = new Ghost(800, 145, 200, 200);
 		boss = new Boss1(900, 117, 300, 300);
-		hoguera1 = new Hoguera(50, 145, 20, 100);
+		hoguera1 = new Hoguera(140, 145, 20, 100);
 		hoguera2 = new Hoguera(600, 145, 20, 100);
 		
 
@@ -331,7 +331,7 @@ public class ScreenGame implements Screen {
 	@Override
 	public void dispose() {
 		mapa.dispose();
-
+		
 	}
 
 }
