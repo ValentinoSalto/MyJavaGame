@@ -7,13 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
-import com.mygdx.game.recursos.Knight3.EstadoPersonaje;
 
 public class Knight3 {
 
@@ -24,7 +17,7 @@ public class Knight3 {
 	private Sprite spr;
 	private Sprite spr2;
 	private float alto, ancho;
-	public float x;
+	public static float x;
 	public float y;
 	private Animation<TextureRegion> idleAnimation;
 	private Animation<TextureRegion> walkingLeftAnimation;
@@ -63,9 +56,10 @@ public class Knight3 {
 	private static final float GROUND_LEVEL = 145;
 	public static final float GRAVITY = -800; // Ajusta según la gravedad deseada
 	public static final float JUMP_SPEED = 500; // Ajusta según la velocidad de salto deseada
+	public static final float RANGO_ATAQUE = 50; // Ajusta según el rango de ataque deseado
 
 	public float ySpeed = 0;
-
+	
 	public Knight3(float x, float y, float ancho, float alto) {
 
 		this.x = x;
@@ -378,19 +372,27 @@ public class Knight3 {
 				// Guarda las dimensiones originales
 				float tempWidth = spr.getWidth();
 				float tempHeight = spr.getHeight();
+				
 				// Establece la región de ataque
 				spr.setRegion(attackAnimation.getKeyFrame(tiempoAtaque, false));
+				
 				// Restaura las dimensiones originales
 				spr.setSize(tempWidth, tempHeight);
+				
+			
 			} else {
+				
 				ataqueIniciado = false;
 				tiempoAtaque = 0f;
 				cambiarEstado(EstadoPersonaje.IDLE);
+				
 			}
 		} else {
+			
 			// Si no está atacando, actualiza la animación normal
 			Animation<TextureRegion> currentAnimation = getAnimationForCurrentState();
 			spr.setRegion(currentAnimation.getKeyFrame(time, true));
+			
 		}
 	}
 
@@ -417,6 +419,18 @@ public class Knight3 {
 				vida -= cantidad;
 			}
 
+	}
+	
+	public void encenderHoguera() {
+		
+		if(x-Hoguera.x <= Hoguera.distancia) {
+			
+			Hoguera.encendida = true;
+		}else {
+			System.out.println("No hay ninguna hoguera cerca");
+	
+			
+		}
 	}
 
 	private Animation<TextureRegion> getAnimationForCurrentState() {

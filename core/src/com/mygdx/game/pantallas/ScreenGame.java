@@ -139,7 +139,7 @@ public class ScreenGame implements Screen {
 		knight = new Knight3(20, 145, 100, 100);
 		ghost1 = new Ghost(500, 145, 200, 200);
 		ghost2 = new Ghost(500, 145, 200, 200);
-		ghost3 = new Ghost(800, 145, 200, 200);
+		ghost3 = new Ghost(900, 145, 200, 200);
 		boss = new Boss1(900, 117, 300, 300);
 		hoguera1 = new Hoguera(140, 145, 20, 100);
 		hoguera2 = new Hoguera(600, 145, 20, 100);
@@ -193,11 +193,13 @@ public class ScreenGame implements Screen {
 		} else if (Gdx.input.isKeyPressed(Input.Keys.D)&&!knight.bloqueando) {
 			knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_RIGHT);
 
-		}
-
-		else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)&&!knight.bloqueando) {
+		} else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)&&!knight.bloqueando) {
 
 			knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);
+
+		} else if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+
+			knight.encenderHoguera();
 
 		} else if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
 
@@ -288,6 +290,8 @@ public class ScreenGame implements Screen {
 		if (knight.vida == 0) {
 			Render.app.setScreen(new ScreenMenu());
 		}
+		
+		
 
 		b.end();
 

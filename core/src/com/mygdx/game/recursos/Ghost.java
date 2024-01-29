@@ -17,7 +17,8 @@ public class Ghost {
 
 	private Sprite spr;
 	private float alto, ancho;
-	private float x, y;
+	float x;
+	private float y;
 	private Animation<TextureRegion> idleAnimation;
 	private Animation<TextureRegion> walkingLeftAnimation;
 	private Animation<TextureRegion> walkingRightAnimation;
@@ -210,6 +211,14 @@ public class Ghost {
 		default:
 			return idleAnimation;
 		}
+	}
+	
+	public void restarVida(int cantidad) {
+
+			for (int i = 1; i == 1; i++) {
+				vida -= cantidad;
+			}
+
 	}
 
 	// Método para obtener la posición X del personaje

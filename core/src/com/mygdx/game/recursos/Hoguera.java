@@ -1,12 +1,12 @@
 package com.mygdx.game.recursos;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
 
 public class Hoguera {
 
@@ -16,7 +16,8 @@ public class Hoguera {
 
 	private Sprite spr;
 	private float alto, ancho;
-	private float x, y;
+	public static float x;
+	private float y;
 	
 	private Animation<TextureRegion> offAnimation;
 	private Animation<TextureRegion> onAnimation;
@@ -25,6 +26,8 @@ public class Hoguera {
 	private TextureRegion[] regionsMovement_on;
 	
 	public boolean disposed;
+	public static boolean encendida = false;
+	public static int distancia = 20;
 	private float time;
 	private TextureRegion currentFrame;
 	private Texture offTexture;
@@ -79,6 +82,8 @@ public class Hoguera {
 		spr = new Sprite(offAnimation.getKeyFrame(0, true));
 		spr.setPosition(x, y);
 		spr.setSize(ancho, alto);
+		
+		
 	}
 
 	public void render(SpriteBatch batch) {
@@ -87,6 +92,13 @@ public class Hoguera {
 		currentFrame = (TextureRegion) offAnimation.getKeyFrame(time, true);
 		// Dibuja el sprite correspondiente a la animación del estado actual
 		spr.draw(batch);
+		
+		if(encendida) {
+			cambiarEstado(Hoguera.EstadoPersonaje.ON);
+		} else {
+			cambiarEstado(Hoguera.EstadoPersonaje.OFF);
+		}
+		
 		
 	}
 
