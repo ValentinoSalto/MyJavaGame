@@ -288,7 +288,7 @@ public class ScreenGame implements Screen {
 		font.draw(b, "Muertes: " + muertes, 10, 670); // Dibuja las muertes en la esquina superior derecha
 
 		if (knight.vida == 0) {
-			Render.app.setScreen(new ScreenMenu());
+			Render.app.setScreen(new ScreenDeath());
 		}
 		
 		

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.mygdx.game.pantallas.ScreenGame;
 
 public class Hoguera {
 
@@ -27,7 +28,8 @@ public class Hoguera {
 	
 	public boolean disposed;
 	public static boolean encendida = false;
-	public static int distancia = 20;
+	public static int distancia = 10;
+	public static int numHoguera;
 	private float time;
 	private TextureRegion currentFrame;
 	private Texture offTexture;
@@ -83,6 +85,9 @@ public class Hoguera {
 		spr.setPosition(x, y);
 		spr.setSize(ancho, alto);
 		
+		if(encendida) {
+			numHoguera = ScreenGame.numeroEscenario;
+		}
 		
 	}
 
@@ -151,7 +156,7 @@ public class Hoguera {
 	}
 
 	// Método para obtener la posición X del personaje
-	public float getX() {
+	public static float getX() {
 		return x;
 	}
 

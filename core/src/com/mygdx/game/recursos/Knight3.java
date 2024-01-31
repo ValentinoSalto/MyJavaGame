@@ -59,7 +59,7 @@ public class Knight3 {
 	public static final float RANGO_ATAQUE = 50; // Ajusta según el rango de ataque deseado
 
 	public float ySpeed = 0;
-	
+
 	public Knight3(float x, float y, float ancho, float alto) {
 
 		this.x = x;
@@ -343,7 +343,7 @@ public class Knight3 {
 				cambiarEstado(EstadoPersonaje.COVER_LEFT);
 				bloqueando = true;
 				x -= 3;
-				
+
 			} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 
 				spr.setRegion(coverWalkRightAnimation.getKeyFrame(time, true));
@@ -354,11 +354,11 @@ public class Knight3 {
 			break;
 		case COVER_RIGHT:
 			spr.setRegion(coverWalkRightAnimation.getKeyFrame(time, true));
-			
+
 			break;
 		case COVER_LEFT:
 			spr.setRegion(coverWalkLeftAnimation.getKeyFrame(time, true));
-			
+
 			break;
 
 		}
@@ -372,27 +372,26 @@ public class Knight3 {
 				// Guarda las dimensiones originales
 				float tempWidth = spr.getWidth();
 				float tempHeight = spr.getHeight();
-				
+
 				// Establece la región de ataque
 				spr.setRegion(attackAnimation.getKeyFrame(tiempoAtaque, false));
-				
+
 				// Restaura las dimensiones originales
 				spr.setSize(tempWidth, tempHeight);
-				
-			
+
 			} else {
-				
+
 				ataqueIniciado = false;
 				tiempoAtaque = 0f;
 				cambiarEstado(EstadoPersonaje.IDLE);
-				
+
 			}
 		} else {
-			
+
 			// Si no está atacando, actualiza la animación normal
 			Animation<TextureRegion> currentAnimation = getAnimationForCurrentState();
 			spr.setRegion(currentAnimation.getKeyFrame(time, true));
-			
+
 		}
 	}
 
@@ -420,17 +419,20 @@ public class Knight3 {
 			}
 
 	}
-	
+
 	public void encenderHoguera() {
 		
-		if(x-Hoguera.x <= Hoguera.distancia) {
-			
-			Hoguera.encendida = true;
-		}else {
-			System.out.println("No hay ninguna hoguera cerca");
-	
-			
-		}
+		if (!Hoguera.encendida) {
+	        float distanciaX = Math.abs(Hoguera.getX() - x); // Calcula la distancia en valor absoluto
+
+	        if (distanciaX <= 10) {
+	            Hoguera.encendida = true;
+	        } else {
+	            System.out.println("No hay ninguna hoguera cerca");
+	        }
+	    } else {
+	        System.out.println("La instancia de Hoguera no está configurada correctamente.");
+	    }
 	}
 
 	private Animation<TextureRegion> getAnimationForCurrentState() {

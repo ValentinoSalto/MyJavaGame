@@ -188,7 +188,7 @@ public class Ghost {
 			// Verifica el tiempo desde el último ataque
 			if (tiempoDesdeUltimoAtaque >= tiempoEntreAtaques) {
 				// Resta vida al Knight
-				knight.restarVida(0); // Ajusta la cantidad de daño según sea necesario
+				knight.restarVida(100); // Ajusta la cantidad de daño según sea necesario
 
 				// Reinicia el temporizador
 				tiempoDesdeUltimoAtaque = 0f;
