@@ -87,6 +87,7 @@ public class Hoguera {
 		
 		if(encendida) {
 			numHoguera = ScreenGame.numeroEscenario;
+			System.out.println("El respawn esta en la hoguera num: "+ numHoguera);
 		}
 		
 	}

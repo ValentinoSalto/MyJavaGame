@@ -421,18 +421,14 @@ public class Knight3 {
 	}
 
 	public void encenderHoguera() {
-		
-		if (!Hoguera.encendida) {
-	        float distanciaX = Math.abs(Hoguera.getX() - x); // Calcula la distancia en valor absoluto
 
-	        if (distanciaX <= 10) {
-	            Hoguera.encendida = true;
-	        } else {
-	            System.out.println("No hay ninguna hoguera cerca");
-	        }
-	    } else {
-	        System.out.println("La instancia de Hoguera no está configurada correctamente.");
-	    }
+		if (!Hoguera.encendida) {
+			if (x >= Hoguera.x - Hoguera.distancia || x <= Hoguera.x + Hoguera.distancia) {
+				Hoguera.encendida=true;
+			} else{
+				System.out.println("No hay hoguera cerca");
+			}
+		}
 	}
 
 	private Animation<TextureRegion> getAnimationForCurrentState() {

@@ -41,7 +41,7 @@ public class ScreenGame implements Screen {
 	boolean bloqueoActivo;
 
 	ShapeRenderer sr; // Agrega un objeto ShapeRenderer
-	public static int numeroEscenario = 0;
+	public static int numeroEscenario =10;
 
 	private Fondo fondo1;
 	private Fondo fondo2;
@@ -143,7 +143,6 @@ public class ScreenGame implements Screen {
 		boss = new Boss1(900, 117, 300, 300);
 		hoguera1 = new Hoguera(140, 145, 20, 100);
 		hoguera2 = new Hoguera(600, 145, 20, 100);
-		
 
 	}
 
@@ -187,17 +186,17 @@ public class ScreenGame implements Screen {
 		chequearLimites();
 
 		// Maneja las entradas del teclado para cambiar el estado del personaje
-		if (Gdx.input.isKeyPressed(Input.Keys.A)&&!knight.bloqueando) {
+		if (Gdx.input.isKeyPressed(Input.Keys.A) && !knight.bloqueando) {
 			knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_LEFT);
 
-		} else if (Gdx.input.isKeyPressed(Input.Keys.D)&&!knight.bloqueando) {
+		} else if (Gdx.input.isKeyPressed(Input.Keys.D) && !knight.bloqueando) {
 			knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_RIGHT);
 
-		} else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)&&!knight.bloqueando) {
+		} else if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !knight.bloqueando) {
 
 			knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);
 
-		} else if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+		} else if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 
 			knight.encenderHoguera();
 
@@ -231,7 +230,7 @@ public class ScreenGame implements Screen {
 		fondo1.render(b);
 		fondo2.render(b);
 		fondo3.render(b);
-		
+
 		b.end();
 
 		b.begin();
@@ -243,17 +242,17 @@ public class ScreenGame implements Screen {
 		Render.batch.setProjectionMatrix(cam.combined);
 		knight.render(b);
 
-		if (numeroEscenario == 1) {
-			
+		if (numeroEscenario == 1 || Hoguera.numHoguera == 1) {
+
 			hoguera1.render(b);
 			ghost1.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 			ghost1.render(b);
 			ghost1.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
 			ghost1.atacarKnight(knight);
-			
+
 		}
-		if (numeroEscenario == 2) {
-			
+		if (numeroEscenario == 2 || Hoguera.numHoguera == 2) {
+
 			hoguera2.render(b);
 			ghost1.dispose();
 			ghost2.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
@@ -264,15 +263,17 @@ public class ScreenGame implements Screen {
 			ghost3.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 			ghost3.render(b);
 			ghost3.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
-			ghost3.atacarKnight(knight);		
-			
-			
-		} else if (numeroEscenario == 3) {
+			ghost3.atacarKnight(knight);
+
+		} else if (numeroEscenario == 3 || Hoguera.numHoguera == 3) {
 			boss.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 			boss.render(b);
 			boss.seguirKnight(knight, delta);
 			ghost3.dispose();
 			ghost2.dispose();
+
+		}	else if (numeroEscenario == 0 && Hoguera.numHoguera == 0) {
+			Render.app.setScreen(new ScreenMenu());
 
 		}
 
@@ -287,11 +288,13 @@ public class ScreenGame implements Screen {
 		font.draw(b, "Vida: " + knight.vida, 10, 700); // Dibuja la vida en la esquina superior izquierda
 		font.draw(b, "Muertes: " + muertes, 10, 670); // Dibuja las muertes en la esquina superior derecha
 
-		if (knight.vida == 0) {
+		if (knight.vida == 0 ) {
+			if(!Hoguera.encendida) {
+				numeroEscenario = 0;
+			}
 			Render.app.setScreen(new ScreenDeath());
+			
 		}
-		
-		
 
 		b.end();
 
@@ -335,7 +338,7 @@ public class ScreenGame implements Screen {
 	@Override
 	public void dispose() {
 		mapa.dispose();
-		
+
 	}
 
 }

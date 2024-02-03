@@ -62,7 +62,7 @@ public class ScreenDeath implements Screen {
 			contTiempoTermina+=0.04f;
 			if(contTiempoTermina>tiempoTermina) {
 				System.out.println("Cambio de pantalla");
-				Render.app.setScreen(new ScreenMenu());
+				Render.app.setScreen(new ScreenGame());
 			}
 		}
 		 
