@@ -1,7 +1,7 @@
 package com.mygdx.game.pantallas;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Music; 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -21,6 +21,7 @@ import com.mygdx.game.recursos.Imagen;
 import com.mygdx.game.utiles.Config;
 import com.mygdx.game.utiles.Recursos;
 import com.mygdx.game.utiles.Render;
+
 
 public class ScreenMenu implements Screen{
 	
@@ -121,8 +122,7 @@ public class ScreenMenu implements Screen{
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Realiza las acciones del botón cuando es clickeado
-            	ScreenGame.numeroEscenario = 1;
+                // Realiza las acciones del botón cuando es clickeado           	
             	Render.app.setScreen(new ScreenGame());
             	backgroundMusic.dispose();
             	stage.dispose();	

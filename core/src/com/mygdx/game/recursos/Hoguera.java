@@ -29,7 +29,7 @@ public class Hoguera {
 	public boolean disposed;
 	public static boolean encendida = false;
 	public static int distancia = 10;
-	public static int numHoguera;
+	public static int numHoguera = 1;
 	private float time;
 	private TextureRegion currentFrame;
 	private Texture offTexture;
@@ -47,7 +47,7 @@ public class Hoguera {
 		
 		// Divide las texturas en regiones para las animaciones
 		
-		//off
+		//OFF
 		TextureRegion[][] offFrames = TextureRegion.split(offTexture, offTexture.getWidth() / 1,
 				offTexture.getHeight());
 		regionsMovement_off = new TextureRegion[1];
@@ -58,7 +58,7 @@ public class Hoguera {
 			time = 0f;
 		}
 		
-		// WALKIN LEFT
+		// ON
 		TextureRegion[][] onFrames = TextureRegion.split(onTexture, onTexture.getWidth() / 1,
 				onTexture.getHeight());
 		regionsMovement_on = new TextureRegion[1];

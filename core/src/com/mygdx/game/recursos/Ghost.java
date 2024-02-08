@@ -1,19 +1,21 @@
 package com.mygdx.game.recursos;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
-import com.mygdx.game.recursos.Knight3.EstadoPersonaje;
+import com.badlogic.gdx.math.Rectangle;
+import com.mygdx.game.utiles.Render;
+import com.mygdx.game.recursos.EstadosGhost;
 
 public class Ghost {
 
-	public enum EstadoPersonaje {
-		IDLE, WALKING_LEFT, WALKING_RIGHT, JUMP, RUN, ATTACK, COVER
-	}
 
 	private Sprite spr;
 	private float alto, ancho;
@@ -37,18 +39,22 @@ public class Ghost {
 	public static float tiempoDesdeUltimoAtaque = 0f;
 	public int vida = 20;
 	public boolean detectado = false;
+
+	// colisiones
+	public Rectangle areaJugador;
 	// Define aquí las demás animaciones para los otros estados (JUMP, RUN, ATTACK,
 	// COVER)
 	// ...
 
-	private EstadoPersonaje estadoActual;
+	private EstadosGhost estadoActual;
 
 	public Ghost(float x, float y, float ancho, float alto) {
 		this.x = x;
 		this.y = y;
 		this.alto = alto;
 		this.ancho = ancho;
-
+		
+		areaJugador = new Rectangle(this.x,this.y, this.alto,this.ancho);
 		// Carga las texturas para las animaciones
 		idleTexture = new Texture(Gdx.files.internal("Personajes/Ghost-Files/PNG/ghost-idle.png"));
 		Texture walkingLeftTexture = new Texture(Gdx.files.internal("Personajes/Ghost-Files/PNG/ghost-idle2.png"));
@@ -87,7 +93,7 @@ public class Ghost {
 		 * attackAnimation = new Animation<>(1 / 20f, attackFrames[0]); time = 0f; }
 		 */
 		// Establece el estado inicial del personaje
-		estadoActual = EstadoPersonaje.IDLE;
+		estadoActual = EstadosGhost.IDLE;
 
 		// Inicializa la sprite con la animación idle
 		spr = new Sprite(idleAnimation.getKeyFrame(0, true));
@@ -101,7 +107,7 @@ public class Ghost {
 		currentFrame = (TextureRegion) idleAnimation.getKeyFrame(time, true);
 		// Dibuja el sprite correspondiente a la animación del estado actual
 		spr.draw(batch);
-
+		//dibujarAreaInteraccion();
 	}
 
 	public void updateAnimation(float delta) {
@@ -129,6 +135,8 @@ public class Ghost {
 		}
 		// Actualiza la posición del sprite
 		spr.setPosition(x, y);
+		
+		areaJugador.setPosition(x,y);
 	}
 
 	public void setPosition(float newX, float newY) {
@@ -136,7 +144,7 @@ public class Ghost {
 		y = newY;
 	}
 
-	public void cambiarEstado(EstadoPersonaje nuevoEstado) {
+	public void cambiarEstado(EstadosGhost nuevoEstado) {
 		// Cambia el estado del personaje y actualiza la animación
 		estadoActual = nuevoEstado;
 
@@ -173,28 +181,33 @@ public class Ghost {
 		}
 
 		if (newX < knight.getX()) {
-			cambiarEstado(EstadoPersonaje.WALKING_LEFT);
+			cambiarEstado(EstadosGhost.WALKING_LEFT);
 		} else {
-			cambiarEstado(EstadoPersonaje.IDLE);
+			cambiarEstado(EstadosGhost.IDLE);
 		}
 	}
 
 	public void atacarKnight(Knight3 knight) {
 		float distanciaAtaque = 10; // Ajusta la distancia de ataque según sea necesario
-
+	
 		float distancia = Math.abs(knight.getX() - x);
 
 		if (distancia < distanciaAtaque) {
+		
 			// Verifica el tiempo desde el último ataque
 			if (tiempoDesdeUltimoAtaque >= tiempoEntreAtaques) {
+			System.out.println("entro 1");
+			if(tiempoDesdeUltimoAtaque >= tiempoEntreAtaques) {
 				// Resta vida al Knight
-				knight.restarVida(20); // Ajusta la cantidad de daño según sea necesario
-
-				// Reinicia el temporizador
-				tiempoDesdeUltimoAtaque = 0f;
+				knight.restarVida(100);
+				System.out.println("restando vida");
 			}
+			// Reinicia el temporizador
+			tiempoDesdeUltimoAtaque = 0f;
 		}
-
+		}
+		
+		
 	}
 
 	private Animation<TextureRegion> getAnimationForCurrentState() {
@@ -212,13 +225,22 @@ public class Ghost {
 			return idleAnimation;
 		}
 	}
-	
+
 	public void restarVida(int cantidad) {
 
-			for (int i = 1; i == 1; i++) {
-				vida -= cantidad;
-			}
+		
+			vida -= cantidad;
+		
 
+	}
+
+	public void dibujarAreaInteraccion() {
+		ShapeRenderer shapeRenderer = new ShapeRenderer();
+		shapeRenderer.setProjectionMatrix(Render.batch.getProjectionMatrix());
+		shapeRenderer.begin(ShapeType.Line);
+		shapeRenderer.setColor(Color.RED);
+		shapeRenderer.rect(areaJugador.x, areaJugador.y, areaJugador.width, areaJugador.height);
+		shapeRenderer.end();
 	}
 
 	// Método para obtener la posición X del personaje
@@ -244,11 +266,11 @@ public class Ghost {
 	public void dispose() {
 		// Libera los recursos asociados al sprite, texturas, etc.
 		// Aquí deberías realizar cualquier limpieza necesaria.
-		detectado=false;
+		detectado = false;
 		// Dispose de la textura, ajusta según tus necesidades
 		if (idleTexture != null) {
 			idleTexture.dispose();
-			
+
 		}
 
 		// Establece el estado "disposed"

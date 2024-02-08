@@ -9,11 +9,14 @@
     ],
     "fileStates": {
         "Mapa 1.tmx": {
+            "expandedObjectLayers": [
+                2
+            ],
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 707.3333333333334,
-                "y": 377.33333333333326
+                "x": 624,
+                "y": 371.99999999999994
             }
         },
         "Mapa 2.tmx": {
@@ -21,10 +24,10 @@
                 2
             ],
             "scale": 0.75,
-            "selectedLayer": 1,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 638.6666666666667,
-                "y": 354.66666666666674
+                "x": 636.6666666666665,
+                "y": 350.66666666666674
             }
         },
         "Mapa 3.tmx": {
@@ -32,7 +35,15 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 776.621787025704,
-                "y": 356.9155446756426
+                "y": 352.9498164014688
+            }
+        },
+        "Mapalobby.tmx": {
+            "scale": 0.8107253086419753,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 648.8017512134766,
+                "y": 197.35414485581038
             }
         },
         "Terreno.tsx": {
@@ -53,13 +64,16 @@
     "map.width": 54,
     "openFiles": [
         "Mapa 1.tmx",
-        "Mapa 3.tmx"
+        "Mapa 2.tmx",
+        "Mapa 3.tmx",
+        "Mapalobby.tmx"
     ],
     "project": "Mapa1.tiled-project",
     "recentFiles": [
+        "Mapalobby.tmx",
         "Mapa 3.tmx",
-        "Mapa 1.tmx",
         "Mapa 2.tmx",
+        "Mapa 1.tmx",
         "Terreno2.tsx",
         "Terreno.tsx"
     ],

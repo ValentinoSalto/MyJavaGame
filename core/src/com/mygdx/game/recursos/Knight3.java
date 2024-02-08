@@ -2,17 +2,21 @@ package com.mygdx.game.recursos;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
+import com.mygdx.game.recursos.EstadosKnight;
+import com.mygdx.game.utiles.Render;
 
 public class Knight3 {
 
-	public enum EstadoPersonaje {
-		IDLE, WALKING_LEFT, WALKING_RIGHT, JUMP, FALL, RUN_RIGHT, RUN_LEFT, ATTACK, COVER, COVER_RIGHT, COVER_LEFT, HURT
-	}
+	
 
 	private Sprite spr;
 	private Sprite spr2;
@@ -48,7 +52,8 @@ public class Knight3 {
 
 	private boolean ataqueIniciado;
 	private float tiempoAtaque;
-	private EstadoPersonaje estadoActual;
+	private EstadosKnight estadoActual;
+	private EstadosKnight direccion;
 	public int vida = 100;
 	public boolean bloqueando = false;
 	public boolean jumping;
@@ -57,8 +62,10 @@ public class Knight3 {
 	public static final float GRAVITY = -800; // Ajusta según la gravedad deseada
 	public static final float JUMP_SPEED = 500; // Ajusta según la velocidad de salto deseada
 	public static final float RANGO_ATAQUE = 50; // Ajusta según el rango de ataque deseado
-
 	public float ySpeed = 0;
+	public boolean lastimable = false;
+	// colisiones
+	public Rectangle areaJugador;
 
 	public Knight3(float x, float y, float ancho, float alto) {
 
@@ -67,8 +74,9 @@ public class Knight3 {
 		this.alto = alto;
 		this.ancho = ancho;
 
-		// CARGA LAS TEXTURAS
+		areaJugador = new Rectangle(this.x, this.y, this.alto, this.ancho);
 
+		// CARGA LAS TEXTURAS
 		idleTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Combat Ready Idle.png"));
 		Texture walkingRightTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Walk.png"));
 		Texture walkingLeftTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Walk2.png"));
@@ -214,7 +222,7 @@ public class Knight3 {
 			time = 0f;
 		}
 
-		estadoActual = EstadoPersonaje.IDLE;
+		estadoActual = EstadosKnight.IDLE;
 
 		spr = new Sprite(idleAnimation.getKeyFrame(0, true));
 		spr.setPosition(x, y);
@@ -237,7 +245,7 @@ public class Knight3 {
 		spr.draw(batch);
 		float X = spr.getX();
 		float ANCHO = spr.getWidth();
-
+		//dibujarAreaInteraccion();
 	}
 
 	public void update() {
@@ -257,11 +265,11 @@ public class Knight3 {
 			spr.setRegion(walkingLeftAnimation.getKeyFrame(time, true));
 			x -= 3;
 			bloqueando = false;
-			if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+			if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)&& direccion != EstadosKnight.WALKING_LEFT) {
 				spr.setRegion(runLeftAnimation.getKeyFrame(time, true));
-				cambiarEstado(Knight3.EstadoPersonaje.RUN_LEFT);
+				cambiarEstado(EstadosKnight.RUN_LEFT);
 				x -= 6;
-
+				
 			}
 			break;
 
@@ -272,7 +280,7 @@ public class Knight3 {
 			if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
 
 				spr.setRegion(runLeftAnimation.getKeyFrame(time, true));
-				cambiarEstado(Knight3.EstadoPersonaje.RUN_RIGHT);
+				cambiarEstado(EstadosKnight.RUN_RIGHT);
 				x += 6;
 
 			}
@@ -298,7 +306,7 @@ public class Knight3 {
 					y = GROUND_LEVEL;
 					ySpeed = 0;
 					jumping = false;
-					cambiarEstado(EstadoPersonaje.FALL); // Cambia al estado de caída
+					cambiarEstado(EstadosKnight.FALL); // Cambia al estado de caída
 				} else {
 					spr.setRegion(jumpAnimation.getKeyFrame(time, true));
 				}
@@ -314,7 +322,7 @@ public class Knight3 {
 				y = GROUND_LEVEL;
 				ySpeed = 0;
 				jumping = false;
-				cambiarEstado(EstadoPersonaje.IDLE); // Puedes cambiar el estado al aterrizar
+				cambiarEstado(EstadosKnight.IDLE); // Puedes cambiar el estado al aterrizar
 			} else {
 				spr.setRegion(fallAnimation.getKeyFrame(time, true));
 			}
@@ -340,14 +348,14 @@ public class Knight3 {
 			if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 
 				spr.setRegion(coverWalkLeftAnimation.getKeyFrame(time, true));
-				cambiarEstado(EstadoPersonaje.COVER_LEFT);
+				cambiarEstado(EstadosKnight.COVER_LEFT);
 				bloqueando = true;
 				x -= 3;
 
 			} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 
 				spr.setRegion(coverWalkRightAnimation.getKeyFrame(time, true));
-				cambiarEstado(EstadoPersonaje.COVER_RIGHT);
+				cambiarEstado(EstadosKnight.COVER_RIGHT);
 				bloqueando = true;
 				x += 3;
 			}
@@ -383,7 +391,7 @@ public class Knight3 {
 
 				ataqueIniciado = false;
 				tiempoAtaque = 0f;
-				cambiarEstado(EstadoPersonaje.IDLE);
+				cambiarEstado(EstadosKnight.IDLE);
 
 			}
 		} else {
@@ -393,13 +401,15 @@ public class Knight3 {
 			spr.setRegion(currentAnimation.getKeyFrame(time, true));
 
 		}
+
+		areaJugador.setPosition(x, y);
 	}
 
-	public void cambiarEstado(EstadoPersonaje nuevoEstado) {
+	public void cambiarEstado(EstadosKnight nuevoEstado) {
 		estadoActual = nuevoEstado;
 		spr.setRegion(getAnimationForCurrentState().getKeyFrame(0));
 
-		if (nuevoEstado == EstadoPersonaje.ATTACK) {
+		if (nuevoEstado == EstadosKnight .ATTACK) {
 			iniciarAtaque();
 		}
 
@@ -413,10 +423,12 @@ public class Knight3 {
 
 	public void restarVida(int cantidad) {
 
-		if (!bloqueando)
-			for (int i = 1; i == 1; i++) {
-				vida -= cantidad;
-			}
+		if (!bloqueando) {
+			vida -= cantidad;
+		}
+			
+				
+		
 
 	}
 
@@ -424,11 +436,37 @@ public class Knight3 {
 
 		if (!Hoguera.encendida) {
 			if (x >= Hoguera.x - Hoguera.distancia || x <= Hoguera.x + Hoguera.distancia) {
-				Hoguera.encendida=true;
-			} else{
+				Hoguera.encendida = true;
+			} else {
 				System.out.println("No hay hoguera cerca");
 			}
 		}
+	}
+
+	/*public void chequearColisiones(Ghost area) {
+
+		if (areaJugador.overlaps(area.areaJugador)) {
+			lastimable = true;
+			//System.out.println("contacto");
+			area.atacarKnight(this);
+			
+		}else {
+			lastimable = false;
+		}
+
+	}*/
+	
+	public void chequearColisionesMapa(Rectangle plataformas) {
+
+		if (areaJugador.overlaps(plataformas)) {
+			lastimable = true;
+			System.out.println("contacto");
+			direccion = estadoActual;
+			
+		}else {
+			lastimable = false;
+		}
+
 	}
 
 	private Animation<TextureRegion> getAnimationForCurrentState() {
@@ -460,6 +498,17 @@ public class Knight3 {
 		}
 	}
 
+	public void dibujarAreaInteraccion() {
+		ShapeRenderer shapeRenderer = new ShapeRenderer();
+		shapeRenderer.setProjectionMatrix(Render.batch.getProjectionMatrix());
+		shapeRenderer.begin(ShapeType.Line);
+		shapeRenderer.setColor(Color.RED);
+		shapeRenderer.rect(areaJugador.x, areaJugador.y, areaJugador.width, areaJugador.height);
+		shapeRenderer.end();
+	}
+
+	
+	
 	public void setPosition(float newX, float newY) {
 		x = newX;
 		y = newY;

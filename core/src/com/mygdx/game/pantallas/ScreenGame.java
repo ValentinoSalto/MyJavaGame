@@ -9,13 +9,16 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.mygdx.game.recursos.Boss1;
+import com.mygdx.game.recursos.EstadosKnight;
 import com.mygdx.game.recursos.Fondo;
 import com.mygdx.game.recursos.Ghost;
 import com.mygdx.game.recursos.Hoguera;
@@ -39,9 +42,10 @@ public class ScreenGame implements Screen {
 	private Hoguera hoguera1;
 	private Hoguera hoguera2;
 	boolean bloqueoActivo;
-
+	public Rectangle plataforma1;
+	public Rectangle plataforma2;
 	ShapeRenderer sr; // Agrega un objeto ShapeRenderer
-	public static int numeroEscenario =10;
+	public static int numeroEscenario = 0;
 
 	private Fondo fondo1;
 	private Fondo fondo2;
@@ -49,6 +53,12 @@ public class ScreenGame implements Screen {
 	private OrthographicCamera cam; // creo la camara
 	private TiledMap mapa; // info del mapa
 	private TiledMapRenderer mapaRenderer; // render del mapa
+	private TiledMap mapa1; // info del mapa
+	private TiledMapRenderer mapaRenderer1; // render del mapa
+	private TiledMap mapa2; // info del mapa
+	private TiledMapRenderer mapaRenderer2; // render del mapa
+	private TiledMap mapa3; // info del mapa
+	private TiledMapRenderer mapaRenderer3; // render del mapa
 
 	private void chequearLimites() {
 		float knightX = knight.getX();
@@ -80,29 +90,51 @@ public class ScreenGame implements Screen {
 
 	private void cambiarEscenario() {
 
-		if (numeroEscenario == 1) {
-			// Cargar el nuevo escenario y ajustar la posición del personaje
-			// Por ejemplo, puedes cargar otro mapa con TiledMapLoader
-			mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 2.tmx");
-			mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
-
-			numeroEscenario = 2;
+		if (numeroEscenario == 0) {
+			numeroEscenario = 1;
+			
+			
 
 			// Restablecer la posición inicial del los personajes en el nuevo escenario
 			knight.setPosition(20, 145);
-
+		} else if (numeroEscenario == 1) {
+			numeroEscenario = 2;
+			
+			// Establece la vista del mapa
+			mapaRenderer2.setView(cam);
+			// Restablecer la posición inicial del los personajes en el nuevo escenario
+			knight.setPosition(20, 145);
 		} else if (numeroEscenario == 2) {
-			// Cargar el nuevo escenario y ajustar la posición del personaje
-			// Por ejemplo, puedes cargar otro mapa con TiledMapLoader
-			mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 3.tmx");
-			mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
-
 			numeroEscenario = 3;
-
+			
+			// Establece la vista del mapa
+			mapaRenderer3.setView(cam);
 			// Restablecer la posición inicial del los personajes en el nuevo escenario
 			knight.setPosition(100, 145);
-
 		}
+		/*
+		 * else if (numeroEscenario == 1) { // Cargar el nuevo escenario y ajustar la
+		 * posición del personaje // Por ejemplo, puedes cargar otro mapa con
+		 * TiledMapLoader mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 2.tmx");
+		 * mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
+		 * 
+		 * numeroEscenario = 2;
+		 * 
+		 * // Restablecer la posición inicial del los personajes en el nuevo escenario
+		 * knight.setPosition(20, 145);
+		 * 
+		 * } else if (numeroEscenario == 2) { // Cargar el nuevo escenario y ajustar la
+		 * posición del personaje // Por ejemplo, puedes cargar otro mapa con
+		 * TiledMapLoader mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 3.tmx");
+		 * mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
+		 * 
+		 * numeroEscenario = 3;
+		 * 
+		 * // Restablecer la posición inicial del los personajes en el nuevo escenario
+		 * knight.setPosition(100, 145);
+		 * 
+		 * }
+		 */
 	}
 
 	@Override
@@ -121,9 +153,22 @@ public class ScreenGame implements Screen {
 		fondo1 = new Fondo("Mapas/Mapa1/background_layer_1.png");
 		fondo2 = new Fondo("Mapas/Mapa1/background_layer_2.png");
 		fondo3 = new Fondo("Mapas/Mapa1/background_layer_3.png");
+
 		// Carga el mapa desde Tiled
-		mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapa 1.tmx");
+		mapa = new TmxMapLoader().load("Mapas/Mapa1/Mapalobby.tmx");
 		mapaRenderer = new OrthogonalTiledMapRenderer(mapa); // crea el render
+		
+		mapa1 = new TmxMapLoader().load("Mapas/Mapa1/Mapa 1.tmx");
+		mapaRenderer1 = new OrthogonalTiledMapRenderer(mapa1); // crea el render
+		
+		mapa2 = new TmxMapLoader().load("Mapas/Mapa1/Mapa 2.tmx");
+		mapaRenderer2= new OrthogonalTiledMapRenderer(mapa2); // crea el render
+		
+		mapa3 = new TmxMapLoader().load("Mapas/Mapa1/Mapa 3.tmx");
+		mapaRenderer3 = new OrthogonalTiledMapRenderer(mapa3); // crea el render
+		// Plataformas
+		plataforma1 = new Rectangle(9 * 24, 10 * 24, 7 * 24, 24);
+		plataforma2 = new Rectangle(33 * 24, 10 * 24, 7 * 24, 24);
 
 		// Ajusta la cámara del mapa para que ocupe toda la pantalla
 
@@ -140,7 +185,7 @@ public class ScreenGame implements Screen {
 		ghost1 = new Ghost(500, 145, 200, 200);
 		ghost2 = new Ghost(500, 145, 200, 200);
 		ghost3 = new Ghost(900, 145, 200, 200);
-		boss = new Boss1(900, 117, 300, 300);
+		boss = new Boss1(900, 90, 400, 300);
 		hoguera1 = new Hoguera(140, 145, 20, 100);
 		hoguera2 = new Hoguera(600, 145, 20, 100);
 
@@ -185,16 +230,23 @@ public class ScreenGame implements Screen {
 		// Manejar el cambio de escenario
 		chequearLimites();
 
+		/*
+		 * //Maneja las colisiones knight.chequearColisiones(ghost1);
+		 * knight.chequearColisiones(ghost2); knight.chequearColisiones(ghost3);
+		 */
+		knight.chequearColisionesMapa(plataforma1);
+		knight.chequearColisionesMapa(plataforma2);
+
 		// Maneja las entradas del teclado para cambiar el estado del personaje
 		if (Gdx.input.isKeyPressed(Input.Keys.A) && !knight.bloqueando) {
-			knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_LEFT);
+			knight.cambiarEstado(EstadosKnight.WALKING_LEFT);
 
 		} else if (Gdx.input.isKeyPressed(Input.Keys.D) && !knight.bloqueando) {
-			knight.cambiarEstado(Knight3.EstadoPersonaje.WALKING_RIGHT);
+			knight.cambiarEstado(EstadosKnight.WALKING_RIGHT);
 
 		} else if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !knight.bloqueando) {
 
-			knight.cambiarEstado(Knight3.EstadoPersonaje.JUMP);
+			knight.cambiarEstado(EstadosKnight.JUMP);
 
 		} else if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 
@@ -202,7 +254,7 @@ public class ScreenGame implements Screen {
 
 		} else if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
 
-			knight.cambiarEstado(Knight3.EstadoPersonaje.ATTACK);
+			knight.cambiarEstado(EstadosKnight.ATTACK);
 			System.out.println("ataca");
 
 		} else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
@@ -210,20 +262,20 @@ public class ScreenGame implements Screen {
 				// Inicia la acción de bloqueo
 				bloqueoActivo = true;
 				// Cambia el estado del personaje a COVER
-				knight.cambiarEstado(Knight3.EstadoPersonaje.COVER);
+				knight.cambiarEstado(EstadosKnight.COVER);
 
 			} else {
 				// Si el clic derecho no está presionado, detiene la acción de bloqueo
 				bloqueoActivo = false;
 				// Cambia el estado del personaje a IDLE (o cualquier otro estado apropiado)
-				knight.cambiarEstado(Knight3.EstadoPersonaje.IDLE);
+				knight.cambiarEstado(EstadosKnight.IDLE);
 			}
 		} else {
-			knight.cambiarEstado(Knight3.EstadoPersonaje.IDLE);
+			knight.cambiarEstado(EstadosKnight.IDLE);
 		}
 
 		knight.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
-
+		
 		b.begin();
 
 		// Dibuja el fondo
@@ -235,24 +287,33 @@ public class ScreenGame implements Screen {
 
 		b.begin();
 
-		// Establece la vista del mapa
-		mapaRenderer.setView(cam);
-		mapaRenderer.render();
+		
+		
 
 		Render.batch.setProjectionMatrix(cam.combined);
 		knight.render(b);
 
-		if (numeroEscenario == 1 || Hoguera.numHoguera == 1) {
+		if (numeroEscenario == 0) {
+			// Establece la vista del mapa
+			mapaRenderer.setView(cam);
+			mapaRenderer.render();
+			System.out.println("Lobby");
+		}
 
-			hoguera1.render(b);
+		if (numeroEscenario == 1) {
+			
+			mapaRenderer1.setView(cam);
+			mapaRenderer1.render();
 			ghost1.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 			ghost1.render(b);
 			ghost1.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
 			ghost1.atacarKnight(knight);
 
 		}
-		if (numeroEscenario == 2 || Hoguera.numHoguera == 2) {
-
+		if (numeroEscenario == 2 || (Hoguera.numHoguera == 2 && knight.vida <= 0)) {
+			
+			mapaRenderer2.setView(cam);
+			mapaRenderer2.render();
 			hoguera2.render(b);
 			ghost1.dispose();
 			ghost2.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
@@ -266,16 +327,15 @@ public class ScreenGame implements Screen {
 			ghost3.atacarKnight(knight);
 
 		} else if (numeroEscenario == 3 || Hoguera.numHoguera == 3) {
+			mapaRenderer3.setView(cam);
+			mapaRenderer3.render();
 			boss.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 			boss.render(b);
 			boss.seguirKnight(knight, delta);
 			ghost3.dispose();
 			ghost2.dispose();
 
-		}	else if (numeroEscenario == 0 && Hoguera.numHoguera == 0) {
-			Render.app.setScreen(new ScreenMenu());
-
-		}
+		} 
 
 		// Actualiza el temporizador
 		Ghost.tiempoDesdeUltimoAtaque += delta;
@@ -288,12 +348,14 @@ public class ScreenGame implements Screen {
 		font.draw(b, "Vida: " + knight.vida, 10, 700); // Dibuja la vida en la esquina superior izquierda
 		font.draw(b, "Muertes: " + muertes, 10, 670); // Dibuja las muertes en la esquina superior derecha
 
-		if (knight.vida == 0 ) {
-			if(!Hoguera.encendida) {
+		if (knight.vida == 0) {
+			
+			Render.app.setScreen(new ScreenDeath());
+			if(Hoguera.encendida) {
+				numeroEscenario = 2;
+			}else {
 				numeroEscenario = 0;
 			}
-			Render.app.setScreen(new ScreenDeath());
-			
 		}
 
 		b.end();
@@ -308,6 +370,15 @@ public class ScreenGame implements Screen {
 		 * // Finaliza el dibujado de líneas sr.end();
 		 */
 
+	}
+
+	public void dibujarAreaInteraccion(Rectangle rectangulo) {
+		ShapeRenderer shapeRenderer = new ShapeRenderer();
+		shapeRenderer.setProjectionMatrix(Render.batch.getProjectionMatrix());
+		shapeRenderer.begin(ShapeType.Line);
+		shapeRenderer.setColor(Color.RED);
+		shapeRenderer.rect(rectangulo.x, rectangulo.y, rectangulo.width, rectangulo.height);
+		shapeRenderer.end();
 	}
 
 	@Override
