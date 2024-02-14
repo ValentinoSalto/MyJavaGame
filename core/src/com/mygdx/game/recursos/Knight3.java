@@ -2,6 +2,8 @@ package com.mygdx.game.recursos;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -11,18 +13,22 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
-import com.mygdx.game.recursos.EstadosKnight;
+import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.utiles.Animador;
 import com.mygdx.game.utiles.Render;
 
 public class Knight3 {
 
-	
-
 	private Sprite spr;
 	private Sprite spr2;
 	private float alto, ancho;
-	public static float x;
-	public float y;
+	
+	
+	private Texture textura;
+	private Animador animacionQuieto;
+	private Animador animacionIzquierda;
+	private Animador animacionDerecha;
+
 	private Animation<TextureRegion> idleAnimation;
 	private Animation<TextureRegion> walkingLeftAnimation;
 	private Animation<TextureRegion> walkingRightAnimation;
@@ -56,25 +62,33 @@ public class Knight3 {
 	private EstadosKnight direccion;
 	public int vida = 100;
 	public boolean bloqueando = false;
-	public boolean jumping;
+	public boolean jumping = false;
+	public boolean terminoSalto = true;
 	private boolean spacePressed = false;
-	private static final float GROUND_LEVEL = 145;
-	public static final float GRAVITY = -800; // Ajusta según la gravedad deseada
-	public static final float JUMP_SPEED = 500; // Ajusta según la velocidad de salto deseada
-	public static final float RANGO_ATAQUE = 50; // Ajusta según el rango de ataque deseado
+	private float GROUND_LEVEL = 145f;
+	public final float GRAVITY = -800; // Ajusta según la gravedad deseada
+	public final float JUMP_SPEED = 500; // Ajusta según la velocidad de salto deseada
+	public final float RANGO_ATAQUE = 50; // Ajusta según el rango de ataque deseado
+	private final float ALTURA_SALTO = 300f;
 	public float ySpeed = 0;
 	public boolean lastimable = false;
+	boolean bloqueoActivo;
+	boolean moverse = true;
 	// colisiones
 	public Rectangle areaJugador;
+	private Vector2 posicion;
+	boolean pasoPlataforma = false;
 
 	public Knight3(float x, float y, float ancho, float alto) {
-
-		this.x = x;
-		this.y = y;
+		posicion = new Vector2();
+		posicion.x = x;
+		posicion.y = y;
 		this.alto = alto;
 		this.ancho = ancho;
 
-		areaJugador = new Rectangle(this.x, this.y, this.alto, this.ancho);
+		posicion.y = 145;
+
+		areaJugador = new Rectangle(this.posicion.x, this.posicion.y, this.ancho, this.alto / 2);
 
 		// CARGA LAS TEXTURAS
 		idleTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Combat Ready Idle.png"));
@@ -243,9 +257,55 @@ public class Knight3 {
 		currentFrame = (TextureRegion) idleAnimation.getKeyFrame(time, true);
 
 		spr.draw(batch);
-		float X = spr.getX();
+		float x = spr.getX();
 		float ANCHO = spr.getWidth();
-		//dibujarAreaInteraccion();
+		dibujarAreaInteraccion();
+
+		moverPersonaje();
+	}
+
+	public void moverPersonaje() {
+		// Maneja las entradas del teclado para cambiar el estado del personaje
+		if (Gdx.input.isKeyPressed(Keys.A) && !bloqueando && moverse /* && direccion != EstadosKnight.WALKING_LEFT */) {
+			cambiarEstado(EstadosKnight.WALKING_LEFT);
+
+		} else if (Gdx.input.isKeyPressed(Keys.D) && !bloqueando
+				&& moverse /* && direccion != EstadosKnight.WALKING_RIGHT */) {
+			cambiarEstado(EstadosKnight.WALKING_RIGHT);
+
+		} else if (Gdx.input.isKeyJustPressed(Keys.SPACE) && !bloqueando) {
+
+			cambiarEstado(EstadosKnight.JUMP);
+
+		} else if (Gdx.input.isKeyJustPressed(Keys.E)) {
+			encenderHoguera();
+
+		} else if (Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
+
+			cambiarEstado(EstadosKnight.ATTACK);
+			System.out.println("ataca");
+
+		} else if (Gdx.input.isButtonPressed(Buttons.RIGHT)) {
+			if (Gdx.input.isButtonPressed(Buttons.RIGHT)) {
+				// Inicia la acción de bloqueo
+				bloqueoActivo = true;
+				// Cambia el estado del personaje a COVER
+				cambiarEstado(EstadosKnight.COVER);
+
+			} else {
+				// Si el clic derecho no está presionado, detiene la acción de bloqueo
+				bloqueoActivo = false;
+				// Cambia el estado del personaje a IDLE (o cualquier otro estado apropiado)
+				if (terminoSalto) {
+					cambiarEstado(EstadosKnight.IDLE);
+				}
+			}
+		} else {
+			if (terminoSalto) {
+				cambiarEstado(EstadosKnight.IDLE);
+
+			}
+		}
 	}
 
 	public void update() {
@@ -258,83 +318,83 @@ public class Knight3 {
 		case IDLE:
 			spr.setRegion(idleAnimation.getKeyFrame(time, true));
 			bloqueando = false;
-			y = 145;
+			terminoSalto = true;
+			moverse = true;
+//			posicion.y = 145;
 			break;
 
 		case WALKING_LEFT:
 			spr.setRegion(walkingLeftAnimation.getKeyFrame(time, true));
-			x -= 3;
+			posicion.x -= 3;
 			bloqueando = false;
-			if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)&& direccion != EstadosKnight.WALKING_LEFT) {
+			if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
 				spr.setRegion(runLeftAnimation.getKeyFrame(time, true));
 				cambiarEstado(EstadosKnight.RUN_LEFT);
-				x -= 6;
-				
+				posicion.x -= 6;
+
 			}
 			break;
 
 		case WALKING_RIGHT:
 			spr.setRegion(walkingRightAnimation.getKeyFrame(time, true));
-			x += 3;
+			posicion.x += 3;
 			bloqueando = false;
-			if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+			if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
 
 				spr.setRegion(runLeftAnimation.getKeyFrame(time, true));
 				cambiarEstado(EstadosKnight.RUN_RIGHT);
-				x += 6;
+				posicion.x += 6;
 
 			}
 			break;
 
 		case JUMP:
-			spacePressed = true;
+			moverse = false;
+			jumping = true;
+			terminoSalto = false;
 
-			if (!jumping && spacePressed && y == GROUND_LEVEL) {
-				ySpeed = JUMP_SPEED;
-				jumping = true;
-				spacePressed = false; // Reinicia la variable después de iniciar el salto
-			}
+			if (posicion.y < ALTURA_SALTO) {// la altura deseada
+				posicion.y += JUMP_SPEED * delta;
 
-			if (jumping) {
-				// Aplica la velocidad vertical durante el salto
-				y += ySpeed * delta;
-
-				// Reduce la velocidad vertical debido a la gravedad
-				ySpeed += GRAVITY * delta;
-
-				if (y <= GROUND_LEVEL) {
-					y = GROUND_LEVEL;
-					ySpeed = 0;
-					jumping = false;
-					cambiarEstado(EstadosKnight.FALL); // Cambia al estado de caída
-				} else {
-					spr.setRegion(jumpAnimation.getKeyFrame(time, true));
+				if (posicion.y >= ALTURA_SALTO) {
+					estadoActual = EstadosKnight.FALL;
 				}
+
 			}
+
 			break;
 
 		case FALL:
-			// Simula la caída
-			ySpeed += GRAVITY * delta;
-			y += ySpeed * delta;
 
-			if (y < GROUND_LEVEL) {
-				y = GROUND_LEVEL;
-				ySpeed = 0;
-				jumping = false;
-				cambiarEstado(EstadosKnight.IDLE); // Puedes cambiar el estado al aterrizar
+			if (!pasoPlataforma) {
+
+				if (posicion.y > GROUND_LEVEL) {
+					posicion.y -= JUMP_SPEED * delta;
+
+				}
+
+				if (posicion.y <= GROUND_LEVEL) {
+					jumping = false;
+					terminoSalto = true;
+					estadoActual = EstadosKnight.IDLE;
+					moverse = true;
+				} else {
+					spr.setRegion(fallAnimation.getKeyFrame(time, true));
+				}
+
 			} else {
-				spr.setRegion(fallAnimation.getKeyFrame(time, true));
+				posicion.y = 260;
+				estadoActual = EstadosKnight.IDLE;
+				terminoSalto = true;
 			}
-
 			break;
 
 		/*
-		 * case RUN_RIGHT: spr.setRegion(runAnimation.getKeyFrame(time, true)); x += 6;
-		 * break;
+		 * case RUN_RIGHT: spr.setRegion(runAnimation.getKeyFrame(time, true));
+		 * posicion.x += 6; break;
 		 * 
-		 * case RUN_LEFT: spr.setRegion(runLeftAnimation.getKeyFrame(time, true)); x -=
-		 * 6; break;
+		 * case RUN_LEFT: spr.setRegion(runLeftAnimation.getKeyFrame(time, true));
+		 * posicion.x -= 6; break;
 		 */
 		case ATTACK:
 
@@ -350,14 +410,14 @@ public class Knight3 {
 				spr.setRegion(coverWalkLeftAnimation.getKeyFrame(time, true));
 				cambiarEstado(EstadosKnight.COVER_LEFT);
 				bloqueando = true;
-				x -= 3;
+				posicion.x -= 3;
 
 			} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 
 				spr.setRegion(coverWalkRightAnimation.getKeyFrame(time, true));
 				cambiarEstado(EstadosKnight.COVER_RIGHT);
 				bloqueando = true;
-				x += 3;
+				posicion.x += 3;
 			}
 			break;
 		case COVER_RIGHT:
@@ -371,7 +431,7 @@ public class Knight3 {
 
 		}
 
-		spr.setPosition(x, y);
+		spr.setPosition(posicion.x, posicion.y);
 
 		if (ataqueIniciado) {
 			tiempoAtaque += delta;
@@ -402,14 +462,14 @@ public class Knight3 {
 
 		}
 
-		areaJugador.setPosition(x, y);
+		areaJugador.setPosition(posicion.x, posicion.y);
 	}
 
 	public void cambiarEstado(EstadosKnight nuevoEstado) {
 		estadoActual = nuevoEstado;
 		spr.setRegion(getAnimationForCurrentState().getKeyFrame(0));
 
-		if (nuevoEstado == EstadosKnight .ATTACK) {
+		if (nuevoEstado == EstadosKnight.ATTACK) {
 			iniciarAtaque();
 		}
 
@@ -426,16 +486,13 @@ public class Knight3 {
 		if (!bloqueando) {
 			vida -= cantidad;
 		}
-			
-				
-		
 
 	}
 
 	public void encenderHoguera() {
 
 		if (!Hoguera.encendida) {
-			if (x >= Hoguera.x - Hoguera.distancia || x <= Hoguera.x + Hoguera.distancia) {
+			if (posicion.x >= Hoguera.x - Hoguera.distancia || posicion.x <= Hoguera.x + Hoguera.distancia) {
 				Hoguera.encendida = true;
 			} else {
 				System.out.println("No hay hoguera cerca");
@@ -443,28 +500,30 @@ public class Knight3 {
 		}
 	}
 
-	/*public void chequearColisiones(Ghost area) {
+	/*
+	 * public void chequearColisiones(Ghost area) {
+	 * 
+	 * if (areaJugador.overlaps(area.areaJugador)) { lastimable = true;
+	 * //System.out.println("contacto"); area.atacarKnight(this);
+	 * 
+	 * }else { lastimable = false; }
+	 * 
+	 * }
+	 */
 
-		if (areaJugador.overlaps(area.areaJugador)) {
-			lastimable = true;
-			//System.out.println("contacto");
-			area.atacarKnight(this);
-			
-		}else {
-			lastimable = false;
-		}
-
-	}*/
-	
 	public void chequearColisionesMapa(Rectangle plataformas) {
 
 		if (areaJugador.overlaps(plataformas)) {
 			lastimable = true;
 			System.out.println("contacto");
 			direccion = estadoActual;
-			
-		}else {
+			pasoPlataforma = true;
+
+		} else {
 			lastimable = false;
+
+			pasoPlataforma = false;
+
 		}
 
 	}
@@ -507,19 +566,21 @@ public class Knight3 {
 		shapeRenderer.end();
 	}
 
-	
-	
+	private void crearAnimacion() {
+		
+	}
+
 	public void setPosition(float newX, float newY) {
-		x = newX;
-		y = newY;
+		posicion.x = newX;
+		posicion.y = newY;
 	}
 
 	public float getX() {
-		return x;
+		return posicion.x;
 	}
 
 	public float getY() {
-		return y;
+		return posicion.y;
 	}
 
 	public float getWidth() {
@@ -528,6 +589,10 @@ public class Knight3 {
 
 	public float getHeight() {
 		return ancho;
+	}
+
+	public Vector2 getPosicion() {
+		return posicion;
 	}
 
 }

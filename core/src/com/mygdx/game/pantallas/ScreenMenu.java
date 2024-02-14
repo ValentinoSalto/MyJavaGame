@@ -126,7 +126,7 @@ public class ScreenMenu implements Screen{
             	Render.app.setScreen(new ScreenGame());
             	backgroundMusic.dispose();
             	stage.dispose();	
-            	
+            	ScreenGame.numeroEscenario=1;
             	
                 
             }
