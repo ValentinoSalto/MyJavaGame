@@ -24,22 +24,24 @@ import com.mygdx.game.recursos.Fondo;
 import com.mygdx.game.recursos.Ghost;
 import com.mygdx.game.recursos.Hoguera;
 import com.mygdx.game.recursos.Knight3;
+import com.mygdx.game.red.UtilesRed;
 import com.mygdx.game.utiles.Config;
 import com.mygdx.game.utiles.Render;
 
 public class ScreenGame implements Screen {
 
 	Image personaje;
-	SpriteBatch b;
-	SpriteBatch h;
 	private OrthographicCamera hudCamera; // creo la camara del hud
 	private BitmapFont font;
 	private int muertes = 0; // Ejemplo: Inicializa el contador de muertes a 0
 	private Knight3 knight;
+	private Knight3 knight2;
+
 	private Enemigo ghost1;
 	private Ghost ghost2;
 	private Ghost ghost3;
 	private Boss1 boss;
+
 	private Hoguera hoguera1;
 	private Hoguera hoguera2;
 
@@ -50,13 +52,13 @@ public class ScreenGame implements Screen {
 	ShapeRenderer sr; // Agrega un objeto ShapeRenderer
 	public static int numeroEscenario = 0;
 
-	//Fondos
+	// Fondos
 	private Fondo fondo1;
 	private Fondo fondo2;
 	private Fondo fondo3;
 	private OrthographicCamera cam; // creo la camara
-	
-	//Mapas
+
+	// Mapas
 	private TiledMap mapa1; // info del mapa
 	private TiledMapRenderer mapaRenderer1; // render del mapa
 	private TiledMap mapa2; // info del mapa
@@ -65,6 +67,14 @@ public class ScreenGame implements Screen {
 	private TiledMapRenderer mapaRenderer3; // render del mapa
 	private TiledMap mapa4; // info del mapa
 	private TiledMapRenderer mapaRenderer4; // render del mapa
+
+	// red
+	public boolean enRed = true;
+
+	public ScreenGame(boolean red) {
+		UtilesRed.hc.setGame(this);
+		enRed = red;
+	}
 
 	private void chequearLimites() {
 		float knightX = knight.getX();
@@ -96,13 +106,14 @@ public class ScreenGame implements Screen {
 
 	private void cambiarEscenario() {
 
-		 if (numeroEscenario == 1) {
+		if (numeroEscenario == 1) {
 			numeroEscenario = 2;
 
 			// Establece la vista del mapa
 			mapaRenderer2.setView(cam);
 			// Restablecer la posición inicial del los personajes en el nuevo escenario
 			knight.setPosition(20, 145);
+			knight2.setPosition(20, 160);
 		} else if (numeroEscenario == 2) {
 			numeroEscenario = 3;
 
@@ -146,6 +157,8 @@ public class ScreenGame implements Screen {
 	@Override
 	public void show() {
 
+		numeroEscenario = 1;
+
 		// Restringe el cursor del mouse a no ser visible
 //		Gdx.input.setCursorCatched(true);
 		cam = new OrthographicCamera(Config.ANCHO, Config.ALTO); // creo la camara
@@ -172,7 +185,7 @@ public class ScreenGame implements Screen {
 		// Carga el mapa desde Tiled
 		mapa4 = new TmxMapLoader().load("Mapas/Mapa1/Mapalobby.tmx");
 		mapaRenderer4 = new OrthogonalTiledMapRenderer(mapa4); // crea el render
-		
+
 		// Plataformas
 		plataforma1 = new Rectangle(9 * 24, 10 * 24, 7 * 24, 24);
 		plataforma2 = new Rectangle(33 * 24, 10 * 24, 7 * 24, 24);
@@ -185,11 +198,21 @@ public class ScreenGame implements Screen {
 		font.setColor(Color.WHITE); // Configura el color de la fuente
 		font.getData().setScale(1.5f); // Escala el tamaño de la fuente
 
-		b = Render.batch;
-		h = Render.batch;
 		sr = new ShapeRenderer(); // Inicializa el ShapeRenderer
 
-		knight = new Knight3(20, 145, 100, 100);
+		// Inicializar personajes
+
+		
+		
+
+		if (enRed) {
+			knight = new Knight3(20, 145, 100, 100, true);
+			knight2 = new Knight3(50, 145, 100, 100, true);
+			System.out.println("creado");
+		}else {
+			knight = new Knight3(20, 145, 100, 100, false);
+		}
+
 		ghost1 = new Ghost(500, 145);
 		ghost2 = new Ghost(500, 145);
 		ghost3 = new Ghost(900, 145);
@@ -202,151 +225,159 @@ public class ScreenGame implements Screen {
 	@Override
 	public void render(float delta) {
 
-		// Limpio la pantalla (solamente para ver bien el caballero despues va a tener
-		// un fondo)
+		if (!UtilesRed.hc.salirDelJuego) {
 
-		Gdx.gl.glClearColor(0, 0, 0, 0);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		cam.update();
-		Render.batch.setProjectionMatrix(cam.combined);
+			// Limpio la pantalla (solamente para ver bien el caballero despues va a tener
+			// un fondo)
+			cam.update();
+			Render.batch.setProjectionMatrix(cam.combined);
 
-		// Ajusta la vista del mapa
-		float mapWidth = mapa1.getProperties().get("width", Integer.class)
-				* mapa1.getProperties().get("tilewidth", Integer.class);
-		float mapHeight = mapa1.getProperties().get("height", Integer.class)
-				* mapa1.getProperties().get("tileheight", Integer.class);
+			// Ajusta la vista del mapa
+			float mapWidth = mapa1.getProperties().get("width", Integer.class)
+					* mapa1.getProperties().get("tilewidth", Integer.class);
+			float mapHeight = mapa1.getProperties().get("height", Integer.class)
+					* mapa1.getProperties().get("tileheight", Integer.class);
 
-		float viewportWidth = cam.viewportWidth * cam.zoom;
-		float viewportHeight = cam.viewportHeight * cam.zoom;
+			float viewportWidth = cam.viewportWidth * cam.zoom;
+			float viewportHeight = cam.viewportHeight * cam.zoom;
 
-		float minX = viewportWidth / 2;
-		float maxX = mapWidth - viewportWidth / 2;
-		float minY = viewportHeight / 2;
-		float maxY = mapHeight - viewportHeight / 2;
+			float minX = viewportWidth / 2;
+			float maxX = mapWidth - viewportWidth / 2;
+			float minY = viewportHeight / 2;
+			float maxY = mapHeight - viewportHeight / 2;
 
-		float cameraX = MathUtils.clamp(cam.position.x, minX, maxX);
-		float cameraY = MathUtils.clamp(cam.position.y, minY, maxY);
+			float cameraX = MathUtils.clamp(cam.position.x, minX, maxX);
+			float cameraY = MathUtils.clamp(cam.position.y, minY, maxY);
 
-		cam.position.set(cameraX, cameraY, 0);
-		cam.update();
+			cam.position.set(cameraX, cameraY, 0);
+			cam.update();
 
-		// Actualiza la posición de la cámara para que siga al personaje
-		/*
-		 * cam.position.set(knight.getX() + knight.getWidth() / 2,360, 0); cam.update();
-		 */
+			// Actualiza la posición de la cámara para que siga al personaje
+			/*
+			 * cam.position.set(knight.getX() + knight.getWidth() / 2,360, 0); cam.update();
+			 */
 
-		// Manejar el cambio de escenario
-		chequearLimites();
+			// Manejar el cambio de escenario
+			chequearLimites();
 
-		/*
-		 * //Maneja las colisiones knight.chequearColisiones(ghost1);
-		 * knight.chequearColisiones(ghost2); knight.chequearColisiones(ghost3);
-		 */
+			/*
+			 * //Maneja las colisiones knight.chequearColisiones(ghost1);
+			 * knight.chequearColisiones(ghost2); knight.chequearColisiones(ghost3);
+			 */
 
-		knight.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+			knight.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 
-		b.begin();
+			Render.batch.begin();
 
-		// Dibuja el fondo
-		fondo1.render(b);
-		fondo2.render(b);
-		fondo3.render(b);
+			// Dibuja el fondo
+			fondo1.render();
+			fondo2.render();
+			fondo3.render();
 
-		b.end();
+			Render.batch.end();
 
-		b.begin();
+			Render.batch.begin();
 
-		Render.batch.setProjectionMatrix(cam.combined);
-		knight.render(b);
+			Render.batch.setProjectionMatrix(cam.combined);
 
+			knight.render(Render.batch);
 
-		if (numeroEscenario == 1) {
-
-			mapaRenderer1.setView(cam);
-			mapaRenderer1.render();
-			// ghost1.updateAnimation(delta); // Actualiza la animación del personaje según
-			// el estado actual
-			ghost1.render(b);
-			ghost1.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
-			ghost1.atacarKnight(knight);
-
-			// dibujarAreaInteraccion(plataforma1);
-			// dibujarAreaInteraccion(plataforma2);
-			knight.chequearColisionesMapa(plataforma1);
-			knight.chequearColisionesMapa(plataforma2);
-
-		}
-		else if (numeroEscenario == 2 || (Hoguera.numHoguera == 2 && knight.vida <= 0)) {
-
-			mapaRenderer2.setView(cam);
-			mapaRenderer2.render();
-			hoguera2.render(b);
-			ghost1.dispose();
-			// ghost2.updateAnimation(delta); // Actualiza la animación del personaje según
-			// el estado actual
-			ghost2.render(b);
-			ghost2.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
-			ghost2.atacarKnight(knight);
-
-			// ghost3.updateAnimation(delta); // Actualiza la animación del personaje según
-			// el estado actual
-			ghost3.render(b);
-			ghost3.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
-			ghost3.atacarKnight(knight);
-			dibujarAreaInteraccion(plataforma3);
-			knight.chequearColisionesMapa(plataforma3);
-
-		} else if (numeroEscenario == 3 || Hoguera.numHoguera == 3) {
-			mapaRenderer3.setView(cam);
-			mapaRenderer3.render();
-			// boss.updateAnimation(delta); // Actualiza la animación del personaje según el
-			// estado actual
-			boss.render(b);
-			boss.seguirKnight(knight, delta);
-			ghost3.dispose();
-			ghost2.dispose();
-
-		}else if (numeroEscenario == 4) {
-			// Establece la vista del mapa
-			mapaRenderer4.setView(cam);
-			mapaRenderer4.render();
-			// System.out.println("Lobby");
-//			Gdx.app.log("Boton inicar", "Click");
-		}
-
-		// Actualiza el temporizador
-		Ghost.tiempoDesdeUltimoAtaque += delta;
-		// Actualiza el temporizador
-		Boss1.tiempoDesdeUltimoAtaque += delta;
-
-		Render.batch.setProjectionMatrix(hudCamera.combined); // Configura el SpriteBatch para la cámara del HUD
-		// Configura el color de fuente y dibuja la información de "Vida"
-		font.setColor(Color.WHITE); // Configura el color de fuente (blanco en este ejemplo)
-		font.draw(b, "Vida: " + knight.vida, 10, 700); // Dibuja la vida en la esquina superior izquierda
-		font.draw(b, "Muertes: " + muertes, 10, 670); // Dibuja las muertes en la esquina superior derecha
-
-		if (knight.vida == 0) {
-
-			Render.app.setScreen(new ScreenDeath());
-			if (Hoguera.encendida) {
-				numeroEscenario = 2;
-			} else {
-				numeroEscenario = 0;
+			if (enRed) {
+				knight2.updateAnimation(delta);
+				//System.out.println("renderizando");
+				knight2.render(Render.batch);
 			}
+
+			if (numeroEscenario == 1) {
+
+				mapaRenderer1.setView(cam);
+				mapaRenderer1.render();
+				// ghost1.updateAnimation(delta); // Actualiza la animación del personaje según
+				// el estado actual
+				ghost1.render(Render.batch);
+				ghost1.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
+				ghost1.atacarKnight(knight);
+
+				// dibujarAreaInteraccion(plataforma1);
+				// dibujarAreaInteraccion(plataforma2);
+				knight.chequearColisionesMapa(plataforma1);
+				knight.chequearColisionesMapa(plataforma2);
+
+			} else if (numeroEscenario == 2 || (Hoguera.numHoguera == 2 && knight.vida <= 0)) {
+
+				mapaRenderer2.setView(cam);
+				mapaRenderer2.render();
+				hoguera2.render(Render.batch);
+				ghost1.dispose();
+				// ghost2.updateAnimation(delta); // Actualiza la animación del personaje según
+				// el estado actual
+				ghost2.render(Render.batch);
+				ghost2.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
+				ghost2.atacarKnight(knight);
+
+				// ghost3.updateAnimation(delta); // Actualiza la animación del personaje según
+				// el estado actual
+				ghost3.render(Render.batch);
+				ghost3.seguirKnight(knight, delta); // Actualiza posición para seguir al Knight
+				ghost3.atacarKnight(knight);
+//			dibujarAreaInteraccion(plataforma3);
+				knight.chequearColisionesMapa(plataforma3);
+
+			} else if (numeroEscenario == 3 || Hoguera.numHoguera == 3) {
+				mapaRenderer3.setView(cam);
+				mapaRenderer3.render();
+				// boss.updateAnimation(delta); // Actualiza la animación del personaje según el
+				// estado actual
+				boss.render(Render.batch);
+				boss.seguirKnight(knight, delta);
+				ghost3.dispose();
+				ghost2.dispose();
+
+			} else if (numeroEscenario == 4) {
+				// Establece la vista del mapa
+				mapaRenderer4.setView(cam);
+				mapaRenderer4.render();
+				// System.out.println("Lobby");
+//			Gdx.app.log("Boton inicar", "Click");
+			}
+
+			// Actualiza el temporizador
+			Ghost.tiempoDesdeUltimoAtaque += delta;
+			// Actualiza el temporizador
+			Boss1.tiempoDesdeUltimoAtaque += delta;
+
+			Render.batch.setProjectionMatrix(hudCamera.combined); // Configura el SpriteBatch para la cámara del HUD
+			// Configura el color de fuente y dibuja la información de "Vida"
+			font.setColor(Color.WHITE); // Configura el color de fuente (blanco en este ejemplo)
+			font.draw(Render.batch, "Vida: " + knight.vida, 10, 700); // Dibuja la vida en la esquina superior izquierda
+			font.draw(Render.batch, "Muertes: " + muertes, 10, 670); // Dibuja las muertes en la esquina superior
+																		// derecha
+
+			if (knight.vida == 0) {
+
+				Render.app.setScreen(new ScreenDeath());
+				if (Hoguera.encendida) {
+					numeroEscenario = 2;
+				} else {
+					numeroEscenario = 0;
+				}
+			}
+
+			Render.batch.end();
+
+			/*
+			 * // Inicia el dibujado de líneas sr.begin(ShapeType.Line); sr.setColor(255, 0,
+			 * 0, 1); // Establece el color de la línea (blanco en este caso)
+			 * 
+			 * // Dibuja la línea del piso desde (x1, y1) a (x2, y2) sr.line(0, 100,
+			 * Gdx.graphics.getWidth(), 100);
+			 * 
+			 * // Finaliza el dibujado de líneas sr.end();
+			 */
+
+		} else {
+			Render.app.setScreen(new ScreenMenu());
 		}
-
-		b.end();
-
-		/*
-		 * // Inicia el dibujado de líneas sr.begin(ShapeType.Line); sr.setColor(255, 0,
-		 * 0, 1); // Establece el color de la línea (blanco en este caso)
-		 * 
-		 * // Dibuja la línea del piso desde (x1, y1) a (x2, y2) sr.line(0, 100,
-		 * Gdx.graphics.getWidth(), 100);
-		 * 
-		 * // Finaliza el dibujado de líneas sr.end();
-		 */
-
 	}
 
 	public void dibujarAreaInteraccion(Rectangle rectangulo) {
@@ -356,6 +387,18 @@ public class ScreenGame implements Screen {
 		shapeRenderer.setColor(Color.RED);
 		shapeRenderer.rect(rectangulo.x, rectangulo.y, rectangulo.width, rectangulo.height);
 		shapeRenderer.end();
+	}
+
+	public Knight3 getJugador1() {
+
+		return knight;
+
+	}
+
+	public Knight3 getJugador2() {
+
+		return knight2;
+
 	}
 
 	@Override

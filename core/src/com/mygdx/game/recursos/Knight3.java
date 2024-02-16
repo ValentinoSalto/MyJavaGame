@@ -14,7 +14,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.red.UtilesRed;
 import com.mygdx.game.utiles.Animador;
+import com.mygdx.game.utiles.Recursos;
 import com.mygdx.game.utiles.Render;
 
 public class Knight3 {
@@ -22,8 +24,7 @@ public class Knight3 {
 	private Sprite spr;
 	private Sprite spr2;
 	private float alto, ancho;
-	
-	
+
 	private Texture textura;
 	private Animador animacionQuieto;
 	private Animador animacionIzquierda;
@@ -78,13 +79,15 @@ public class Knight3 {
 	public Rectangle areaJugador;
 	private Vector2 posicion;
 	boolean pasoPlataforma = false;
+	private boolean enRed = false;
 
-	public Knight3(float x, float y, float ancho, float alto) {
+	public Knight3(float x, float y, float ancho, float alto, boolean enRed) {
 		posicion = new Vector2();
 		posicion.x = x;
 		posicion.y = y;
 		this.alto = alto;
 		this.ancho = ancho;
+		this.enRed = enRed;
 
 		posicion.y = 145;
 
@@ -259,14 +262,19 @@ public class Knight3 {
 		spr.draw(batch);
 		float x = spr.getX();
 		float ANCHO = spr.getWidth();
-		dibujarAreaInteraccion();
+//		dibujarAreaInteraccion();
 
 		moverPersonaje();
 	}
 
 	public void moverPersonaje() {
+		
+		if(!enRed) {
+			
+		
 		// Maneja las entradas del teclado para cambiar el estado del personaje
 		if (Gdx.input.isKeyPressed(Keys.A) && !bloqueando && moverse /* && direccion != EstadosKnight.WALKING_LEFT */) {
+
 			cambiarEstado(EstadosKnight.WALKING_LEFT);
 
 		} else if (Gdx.input.isKeyPressed(Keys.D) && !bloqueando
@@ -306,8 +314,30 @@ public class Knight3 {
 
 			}
 		}
+		}else {
+			// Maneja las entradas del teclado para cambiar el estado del personaje
+			if (Gdx.input.isKeyPressed(Keys.A)) {
+				System.out.println("moverse en red izquierda");
+				UtilesRed.hc.enviarMensaje("moverse#izquierda#"+UtilesRed.hc.IdCliente);
+				
+
+			}else if (Gdx.input.isKeyPressed(Keys.D)) {
+				System.out.println("moverse en red derecha");
+				UtilesRed.hc.enviarMensaje("moverse#derecha#"+UtilesRed.hc.IdCliente);
+				
+
+			}
+			
+		}
 	}
 
+	
+	public void actualizarPosicionRed(float x, float y) {
+		posicion.x = x;
+		posicion.y = y;
+		spr.setPosition(posicion.x, posicion.y);
+	}
+	
 	public void update() {
 
 	}
@@ -567,7 +597,7 @@ public class Knight3 {
 	}
 
 	private void crearAnimacion() {
-		
+
 	}
 
 	public void setPosition(float newX, float newY) {
