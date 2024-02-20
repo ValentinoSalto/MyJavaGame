@@ -75,6 +75,7 @@ public class Knight3 {
 	public boolean lastimable = false;
 	boolean bloqueoActivo;
 	boolean moverse = true;
+	float delta;
 	// colisiones
 	public Rectangle areaJugador;
 	private Vector2 posicion;
@@ -264,6 +265,8 @@ public class Knight3 {
 		float ANCHO = spr.getWidth();
 //		dibujarAreaInteraccion();
 
+		
+		delta = Gdx.graphics.getDeltaTime();
 		moverPersonaje();
 	}
 
@@ -326,11 +329,32 @@ public class Knight3 {
 				UtilesRed.hc.enviarMensaje("moverse#derecha#"+UtilesRed.hc.IdCliente);
 				
 
+			}else if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+				System.out.println("saltar");
+				UtilesRed.hc.enviarMensaje("moverse#arriba#"+UtilesRed.hc.IdCliente);
+				
+				
+				saltar();
+
 			}
 			
 		}
 	}
 
+	
+	
+	public void saltar() {
+		estadoActual = EstadosKnight.JUMP;
+		jumping = true;
+		
+		posicion.y += GRAVITY * delta;
+		
+		if(posicion.y >= ALTURA_SALTO) {
+			System.out.println("me caigo");
+		
+		}
+		
+	}
 	
 	public void actualizarPosicionRed(float x, float y) {
 		posicion.x = x;

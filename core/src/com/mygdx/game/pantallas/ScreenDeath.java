@@ -1,6 +1,8 @@
 package com.mygdx.game.pantallas;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.recursos.Hoguera;
 import com.mygdx.game.recursos.Imagen;
@@ -11,6 +13,7 @@ public class ScreenDeath implements Screen {
 
 	Imagen fondo;
 	SpriteBatch b;
+	private Music died;
 	boolean fadeInTerminado = false, termina = false;
 	float a = 0;
 	float contTiempo = 0, tiempoEspera = 5;
@@ -18,10 +21,14 @@ public class ScreenDeath implements Screen {
 
 	@Override
 	public void show() {
-
+		 
+		// Carga el fx desde el archivo
+		died = Gdx.audio.newMusic(Gdx.files.internal("Sounds/FX/Died.mp3"));
+		died.play();
 		System.out.println("show");
 		fondo = new Imagen(Recursos.PANTALLAMUERTE);
 		b = Render.batch;
+
 		fondo.setTransparencia(0);
 	}
 
@@ -65,7 +72,7 @@ public class ScreenDeath implements Screen {
 			contTiempoTermina += 0.04f;
 			if (contTiempoTermina > tiempoTermina) {
 				System.out.println("Cambio de pantalla");
-
+				died.dispose();
 				Render.app.setScreen(new ScreenMenu());
 
 			}

@@ -24,12 +24,13 @@ import com.mygdx.game.recursos.Fondo;
 import com.mygdx.game.recursos.Ghost;
 import com.mygdx.game.recursos.Hoguera;
 import com.mygdx.game.recursos.Knight3;
+import com.mygdx.game.recursos.KnightBlue;
 import com.mygdx.game.red.UtilesRed;
 import com.mygdx.game.utiles.Config;
 import com.mygdx.game.utiles.Render;
 
 public class ScreenGame implements Screen {
-
+	// Camara y HUD
 	Image personaje;
 	private OrthographicCamera hudCamera; // creo la camara del hud
 	private BitmapFont font;
@@ -37,14 +38,17 @@ public class ScreenGame implements Screen {
 	private Knight3 knight;
 	private Knight3 knight2;
 
+	// Enemigos
 	private Enemigo ghost1;
 	private Ghost ghost2;
 	private Ghost ghost3;
 	private Boss1 boss;
 
+	// Hoguera checkpoints
 	private Hoguera hoguera1;
 	private Hoguera hoguera2;
 
+	// Plataformas
 	public Rectangle plataforma1;
 	public Rectangle plataforma2;
 	public Rectangle plataforma3;
@@ -67,13 +71,24 @@ public class ScreenGame implements Screen {
 	private TiledMapRenderer mapaRenderer3; // render del mapa
 	private TiledMap mapa4; // info del mapa
 	private TiledMapRenderer mapaRenderer4; // render del mapa
+	private TiledMap mapa5; // info del mapa
+	private TiledMapRenderer mapaRenderer5; // render del mapa
+	private TiledMap mapa6; // info del mapa
+	private TiledMapRenderer mapaRenderer6; // render del mapa
+	private TiledMap mapa7; // info del mapa
+	private TiledMapRenderer mapaRenderer7; // render del mapa
+	private TiledMap mapa8; // info del mapa
+	private TiledMapRenderer mapaRenderer8; // render del mapa
 
 	// red
 	public boolean enRed = true;
 
 	public ScreenGame(boolean red) {
-		UtilesRed.hc.setGame(this);
 		enRed = red;
+
+		if(enRed) {
+		UtilesRed.hc.setGame(this);
+		}
 	}
 
 	private void chequearLimites() {
@@ -82,6 +97,9 @@ public class ScreenGame implements Screen {
 		float knightWidth = knight.getWidth();
 		float knightHeight = knight.getHeight();
 
+		
+		
+
 		// Definir límites de transición
 		float limiteIzquierdo = 0;
 		float limiteDerecho = Config.ANCHO;
@@ -89,19 +107,36 @@ public class ScreenGame implements Screen {
 		float limiteSuperior = Config.ALTO;
 
 		// Verificar si el personaje ha salido de los límites
-		if (knightX + knightWidth < limiteIzquierdo) {
-			// Personaje salió por la izquierda
+		if (enRed) {
+			if (knightX + knightWidth < limiteIzquierdo) {
+				// Personaje salió por la izquierda
 
-		} else if (knightX > limiteDerecho) {
-			// Personaje salió por la derecha
-			cambiarEscenario();
-		} else if (knightY + knightHeight < limiteInferior) {
-			// Personaje salió por abajo
+			} else if (knightX > limiteDerecho ) {
+				// Personaje salió por la derecha
+				cambiarEscenario();
+			} else if (knightY + knightHeight < limiteInferior) {
+				// Personaje salió por abajo
 
-		} else if (knightY > limiteSuperior) {
-			// Personaje salió por arriba
+			} else if (knightY > limiteSuperior) {
+				// Personaje salió por arriba
 
+			}
+		} else {
+			if (knightX + knightWidth < limiteIzquierdo) {
+				// Personaje salió por la izquierda
+
+			} else if (knightX > limiteDerecho) {
+				// Personaje salió por la derecha
+				cambiarEscenario();
+			} else if (knightY + knightHeight < limiteInferior) {
+				// Personaje salió por abajo
+
+			} else if (knightY > limiteSuperior) {
+				// Personaje salió por arriba
+
+			}
 		}
+
 	}
 
 	private void cambiarEscenario() {
@@ -113,21 +148,60 @@ public class ScreenGame implements Screen {
 			mapaRenderer2.setView(cam);
 			// Restablecer la posición inicial del los personajes en el nuevo escenario
 			knight.setPosition(20, 145);
-			knight2.setPosition(20, 160);
+			if(enRed) {
+				knight2.setPosition(50, 145);				
+			}
 		} else if (numeroEscenario == 2) {
 			numeroEscenario = 3;
 
 			// Establece la vista del mapa
 			mapaRenderer3.setView(cam);
+
 			// Restablecer la posición inicial del los personajes en el nuevo escenario
-			knight.setPosition(100, 145);
+			knight.setPosition(20, 145);
+			if(enRed) {
+				knight2.setPosition(50, 145);				
+			}
 		} else if (numeroEscenario == 3) {
 			numeroEscenario = 4;
 
 			// Establece la vista del mapa
 			mapaRenderer4.setView(cam);
 			// Restablecer la posición inicial del los personajes en el nuevo escenario
-			knight.setPosition(100, 145);
+			knight.setPosition(20, 145);
+			if(enRed) {
+				knight2.setPosition(50, 145);				
+			}
+		} else if (numeroEscenario == 4) {
+			numeroEscenario = 5;
+
+			// Establece la vista del mapa
+			mapaRenderer5.setView(cam);
+			// Restablecer la posición inicial del los personajes en el nuevo escenario
+			knight.setPosition(20, 145);
+			if(enRed) {
+				knight2.setPosition(50, 145);				
+			}
+		} else if (numeroEscenario == 5) {
+			numeroEscenario = 6;
+
+			// Establece la vista del mapa
+			mapaRenderer6.setView(cam);
+			// Restablecer la posición inicial del los personajes en el nuevo escenario
+			knight.setPosition(20, 145);
+			if(enRed) {
+				knight2.setPosition(50, 145);				
+			}
+		} else if (numeroEscenario == 6) {
+			numeroEscenario = 7;
+
+			// Establece la vista del mapa
+			mapaRenderer7.setView(cam);
+			// Restablecer la posición inicial del los personajes en el nuevo escenario
+			knight.setPosition(20, 145);
+			if(enRed) {
+				knight2.setPosition(50, 145);				
+			}
 		}
 		/*
 		 * else if (numeroEscenario == 1) { // Cargar el nuevo escenario y ajustar la
@@ -167,6 +241,7 @@ public class ScreenGame implements Screen {
 		// Inicializa la cámara del HUD
 		hudCamera = new OrthographicCamera();
 		hudCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		hudCamera.zoom = 2;
 
 		// Crear el fondo
 		fondo1 = new Fondo("Mapas/Mapa1/background_layer_1.png");
@@ -186,6 +261,15 @@ public class ScreenGame implements Screen {
 		mapa4 = new TmxMapLoader().load("Mapas/Mapa1/Mapalobby.tmx");
 		mapaRenderer4 = new OrthogonalTiledMapRenderer(mapa4); // crea el render
 
+		mapa5 = new TmxMapLoader().load("Mapas/Mapa2/Mapa 1.tmx");
+		mapaRenderer5 = new OrthogonalTiledMapRenderer(mapa5); // crea el render
+
+		mapa6 = new TmxMapLoader().load("Mapas/Mapa2/Mapa 2.tmx");
+		mapaRenderer6 = new OrthogonalTiledMapRenderer(mapa6); // crea el render
+
+		mapa7 = new TmxMapLoader().load("Mapas/Mapa2/Mapa 3.tmx");
+		mapaRenderer7 = new OrthogonalTiledMapRenderer(mapa7); // crea el render
+
 		// Plataformas
 		plataforma1 = new Rectangle(9 * 24, 10 * 24, 7 * 24, 24);
 		plataforma2 = new Rectangle(33 * 24, 10 * 24, 7 * 24, 24);
@@ -202,14 +286,11 @@ public class ScreenGame implements Screen {
 
 		// Inicializar personajes
 
-		
-		
-
-		if (enRed) {
+		if (enRed) {//Siempre chequear que el juego esta en red para hacer cualquier cosa con el knigth2
 			knight = new Knight3(20, 145, 100, 100, true);
 			knight2 = new Knight3(50, 145, 100, 100, true);
 			System.out.println("creado");
-		}else {
+		} else {
 			knight = new Knight3(20, 145, 100, 100, false);
 		}
 
@@ -225,7 +306,7 @@ public class ScreenGame implements Screen {
 	@Override
 	public void render(float delta) {
 
-		if (!UtilesRed.hc.salirDelJuego) {
+
 
 			// Limpio la pantalla (solamente para ver bien el caballero despues va a tener
 			// un fondo)
@@ -265,29 +346,31 @@ public class ScreenGame implements Screen {
 			 * knight.chequearColisiones(ghost2); knight.chequearColisiones(ghost3);
 			 */
 
-			knight.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 
 			Render.batch.begin();
+		
+
+			
+			//knight2.updateAnimation(delta);
 
 			// Dibuja el fondo
 			fondo1.render();
 			fondo2.render();
 			fondo3.render();
 
+			
+			
+
+			
 			Render.batch.end();
 
 			Render.batch.begin();
 
 			Render.batch.setProjectionMatrix(cam.combined);
 
-			knight.render(Render.batch);
+			//knight.render(Render.batch);
 
-			if (enRed) {
-				knight2.updateAnimation(delta);
-				//System.out.println("renderizando");
-				knight2.render(Render.batch);
-			}
-
+			
 			if (numeroEscenario == 1) {
 
 				mapaRenderer1.setView(cam);
@@ -339,8 +422,40 @@ public class ScreenGame implements Screen {
 				mapaRenderer4.render();
 				// System.out.println("Lobby");
 //			Gdx.app.log("Boton inicar", "Click");
-			}
+			}else if (numeroEscenario == 5) {
+				// Establece la vista del mapa
+				mapaRenderer5.setView(cam);
+				mapaRenderer5.render();
 
+			}else if (numeroEscenario == 6) {
+				// Establece la vista del mapa
+				mapaRenderer6.setView(cam);
+				mapaRenderer6.render();
+
+			}else if (numeroEscenario == 7) {
+				// Establece la vista del mapa
+				mapaRenderer7.setView(cam);
+				mapaRenderer7.render();
+
+			}
+			if (enRed) {
+				knight2.render(Render.batch);
+				knight2.updateAnimation(delta);
+				knight2.moverPersonaje();
+				knight.render(Render.batch);
+				knight.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+				knight.moverPersonaje();
+				// System.out.println("renderizando");
+				//knight2.render(Render.batch);
+			}else {
+				knight.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+				knight.moverPersonaje();
+				knight.render(Render.batch);
+			}
+			
+
+			
+			
 			// Actualiza el temporizador
 			Ghost.tiempoDesdeUltimoAtaque += delta;
 			// Actualiza el temporizador
@@ -375,10 +490,14 @@ public class ScreenGame implements Screen {
 			 * // Finaliza el dibujado de líneas sr.end();
 			 */
 
-		} else {
-			Render.app.setScreen(new ScreenMenu());
+
+			if(enRed) {
+			if(UtilesRed.hc.salirDelJuego) {
+				Render.app.setScreen(new ScreenMenu());				
+			}
+			}
 		}
-	}
+	
 
 	public void dibujarAreaInteraccion(Rectangle rectangulo) {
 		ShapeRenderer shapeRenderer = new ShapeRenderer();

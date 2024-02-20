@@ -53,7 +53,7 @@ public class EsperaConexion implements Screen, Hud{
 	public void poblarStage() {
 		
 		tabla.setFillParent(true);
-		stage.setDebugAll(true);
+		//stage.setDebugAll(true);
 		
 		
 		contenedor.add(textoEsperando);

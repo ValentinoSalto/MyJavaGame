@@ -18,12 +18,12 @@ public abstract class Texturas {
 	public static final String KnightJumpTexture ="Personajes/Hero/1/jump.png";
 	public static final String KnightFallTexture ="Personajes/Hero/1/fall.png";
 	
-	
-	
+	//New knight
+	public static final String KnightSpriteSheet ="Personajes/Warrior/SpriteSheet/Spritesheet.png";
 	//Texturas Ghost
 	public static final String ghostIdleTexture = "Personajes/Ghost-Files/PNG/ghost-idle.png";
 	public static final String ghostSpriteSheet = "Personajes/Ghost-Files/PNG/ghost-idle-1.png";
-	public static final String GhostWalkingLeftTexture = "Personajes/Ghost-Files/PNG/ghost-idle2.png";
+	
 	
 	//Texturas Boss1
 	public static final String BossIdleTexture = "Personajes/Boss1/idle.png";

@@ -73,6 +73,7 @@ public class HiloCliente extends Thread {
 			// game.enRed = true;
 			System.out.println("Que empieze el juego!!!");
 			empezar = true;
+		
 			break;
 			
 		case "Exito":
@@ -83,18 +84,32 @@ public class HiloCliente extends Thread {
 			}
 				break;
 		case "seMovio":
+				
 				if(mensajeCompuesto[3].equals("0")) {
 					game.getJugador1().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),Float.valueOf(mensajeCompuesto[2]));
-					System.out.println("se movio 0");
+					//System.out.println("se movio 0");
 				}else {
 					game.getJugador2().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),Float.valueOf(mensajeCompuesto[2]));
-					System.out.println("se movio 1");
+					//System.out.println("se movio 1");
 				}
+			
 			break;
+			
+		case "saltando":
+			if(mensajeCompuesto[3].equals("0")) {
+				game.getJugador1().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),Float.valueOf(mensajeCompuesto[2]));
+				
+			}else {
+				game.getJugador2().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),Float.valueOf(mensajeCompuesto[2]));
+			}
+			System.out.println(IdCliente +  " Estoy Saltandooooo");
+			break;
+			
+		
 		}
 
 	}
-
+ 
 	public void enviarMensaje(String msg) {
 		byte[] mensaje = msg.getBytes();
 

@@ -13,7 +13,7 @@ public class Animador implements ApplicationListener {
 
 	//https://libgdx.com/wiki/graphics/2d/2d-animation
 	// Constant rows and columns of the sprite sheet
-	private static final int FRAME_COLS = 7, FRAME_ROWS = 2;
+	private int FRAME_COLS , FRAME_ROWS ;
 	private int filaDelSpriteSheet;
 
 	// Objects used
@@ -26,10 +26,15 @@ public class Animador implements ApplicationListener {
 	// A variable for tracking elapsed time for the animation
 	float stateTime;
 	
-	public Animador(String rutaSpriteSheet, Vector2 posicion, int filaDelSpriteSheet) {
+	public Animador(String rutaSpriteSheet, Vector2 posicion, int filaDelSpriteSheet, int columna, int fila) {
 		this.rutaSpriteSheet = rutaSpriteSheet;
 		this.filaDelSpriteSheet = filaDelSpriteSheet;
 		this.posicion = posicion;
+		FRAME_COLS = columna;
+		FRAME_ROWS = fila;
+		
+		
+		create();
 	}
 
 	@Override
@@ -69,7 +74,7 @@ public class Animador implements ApplicationListener {
 
 		// Get current frame of animation for the current stateTime
 		TextureRegion currentFrame = animacion.getKeyFrame(stateTime, true);
-		Render.batch.draw(currentFrame, posicion.x-32, posicion.y-40);
+		Render.batch.draw(currentFrame, posicion.x-24, posicion.y-24);
 	}
 	
 	
