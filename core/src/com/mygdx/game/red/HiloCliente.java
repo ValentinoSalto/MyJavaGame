@@ -95,7 +95,7 @@ public class HiloCliente extends Thread {
 			
 			break;
 			
-		case "saltando":
+		case "saltar":
 			if(mensajeCompuesto[3].equals("0")) {
 				game.getJugador1().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),Float.valueOf(mensajeCompuesto[2]));
 				

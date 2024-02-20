@@ -60,13 +60,11 @@ public class Knight3 {
 	private boolean ataqueIniciado;
 	private float tiempoAtaque;
 	private EstadosKnight estadoActual;
-	private EstadosKnight direccion;
 	public int vida = 100;
 	public boolean bloqueando = false;
 	public boolean jumping = false;
 	public boolean terminoSalto = true;
 	public boolean cayendo = false;
-	private boolean spacePressed = false;
 	private float GROUND_LEVEL = 145f;
 	public final float GRAVITY = -100; // Ajusta según la gravedad deseada
 	public final float JUMP_SPEED = 50; // Ajusta según la velocidad de salto deseada
@@ -77,19 +75,23 @@ public class Knight3 {
 	boolean bloqueoActivo;
 	boolean moverse = true;
 	float delta;
+	
+	private String rutaTextura;
 	// colisiones
 	public Rectangle areaJugador;
 	private Vector2 posicion;
 	boolean pasoPlataforma = false;
 	private boolean enRed = false;
 
-	public Knight3(float x, float y, float ancho, float alto, boolean enRed) {
+	public Knight3(float x, float y, float ancho, float alto, boolean enRed, String rutaTextura) {
+		
 		posicion = new Vector2();
 		posicion.x = x;
 		posicion.y = y;
 		this.alto = alto;
 		this.ancho = ancho;
 		this.enRed = enRed;
+		this.rutaTextura = rutaTextura;
 
 		posicion.y = 145;
 
@@ -344,12 +346,7 @@ public class Knight3 {
 				
 
 			}else if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-				System.out.println("saltar");
 				UtilesRed.hc.enviarMensaje("moverse#arriba#"+UtilesRed.hc.IdCliente);
-				
-				
-				inciarSalto();
-
 			}
 			
 			
@@ -633,7 +630,6 @@ public class Knight3 {
 		if (areaJugador.overlaps(plataformas)) {
 			lastimable = true;
 			System.out.println("contacto");
-			direccion = estadoActual;
 			pasoPlataforma = true;
 
 		} else {
