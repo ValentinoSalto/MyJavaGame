@@ -65,10 +65,11 @@ public class Knight3 {
 	public boolean bloqueando = false;
 	public boolean jumping = false;
 	public boolean terminoSalto = true;
+	public boolean cayendo = false;
 	private boolean spacePressed = false;
 	private float GROUND_LEVEL = 145f;
-	public final float GRAVITY = -800; // Ajusta según la gravedad deseada
-	public final float JUMP_SPEED = 500; // Ajusta según la velocidad de salto deseada
+	public final float GRAVITY = -100; // Ajusta según la gravedad deseada
+	public final float JUMP_SPEED = 50; // Ajusta según la velocidad de salto deseada
 	public final float RANGO_ATAQUE = 50; // Ajusta según el rango de ataque deseado
 	private final float ALTURA_SALTO = 300f;
 	public float ySpeed = 0;
@@ -286,6 +287,7 @@ public class Knight3 {
 
 		} else if (Gdx.input.isKeyJustPressed(Keys.SPACE) && !bloqueando) {
 
+			inciarSalto();
 			cambiarEstado(EstadosKnight.JUMP);
 
 		} else if (Gdx.input.isKeyJustPressed(Keys.E)) {
@@ -307,16 +309,28 @@ public class Knight3 {
 				// Si el clic derecho no está presionado, detiene la acción de bloqueo
 				bloqueoActivo = false;
 				// Cambia el estado del personaje a IDLE (o cualquier otro estado apropiado)
-				if (terminoSalto) {
-					cambiarEstado(EstadosKnight.IDLE);
-				}
 			}
-		} else {
-			if (terminoSalto) {
-				cambiarEstado(EstadosKnight.IDLE);
-
-			}
+		
+		}else {
+			estadoActual = EstadosKnight.IDLE;
 		}
+		
+		if(!terminoSalto) {
+			
+		if(jumping) {
+			moverse = false;
+			estadoActual = EstadosKnight.JUMP;
+			saltar();
+		}
+		
+		if(cayendo) {
+			estadoActual = EstadosKnight.FALL;
+			caer();
+		}
+		}
+
+		
+		
 		}else {
 			// Maneja las entradas del teclado para cambiar el estado del personaje
 			if (Gdx.input.isKeyPressed(Keys.A)) {
@@ -334,24 +348,73 @@ public class Knight3 {
 				UtilesRed.hc.enviarMensaje("moverse#arriba#"+UtilesRed.hc.IdCliente);
 				
 				
-				saltar();
+				inciarSalto();
 
 			}
+			
 			
 		}
 	}
 
 	
 	
-	public void saltar() {
+	public void inciarSalto() {
+		//salto
 		estadoActual = EstadosKnight.JUMP;
 		jumping = true;
+		moverse = false;
+		terminoSalto = false;
 		
-		posicion.y += GRAVITY * delta;
+	}
+	
+	
+	public void saltar() {
+		if(!cayendo) {
+				
+		posicion.y -= GRAVITY * delta;
 		
-		if(posicion.y >= ALTURA_SALTO) {
-			System.out.println("me caigo");
 		
+		if (posicion.y < ALTURA_SALTO) {// la altura deseada
+			posicion.y += JUMP_SPEED * delta; //esto se sube para arriba
+			
+			
+	}
+
+		if(posicion.y >= ALTURA_SALTO) {//aca ya estas cayendo
+			cayendo = true;
+			
+			
+		}
+	}
+
+
+	}
+	
+	public void caer() {
+		if(!terminoSalto && cayendo) {
+		estadoActual = EstadosKnight.FALL;
+		posicion.y += GRAVITY * delta*2;
+		System.out.println(posicion.y);
+		
+		
+		if(!pasoPlataforma) {
+			
+		if (posicion.y <=  GROUND_LEVEL) {// la altura deseada
+			posicion.y = GROUND_LEVEL ; //aca cuando termino de caer
+			terminoSalto = true;
+			moverse = true;
+			jumping = false;
+			cayendo = false;
+			estadoActual = EstadosKnight.IDLE;
+		}
+		}else {
+			posicion.y = 260 ; //aca cuando termino de caer
+			terminoSalto = true;
+			moverse = true;
+			jumping = false;
+			cayendo = false;
+			estadoActual = EstadosKnight.IDLE;
+		}
 		}
 		
 	}
@@ -403,44 +466,44 @@ public class Knight3 {
 			break;
 
 		case JUMP:
-			moverse = false;
-			jumping = true;
-			terminoSalto = false;
-
-			if (posicion.y < ALTURA_SALTO) {// la altura deseada
-				posicion.y += JUMP_SPEED * delta;
-
-				if (posicion.y >= ALTURA_SALTO) {
-					estadoActual = EstadosKnight.FALL;
-				}
-
-			}
+//			moverse = false;
+//			jumping = true;
+//			terminoSalto = false;
+//
+//			if (posicion.y < ALTURA_SALTO) {// la altura deseada
+//				posicion.y += JUMP_SPEED * delta;
+//
+//				if (posicion.y >= ALTURA_SALTO) {
+//					estadoActual = EstadosKnight.FALL;
+//				}
+//
+//			}
 
 			break;
 
 		case FALL:
-
-			if (!pasoPlataforma) {
-
-				if (posicion.y > GROUND_LEVEL) {
-					posicion.y -= JUMP_SPEED * delta;
-
-				}
-
-				if (posicion.y <= GROUND_LEVEL) {
-					jumping = false;
-					terminoSalto = true;
-					estadoActual = EstadosKnight.IDLE;
-					moverse = true;
-				} else {
-					spr.setRegion(fallAnimation.getKeyFrame(time, true));
-				}
-
-			} else {
-				posicion.y = 260;
-				estadoActual = EstadosKnight.IDLE;
-				terminoSalto = true;
-			}
+//
+//			if (!pasoPlataforma) {
+//
+//				if (posicion.y > GROUND_LEVEL) {
+//					posicion.y -= JUMP_SPEED * delta;
+//
+//				}
+//
+//				if (posicion.y <= GROUND_LEVEL) {
+//					jumping = false;
+//					terminoSalto = true;
+//					estadoActual = EstadosKnight.IDLE;
+//					moverse = true;
+//				} else {
+//					spr.setRegion(fallAnimation.getKeyFrame(time, true));
+//				}
+//
+//			} else {
+//				posicion.y = 260;
+//				estadoActual = EstadosKnight.IDLE;
+//				terminoSalto = true;
+//			}
 			break;
 
 		/*
@@ -575,7 +638,6 @@ public class Knight3 {
 
 		} else {
 			lastimable = false;
-
 			pasoPlataforma = false;
 
 		}
