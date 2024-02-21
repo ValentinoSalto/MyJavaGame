@@ -60,7 +60,7 @@ public class ScreenGame implements Screen {
 	private Fondo fondo1;
 	private Fondo fondo2;
 	private Fondo fondo3;
-	private OrthographicCamera cam; // creo la camara
+	private OrthographicCamera cam, camKnight; // creo la camara
 
 	// Mapas
 	private TiledMap mapa1; // info del mapa
@@ -237,6 +237,17 @@ public class ScreenGame implements Screen {
 //		Gdx.input.setCursorCatched(true);
 		cam = new OrthographicCamera(Config.ANCHO, Config.ALTO); // creo la camara
 		cam.setToOrtho(false, Config.ANCHO, Config.ALTO);
+		cam.position.x = Config.ANCHO/2;
+		cam.position.y = Config.ALTO/2;
+		
+		camKnight = new OrthographicCamera(Config.ANCHO, Config.ALTO);
+		camKnight.setToOrtho(false, Config.ANCHO, Config.ALTO);
+		camKnight.position.x = Config.ANCHO/2;
+		camKnight.position.y = Config.ALTO/2;
+		
+		
+		
+		cam.zoom = 1;
 
 		// Inicializa la cámara del HUD
 		hudCamera = new OrthographicCamera();
@@ -287,11 +298,11 @@ public class ScreenGame implements Screen {
 		// Inicializar personajes
 
 		if (enRed) {//Siempre chequear que el juego esta en red para hacer cualquier cosa con el knigth2
-			knight = new Knight3(20, 145, 100, 100, true);
-			knight2 = new Knight3(50, 145, 100, 100, true);
+			knight = new Knight3(20, 168, 100, 100, true);
+			knight2 = new Knight3(50, 168, 100, 100, true);
 			System.out.println("creado");
 		} else {
-			knight = new Knight3(20, 145, 100, 100, false);
+			knight = new Knight3(20, 168, 100, 100, false);
 		}
 
 		ghost1 = new Ghost(500, 145);
@@ -306,32 +317,54 @@ public class ScreenGame implements Screen {
 	@Override
 	public void render(float delta) {
 
+		    // Limpio la pantalla (solamente para ver bien el caballero despues va a tener un fondo)
+		    Gdx.gl.glClearColor(0, 0, 0, 1);
+		    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		    // Actualiza la posición de la cámara para que siga al personaje
+		    cam.position.set(Config.ANCHO/2, Config.ALTO/2, 0);
+		    cam.update();
+
+		    // Actualiza la posición de la cámara camKnight para que siga al personaje y a los enemigos
+		    camKnight.position.set(Config.ANCHO/2, Config.ALTO/2, 0);
+		    camKnight.update();
+
+		    // Renderiza el mapa con la cámara cam
+		    Render.batch.setProjectionMatrix(cam.combined);
+		    Render.batch.begin();
+		    cam.zoom = 1f;
+		 // Ajusta la vista del mapa
+		 			float mapWidth = mapa1.getProperties().get("width", Integer.class)
+		 					* mapa1.getProperties().get("tilewidth", Integer.class);
+		 			float mapHeight = mapa1.getProperties().get("height", Integer.class)
+		 					* mapa1.getProperties().get("tileheight", Integer.class);
+
+		 			float viewportWidth = cam.viewportWidth * cam.zoom;
+		 			float viewportHeight = cam.viewportHeight * cam.zoom;
+
+		 			float minX = viewportWidth / 2;
+		 			float maxX = mapWidth - viewportWidth / 2;
+		 			float minY = viewportHeight / 2;
+		 			float maxY = mapHeight - viewportHeight / 2;
+
+		 			float cameraX = MathUtils.clamp(cam.position.x, minX, maxX);
+		 			float cameraY = MathUtils.clamp(cam.position.y, minY, maxY);
+
+					fondo1.render();
+					fondo2.render();
+					fondo3.render();
+					
+		    Render.batch.end();
+
+		    // Renderiza los personajes y enemigos con la cámara camKnight
+		    Render.batch.setProjectionMatrix(camKnight.combined);
 
 
+		    // Dibujar aquí los personajes y enemigos
+		    // ...
 			// Limpio la pantalla (solamente para ver bien el caballero despues va a tener
 			// un fondo)
-			cam.update();
-			Render.batch.setProjectionMatrix(cam.combined);
 
-			// Ajusta la vista del mapa
-			float mapWidth = mapa1.getProperties().get("width", Integer.class)
-					* mapa1.getProperties().get("tilewidth", Integer.class);
-			float mapHeight = mapa1.getProperties().get("height", Integer.class)
-					* mapa1.getProperties().get("tileheight", Integer.class);
-
-			float viewportWidth = cam.viewportWidth * cam.zoom;
-			float viewportHeight = cam.viewportHeight * cam.zoom;
-
-			float minX = viewportWidth / 2;
-			float maxX = mapWidth - viewportWidth / 2;
-			float minY = viewportHeight / 2;
-			float maxY = mapHeight - viewportHeight / 2;
-
-			float cameraX = MathUtils.clamp(cam.position.x, minX, maxX);
-			float cameraY = MathUtils.clamp(cam.position.y, minY, maxY);
-
-			cam.position.set(cameraX, cameraY, 0);
-			cam.update();
 
 			// Actualiza la posición de la cámara para que siga al personaje
 			/*
@@ -345,28 +378,22 @@ public class ScreenGame implements Screen {
 			 * //Maneja las colisiones knight.chequearColisiones(ghost1);
 			 * knight.chequearColisiones(ghost2); knight.chequearColisiones(ghost3);
 			 */
-
-
 			Render.batch.begin();
-		
-
+		    camKnight.zoom = .1f;
+			
 			
 			//knight2.updateAnimation(delta);
 
 			// Dibuja el fondo
-			fondo1.render();
-			fondo2.render();
-			fondo3.render();
+
 
 			
 			
 
 			
-			Render.batch.end();
 
-			Render.batch.begin();
 
-			Render.batch.setProjectionMatrix(cam.combined);
+			camKnight.update();
 
 			//knight.render(Render.batch);
 
@@ -439,21 +466,32 @@ public class ScreenGame implements Screen {
 
 			}
 			if (enRed) {
-				knight2.render(Render.batch);
-				knight2.updateAnimation(delta);
+				
+				
 				knight2.moverPersonaje();
-				knight.render(Render.batch);
-				knight.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+				knight2.updateAnimation(delta);	
+				knight2.alternarSprites();
+				//knight.render(Render.batch);
+				knight.alternarSprites();
 				knight.moverPersonaje();
+				knight.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
+				
 				// System.out.println("renderizando");
 				//knight2.render(Render.batch);
 			}else {
+			
+				knight.moverPersonaje();
 				knight.updateAnimation(delta); // Actualiza la animación del personaje según el estado actual
 				knight.moverPersonaje();
-				knight.render(Render.batch);
+				knight.alternarSprites();
+			
+				//knight.render(Render.batch);
 			}
 			
-
+		
+			if(enRed) {
+				
+			}
 			
 			
 			// Actualiza el temporizador
@@ -477,9 +515,9 @@ public class ScreenGame implements Screen {
 					numeroEscenario = 0;
 				}
 			}
-
+			
 			Render.batch.end();
-
+			
 			/*
 			 * // Inicia el dibujado de líneas sr.begin(ShapeType.Line); sr.setColor(255, 0,
 			 * 0, 1); // Establece el color de la línea (blanco en este caso)

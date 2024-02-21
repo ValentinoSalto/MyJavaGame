@@ -92,6 +92,7 @@ public class ScreenMenu implements Screen, Hud {
 				Render.app.setScreen(new ScreenGame(false));
 				ScreenGame.numeroEscenario = 1;
 				stage.dispose();
+				backgroundMusic.stop();
 				backgroundMusic.dispose();
 			}
 
@@ -119,6 +120,7 @@ public class ScreenMenu implements Screen, Hud {
 				// System.out.println(HelpDebug.debub(getClass())+"click");
 				Render.limpiarPantalla(0, 0, 0);
 				Render.app.setScreen(new EsperaConexion());
+				backgroundMusic.pause();
 				backgroundMusic.dispose();
 
 			}

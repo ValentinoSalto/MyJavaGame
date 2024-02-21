@@ -178,8 +178,8 @@ public class Enemigo {
 	private void crearAnimaciones(String textura) {
 		
 		//Animaciones ghost
-		animacionIzquierda = new Animador(textura, posicion, 0,1,6);
-		animacionDerecha = new Animador(textura, posicion, 1,1,6);
+		animacionIzquierda = new Animador(textura, posicion, 0,7,2);
+		animacionDerecha = new Animador(textura, posicion, 1,7,2);
 
 		animacionIzquierda.create();
 		animacionDerecha.create();
