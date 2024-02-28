@@ -66,34 +66,24 @@ public class ScreenMenu implements Screen, Hud {
 		textoMultiJugador = new Label("Multijugador", estiloLabel);
 		textoSalir = new Label("Salir", estiloLabel);
 
-		textoJugar.addListener(new ClickListener() {
-
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				Gdx.app.log("Label jugar", "Click");
-				// resultadosHUD.cerrar = !mostrarResultadosBatalla;
-				// System.out.println(HelpDebug.debub(getClass())+"click");
-				Render.app.setScreen(new ScreenGame(false));
-				ScreenGame.numeroEscenario = 1;
-				stage.dispose();
-			}
-
-		});
+		
 
 		textoJugar.addListener(new ClickListener() {
 
 			//Diferentes funciones para las interacciones del mouse con los textos del menu.
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-
+				ScreenGame.numeroEscenario = 1;
 				Gdx.app.log("Label jugar", "Click");
 				// resultadosHUD.cerrar = !mostrarResultadosBatalla;
 				// System.out.println(HelpDebug.debub(getClass())+"click");
+				backgroundMusic.pause();
+				backgroundMusic.dispose();
 				Render.app.setScreen(new ScreenGame(false));
 				ScreenGame.numeroEscenario = 1;
 				stage.dispose();
-				backgroundMusic.stop();
-				backgroundMusic.dispose();
+				
+				
 			}
 
 			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {

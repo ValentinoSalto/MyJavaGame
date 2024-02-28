@@ -5,4 +5,5 @@ public class UtilesRed {
 
 	    public static ScreenGame game;
 		public static HiloCliente hc;
+		public static boolean jugador = true; // diferencia el jugador rojo o azul
 	}

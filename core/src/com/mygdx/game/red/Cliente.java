@@ -9,6 +9,7 @@ public class Cliente {
 		UtilesRed.hc = new HiloCliente(UtilesRed.game);
 		UtilesRed.hc.start();			
 		UtilesRed.hc.enviarMensaje("conectar");		
+		
 	}
 
 	public void empezarChat() {

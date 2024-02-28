@@ -5,5 +5,5 @@ public interface Hud {
 	void crearFuente();
 	void crearActores();
 	void poblarStage();
-
+	
 }

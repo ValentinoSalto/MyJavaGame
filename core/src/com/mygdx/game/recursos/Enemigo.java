@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.pantallas.ScreenGame;
+import com.mygdx.game.pantallas.ScreenWin;
 import com.mygdx.game.utiles.Animador;
 import com.mygdx.game.utiles.Render;
 
@@ -18,20 +20,29 @@ public class Enemigo {
 	private float alto, ancho;
 	private Vector2 posicion;
 	private float tiempoEntreAtaques = 1f; // 1 segundo de espera entre ataques
-	public int vida = 20;
+	public float vida = 20;
+	public final float DISTANCIA_FRENADO = 24;
 	public boolean detectado = false;
+	public boolean muerto = false;
+	public boolean puedeMoverse = true;
+	public boolean puedeAtacar = true;
 	public static float tiempoDesdeUltimoAtaque = 0f;
 	private float time;
 	private EstadosEnemigos estadoActual;
 	private boolean disposed;
 	private Texture textura;
-	private Animador animacionIzquierda;
-	private Animador animacionDerecha;
+	public Animador idleAnimation;
+	public Animador walkingLeftAnimation;
+	public Animador walkingRightAnimation;
+	public Animador bossIdleAnimation;
+	public Animador bossWalkingLeftAnimation;
+	public Animador bossWalkingRightAnimation;
+	private int columna, fila;
 
 	// colisiones
 	public Rectangle areaJugador;
 
-	public Enemigo(String textura, int vida, float x, float y) {
+	public Enemigo(String textura, int vida, float x, float y, int columna, int fila) {
 		posicion = new Vector2();
 		this.textura = new Texture(textura);
 		this.vida = vida;
@@ -39,6 +50,8 @@ public class Enemigo {
 		this.posicion.x = x;
 		this.ancho = ancho;
 		this.alto = alto;
+		this.columna = columna;
+		this.fila = fila;
 		estadoActual = EstadosEnemigos.IDLE;
 		spr = new Sprite(this.textura);
 		crearAnimaciones(textura);
@@ -51,23 +64,31 @@ public class Enemigo {
 		// currentFrame = (TextureRegion) idleAnimation.getKeyFrame(time, true);
 		// Dibuja el sprite correspondiente a la animación del estado actual
 		// spr.draw(batch);
-		
 
-		//dibujarAreaInteraccion();
+		// dibujarAreaInteraccion();
 
-		switch (estadoActual) {
+		if (!muerto) {
+			switch (estadoActual) {
 
-		case IDLE:
-			animacionIzquierda.render();
-			break;
+			case IDLE:
 
-		case WALKING_LEFT:
-			animacionIzquierda.render();
-			break;
-		case WALKING_RIGHT:
-			animacionDerecha.render();
-			break;
+				idleAnimation.render();
+
+				break;
+
+			case WALKING_LEFT:
+				walkingLeftAnimation.render();
+
+				break;
+			case WALKING_RIGHT:
+				walkingRightAnimation.render();
+
+				break;
+			case ATTACK:
+				break;
+			}
 		}
+
 	}
 
 	public void dibujarAreaInteraccion() {
@@ -100,10 +121,17 @@ public class Enemigo {
 			detectado = true;
 		}
 
-		// Actualiza la posición del Ghost
-		if (detectado) {
-			setPosition(newX, newY);
+		float distanciaActual = knight.getPosicion().x - posicion.x;
 
+		if ((distanciaActual < 0 ? distanciaActual * -1 : distanciaActual * 1) <= DISTANCIA_FRENADO) {
+			puedeMoverse = false;
+		} else {
+			puedeMoverse = true;
+		}
+
+		// Actualiza la posición del Ghost
+		if (detectado && puedeMoverse) {
+			setPosition(newX, newY);
 		}
 
 		if (newX < knight.getX()) {
@@ -124,9 +152,13 @@ public class Enemigo {
 			if (tiempoDesdeUltimoAtaque >= tiempoEntreAtaques) {
 				System.out.println("entro 1");
 				if (tiempoDesdeUltimoAtaque >= tiempoEntreAtaques) {
-					// Resta vida al Knight
-					knight.restarVida(0);
-					System.out.println("restando vida");
+					// Resta vida al Knigh
+					if (puedeAtacar) {
+						knight.restarVida(20);
+
+					}
+
+					// DSystem.out.println("restando vida");
 				}
 				// Reinicia el temporizador
 				tiempoDesdeUltimoAtaque = 0f;
@@ -135,7 +167,7 @@ public class Enemigo {
 
 	}
 
-	public void restarVida(int cantidad) {
+	public void restarVidaEnemigo(float cantidad) {
 
 		vida -= cantidad;
 
@@ -176,16 +208,26 @@ public class Enemigo {
 	}
 
 	private void crearAnimaciones(String textura) {
-		
-		//Animaciones ghost
-		animacionIzquierda = new Animador(textura, posicion, 0,7,2);
-		animacionDerecha = new Animador(textura, posicion, 1,7,2);
 
-		animacionIzquierda.create();
-		animacionDerecha.create();
-		
-		//Animacion Boss
-		
+		// Animaciones ghost
+		idleAnimation = new Animador(textura, posicion, 0, columna, fila);
+		walkingLeftAnimation = new Animador(textura, posicion, 1, columna, fila);
+		walkingRightAnimation = new Animador(textura, posicion, 2, columna, fila);
+
+	}
+
+	public void bossFinal() {
+		if (ScreenGame.numeroEscenario == 7&& muerto) {
+			Render.app.setScreen(new ScreenWin());
+		}
+	}
+
+	public void escalar(float escalaX, float escalaY) {
+
+		// Escalo boss
+		idleAnimation.setearEscala(escalaX, escalaY);
+		walkingLeftAnimation.setearEscala(escalaX, escalaY);
+		walkingRightAnimation.setearEscala(escalaX, escalaY);
 
 	}
 
@@ -206,5 +248,12 @@ public class Enemigo {
 	// Método para verificar si el Ghost ha sido eliminado
 	public boolean isDisposed() {
 		return disposed;
+	}
+
+	public void morir() {
+		vida = 0;
+		muerto = true;
+		puedeAtacar = false;
+
 	}
 }

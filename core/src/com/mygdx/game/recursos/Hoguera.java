@@ -11,10 +11,6 @@ import com.mygdx.game.pantallas.ScreenGame;
 
 public class Hoguera {
 
-	public enum EstadoPersonaje {
-		OFF, ON
-	}
-
 	private Sprite spr;
 	private float alto, ancho;
 	public static float x;
@@ -33,7 +29,7 @@ public class Hoguera {
 	private float time;
 	private TextureRegion currentFrame;
 	private Texture offTexture;
-	private EstadoPersonaje estadoActual;
+	private EstadosHoguera estadoActual;
 
 	public Hoguera(float x, float y, float ancho, float alto) {
 		this.x = x;
@@ -78,7 +74,7 @@ public class Hoguera {
 		 * attackAnimation = new Animation<>(1 / 20f, attackFrames[0]); time = 0f; }
 		 */
 		// Establece el estado inicial del personaje
-		estadoActual = EstadoPersonaje.OFF;
+		estadoActual = EstadosHoguera.OFF;
 
 		// Inicializa la sprite con la animación off
 		spr = new Sprite(offAnimation.getKeyFrame(0, true));
@@ -100,9 +96,9 @@ public class Hoguera {
 		spr.draw(batch);
 		
 		if(encendida) {
-			cambiarEstado(Hoguera.EstadoPersonaje.ON);
+			cambiarEstado(EstadosHoguera.ON);
 		} else {
-			cambiarEstado(Hoguera.EstadoPersonaje.OFF);
+			cambiarEstado(EstadosHoguera.OFF);
 		}
 		
 		
@@ -133,7 +129,7 @@ public class Hoguera {
 		y = newY;
 	}
 
-	public void cambiarEstado(EstadoPersonaje nuevoEstado) {
+	public void cambiarEstado(EstadosHoguera nuevoEstado) {
 		// Cambia el estado del personaje y actualiza la animación
 		estadoActual = nuevoEstado;
 

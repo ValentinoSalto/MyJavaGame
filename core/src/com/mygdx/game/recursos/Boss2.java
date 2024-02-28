@@ -8,12 +8,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 
-public class Boss1 extends Enemigo{
+public class Boss2 extends Enemigo{
 
 
-	public Boss1(float x, float y) {
-		super(Texturas.BossSpriteSheet,100,x,y,8,8);
+	public Boss2(String textura, int vida, float x, float y, int columna, int fila) {
+		super(Texturas.BossSpriteSheet,200,x,y,8,8);
+		// TODO Auto-generated constructor stub
 	}
+
+	
 
 	
 

@@ -10,6 +10,7 @@ public class Recursos {
 	public static final String FONDOMENU = "Menu/Fondo.png";
 	public static final String FONDOCONFIG = "Configuracion/Fondoconfig.jpg";
 	public static final String PANTALLAMUERTE = "Pantalla de carga/y.png";
+	public static final String PANTALLAGANAR = "Pantalla de carga/you win.png";
 	
 	
 	

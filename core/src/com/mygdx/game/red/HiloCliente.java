@@ -10,6 +10,8 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import com.mygdx.game.pantallas.ScreenGame;
 import com.mygdx.game.pantallas.ScreenMenu;
+import com.mygdx.game.recursos.Enemigo;
+import com.mygdx.game.recursos.EstadosKnight;
 import com.mygdx.game.utiles.Render;
 
 public class HiloCliente extends Thread {
@@ -59,6 +61,7 @@ public class HiloCliente extends Thread {
 
 	private void procesarMensaje(DatagramPacket dp) {
 		String msg = new String(dp.getData()).trim();// trim() lo que hace es sacar los espacios
+		// System.out.println("llego mensaje "+msg);
 		String[] mensajeCompuesto = msg.split("#");
 
 		switch (mensajeCompuesto[0]) {
@@ -73,43 +76,191 @@ public class HiloCliente extends Thread {
 			// game.enRed = true;
 			System.out.println("Que empieze el juego!!!");
 			empezar = true;
-		
+			if (IdCliente == 0) {
+
+				UtilesRed.jugador = true;
+			} else {
+
+				UtilesRed.jugador = false;
+			}
 			break;
-			
+
 		case "Exito":
 			if (mensajeCompuesto[1].equals("0")) {
 				IdCliente = 0;
-			}else {
+
+			} else {
 				IdCliente = 1;
+
 			}
-				break;
-		case "seMovio":
+			break;
+		case "seMovioIzquierda":
+			// System.out.println("llego mensajee");
+
+			/*for (int i = 0; i < mensajeCompuesto.length; i++) {
+				System.out.println(i + " " + mensajeCompuesto[i]);
+			}
+			/*
+			 * switch(mensajeCompuesto[4]) { case "izquierda":
+			 * if(mensajeCompuesto[3].equals("0")) {
+			 * game.getJugador1().cambiarEstado(EstadosKnight.WALKING_LEFT); }else {
+			 * game.getJugador2().cambiarEstado(EstadosKnight.WALKING_LEFT); }
+			 * 
+			 * break; }
+			 */
+			if (mensajeCompuesto[3].equals("0")) {
+				//Renderiza las animaciones en red
+				game.getJugador1().cambiarEstado(EstadosKnight.WALKING_LEFT);
+				game.getJugador1().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+				System.out.println("se movio 0");
 				
-				if(mensajeCompuesto[3].equals("0")) {
-					game.getJugador1().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),Float.valueOf(mensajeCompuesto[2]));
-					//System.out.println("se movio 0");
-				}else {
-					game.getJugador2().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),Float.valueOf(mensajeCompuesto[2]));
-					//System.out.println("se movio 1");
-				}
 			
+			} else {
+				game.getJugador2().cambiarEstado(EstadosKnight.WALKING_LEFT);
+				game.getJugador2().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+				System.out.println("se movio 1");
+			}
+
+			break;
+		case "seMovioDerecha":
+			// System.out.println("llego mensajee");
+
+			/*for (int i = 0; i < mensajeCompuesto.length; i++) {
+				System.out.println(i + " " + mensajeCompuesto[i]);
+			}
+			/*
+			 * switch(mensajeCompuesto[4]) { case "izquierda":
+			 * if(mensajeCompuesto[3].equals("0")) {
+			 * game.getJugador1().cambiarEstado(EstadosKnight.WALKING_LEFT); }else {
+			 * game.getJugador2().cambiarEstado(EstadosKnight.WALKING_LEFT); }
+			 * 
+			 * break; }
+			 */
+			if (mensajeCompuesto[3].equals("0")) {
+				//Renderiza las animaciones en red
+				game.getJugador1().cambiarEstado(EstadosKnight.WALKING_RIGHT);
+				game.getJugador1().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+				System.out.println("se movio 0");
+				
+			
+			} else {
+				game.getJugador2().cambiarEstado(EstadosKnight.WALKING_RIGHT);
+				game.getJugador2().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+				System.out.println("se movio 1");
+			}
+
+			break;
+
+		case "saltando":
+			if (mensajeCompuesto[3].equals("0")) {
+				game.getJugador1().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+				
+			} else {
+				game.getJugador2().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+			}
+			// System.out.println(IdCliente + " Estoy Saltandooooo");
+			break;
+		case "cayendo":
+			if (mensajeCompuesto[3].equals("0")) {
+				game.getJugador1().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+
+			} else {
+				game.getJugador2().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+			}
+			// System.out.println(IdCliente + " Estoy Saltandooooo");
+			break;
+		case "atacando":
+			if (mensajeCompuesto[3].equals("0")) {
+				game.getJugador1().cambiarEstado(EstadosKnight.ATTACK);
+				game.getJugador1().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+				
+			} else {
+				game.getJugador2().cambiarEstado(EstadosKnight.ATTACK);
+				game.getJugador2().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+			}	
+			// System.out.println(IdCliente + " Estoy Saltandooooo");
+			break;
+		case "cubriendo":
+			if (mensajeCompuesto[3].equals("0")) {
+				game.getJugador1().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+
+			} else {
+				game.getJugador2().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+			}
 			break;
 			
-		case "saltar":
-			if(mensajeCompuesto[3].equals("0")) {
-				game.getJugador1().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),Float.valueOf(mensajeCompuesto[2]));
-				
+		case"cambioEscenario":
+			game.cambiarEscenario();
+			break;
+		/*case "restarVida":
+			if(mensajeCompuesto[1].equals("0")) {
+				game.getJugador1().restarVida(20);
 			}else {
-				game.getJugador2().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),Float.valueOf(mensajeCompuesto[2]));
+				game.getJugador2().restarVida(20);
 			}
-			System.out.println(IdCliente +  " Estoy Saltandooooo");
 			break;
 			
 		
+		/*case "cubriendoizquierda":
+			if (mensajeCompuesto[3].equals("0")) {
+				game.getJugador1().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+
+			} else {
+				game.getJugador2().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+			}
+			break;
+		case "cubriendoderecha":
+			if (mensajeCompuesto[3].equals("0")) {
+				game.getJugador1().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+
+			} else {
+				game.getJugador2().actualizarPosicionRed(Float.valueOf(mensajeCompuesto[1]),
+						Float.valueOf(mensajeCompuesto[2]), mensajeCompuesto[3]);
+			}
+			break;
+			
+		/*case "estadoenemigo":
+			boolean estadoEnemigo = Boolean.parseBoolean(mensajeCompuesto[1]);
+			int index = Integer.parseInt(mensajeCompuesto[2]);
+			
+			if(game.getJugador1().enemigosEnElMapa.size()>index) {
+				Enemigo enemigo = game.getJugador1().enemigosEnElMapa.get(index);
+				
+				if(enemigo!=null) {
+					enemigo.muerto = estadoEnemigo;
+				}
+			
+			}if(game.getJugador2().enemigosEnElMapa.size()>index) {
+				Enemigo enemigo = game.getJugador2().enemigosEnElMapa.get(index);
+				
+				if(enemigo!=null) {
+					enemigo.muerto = estadoEnemigo;
+				}
+			
+			}
+			
+			
+			break;*/
+
 		}
 
 	}
- 
+
 	public void enviarMensaje(String msg) {
 		byte[] mensaje = msg.getBytes();
 

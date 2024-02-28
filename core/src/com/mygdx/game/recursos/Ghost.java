@@ -27,7 +27,7 @@ public class Ghost extends Enemigo {
 	
 	public Ghost(float x, float y) {
 		
-		super(Texturas.ghostSpriteSheet,20,x,y);
+		super(Texturas.ghostSpriteSheet,20,x,y,7,3);
 		
 		/*// Carga las texturas para las animaciones
 		idleTexture = new Texture(Gdx.files.internal("Personajes/Ghost-Files/PNG/ghost-idle.png"));
@@ -76,60 +76,10 @@ public class Ghost extends Enemigo {
 		
 		*/
 	}
-
-
-	/*public void updateAnimation(float delta) {
-		// Actualiza la animación según el estado actual del personaje
-		switch (estadoActual) {
-		case IDLE:
-			spr.setRegion(idleAnimation.getKeyFrame(time, true));
-			break;
-		case WALKING_LEFT:
-			spr.setRegion(walkingLeftAnimation.getKeyFrame(time, true));
-			// Mueve al personaje hacia la izquierda
-
-			break;
-		case WALKING_RIGHT:
-			spr.setRegion(walkingRightAnimation.getKeyFrame(time, true));
-			// Mueve al personaje hacia la derecha
-
-			break;
-		case ATTACK:
-			spr.setRegion(attackAnimation.getKeyFrame(time, true));
-			break;
-
-		// Agrega las animaciones para los otros estados (JUMP, RUN, ATTACK, COVER)
-		// ...
-		}
-		// Actualiza la posición del sprite
-		spr.setPosition(x, y);
-
-		areaJugador.setPosition(x, y);
-	}
-	
 	
 
-	
 
 	
-	
-
-	private Animation<TextureRegion> getAnimationForCurrentState() {
-		// Devuelve la animación correspondiente al estado actual
-		switch (estadoActual) {
-		case IDLE:
-			return idleAnimation;
-		case WALKING_LEFT:
-			return walkingLeftAnimation;
-		case WALKING_RIGHT:
-			return walkingRightAnimation;
-		// Devuelve las animaciones para los otros estados (JUMP, RUN, ATTACK, COVER)
-		// ...
-		default:
-			return idleAnimation;
-		}
-	}
-*/
 	
 
 	

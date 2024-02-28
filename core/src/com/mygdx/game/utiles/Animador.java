@@ -25,6 +25,9 @@ public class Animador implements ApplicationListener {
 	
 	// A variable for tracking elapsed time for the animation
 	float stateTime;
+	public float escalaX = 24*4, escalaY = 24*4;
+	
+	
 	
 	public Animador(String rutaSpriteSheet, Vector2 posicion, int filaDelSpriteSheet, int columna, int fila) {
 		this.rutaSpriteSheet = rutaSpriteSheet;
@@ -75,7 +78,14 @@ public class Animador implements ApplicationListener {
 		// Get current frame of animation for the current stateTime
 		TextureRegion currentFrame = animacion.getKeyFrame(stateTime, true);
 		
-		Render.batch.draw(currentFrame, posicion.x-24, posicion.y-24,24*4,24*4);
+		Render.batch.draw(currentFrame, posicion.x-24, posicion.y-24,escalaX,escalaY);
+		
+		
+	}
+	
+	public void setearEscala(float escalaX, float escalaY) {
+		this.escalaX = escalaX;
+		this.escalaY = escalaY;
 		
 	}
 	

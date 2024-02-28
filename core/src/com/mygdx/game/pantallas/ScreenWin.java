@@ -9,7 +9,7 @@ import com.mygdx.game.recursos.Knight3;
 import com.mygdx.game.utiles.Recursos;
 import com.mygdx.game.utiles.Render;
 
-public class ScreenDeath implements Screen {
+public class ScreenWin implements Screen {
 
 	Imagen fondo;
 	SpriteBatch b;
@@ -23,12 +23,10 @@ public class ScreenDeath implements Screen {
 	public void show() {
 		 
 		// Carga el fx desde el archivo
-		died = Gdx.audio.newMusic(Gdx.files.internal("Sounds/FX/Died.mp3"));
-		died.play();
+	
 		System.out.println("show");
-		fondo = new Imagen(Recursos.PANTALLAMUERTE);
-		b = Render.batch;
-		Knight3.vida = 260;
+		fondo = new Imagen(Recursos.PANTALLAGANAR);
+		b = Render.batch;	
 		fondo.setTransparencia(0);
 	}
 

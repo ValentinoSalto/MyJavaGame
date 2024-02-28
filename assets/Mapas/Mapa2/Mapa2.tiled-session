@@ -3,9 +3,10 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Mapa1.tmx",
+    "activeFile": "Mapa 3.tmx",
     "expandedProjectPaths": [
-        "."
+        ".",
+        "Mapa 1.tmx"
     ],
     "file.lastUsedOpenFilter": "Todos los archivos (*)",
     "fileStates": {
@@ -21,27 +22,27 @@
             "scaleInDock": 1
         },
         "Mapa 1.tmx": {
-            "scale": 0.9265432098765432,
+            "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 962.7181878747504,
-                "y": 359.94003997335113
+                "x": 851.3333333333333,
+                "y": 461.33333333333337
             }
         },
         "Mapa 2.tmx": {
             "scale": 0.9903163580246913,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 647.267910709416,
-                "y": 360.9957536327866
+                "x": 757.3337488799721,
+                "y": 362.51042113054655
             }
         },
         "Mapa 3.tmx": {
             "scale": 0.9903163580246913,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 647.267910709416,
-                "y": 360.9957536327866
+                "x": 684.6297089874947,
+                "y": 364.5299777942265
             }
         },
         "Mapa1.tmx": {
@@ -64,16 +65,15 @@
     "map.tileWidth": 16,
     "map.width": 81,
     "openFiles": [
-        "Mapa1.tmx",
+        "Mapa 1.tmx",
         "Mapa 2.tmx",
-        "Mapa 3.tmx",
-        "Mapa 1.tmx"
+        "Mapa 3.tmx"
     ],
     "project": "Mapa2.tiled-project",
     "recentFiles": [
         "Mapa 1.tmx",
-        "Mapa 3.tmx",
         "Mapa 2.tmx",
+        "Mapa 3.tmx",
         "Mapa1.tmx",
         "Terreno.tsx",
         "C:/Users/Valen/Desktop/Juego2/assets/Mapas/Mapa1/Mapa 2.tmx"

@@ -18,12 +18,13 @@ import com.mygdx.game.red.UtilesRed;
 import com.mygdx.game.utiles.Animador;
 import com.mygdx.game.utiles.Recursos;
 import com.mygdx.game.utiles.Render;
+import java.util.ArrayList;
 
 public class Knight3 {
 
 	private float alto, ancho;
 
-	private Texture textura;
+	private String textura;
 
 	private Animador idleAnimation;
 	private Animador walkingLeftAnimation;
@@ -54,14 +55,16 @@ public class Knight3 {
 	private boolean ataqueIniciado;
 	private float tiempoAtaque;
 	private EstadosKnight estadoActual;
-	public int vida = 100;
+	public static int vida = 260;
 	public boolean bloqueando = false;
 	public boolean jumping = false;
 	public boolean terminoSalto = true;
 	public boolean cayendo = false;
+	private boolean atacando = false;
+	private final float DISTANCIA_ATAQUE = 48f;
 	private float GROUND_LEVEL = 168f;
-	public final float GRAVITY = -100; // Ajusta según la gravedad deseada
-	public final float JUMP_SPEED = 100; // Ajusta según la velocidad de salto deseada
+	public final float GRAVITY = -300; // Ajusta según la gravedad deseada
+	public final float JUMP_SPEED = 300; // Ajusta según la velocidad de salto deseada
 	public final float RANGO_ATAQUE = 50; // Ajusta según el rango de ataque deseado
 	private final float ALTURA_SALTO = 300f;
 	public float ySpeed = 0;
@@ -69,7 +72,9 @@ public class Knight3 {
 	boolean bloqueoActivo;
 	boolean moverse = true;
 	float delta;
-
+	boolean personaje = false;
+	public int almas = 0;
+	public ArrayList<Enemigo> enemigosEnElMapa;
 	private String rutaTextura;
 	// colisiones
 	public Rectangle areaJugador;
@@ -77,7 +82,7 @@ public class Knight3 {
 	boolean pasoPlataforma = false;
 	private boolean enRed = false;
 
-	public Knight3(float x, float y, float ancho, float alto, boolean enRed) {
+	public Knight3(float x, float y, float ancho, float alto, boolean enRed, String textura, boolean personaje) {
 
 		posicion = new Vector2();
 		posicion.x = x;
@@ -85,160 +90,14 @@ public class Knight3 {
 		this.alto = alto;
 		this.ancho = ancho;
 		this.enRed = enRed;
-		this.rutaTextura = rutaTextura;
-
-		
+		this.textura = textura;
+		this.personaje = personaje;
+		enemigosEnElMapa = new ArrayList<Enemigo>();
+		estadoActual = EstadosKnight.IDLE;
 
 		areaJugador = new Rectangle(this.posicion.x, this.posicion.y, this.ancho, this.alto / 2);
 		crearAnimacion();
 
-		/*
-		 * // CARGA LAS TEXTURAS idleTexture = new
-		 * Texture(Gdx.files.internal("Personajes/Hero/1/Combat Ready Idle.png"));
-		 * Texture walkingRightTexture = new
-		 * Texture(Gdx.files.internal("Personajes/Hero/1/Walk.png")); Texture
-		 * walkingLeftTexture = new
-		 * Texture(Gdx.files.internal("Personajes/Hero/1/Walk2.png")); Texture
-		 * runTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/Run.png"));
-		 * Texture runLeftTexture = new
-		 * Texture(Gdx.files.internal("Personajes/Hero/1/Run2.png")); Texture
-		 * attackTexture = new
-		 * Texture(Gdx.files.internal("Personajes/Hero/1/Attack 1.png")); Texture
-		 * coverTexture = new
-		 * Texture(Gdx.files.internal("Personajes/Hero/1/Shield Raise.png")); Texture
-		 * coverWalkRightTexture = new
-		 * Texture(Gdx.files.internal("Personajes/Hero/1/Shield Raise Walk.png"));
-		 * Texture coverWalkLeftTexture = new
-		 * Texture(Gdx.files.internal("Personajes/Hero/1/Shield Raise Walk2.png"));
-		 * Texture jumpTexture = new
-		 * Texture(Gdx.files.internal("Personajes/Hero/1/jump.png")); Texture
-		 * fallTexture = new Texture(Gdx.files.internal("Personajes/Hero/1/fall.png"));
-		 * 
-		 * // LOGICA DE LAS ANIMACIONES
-		 * 
-		 * // IDLE
-		 * 
-		 * TextureRegion[][] idleFrames = TextureRegion.split(idleTexture,
-		 * idleTexture.getWidth() / 5, idleTexture.getHeight()); regionsMovement_idle =
-		 * new TextureRegion[5];
-		 * 
-		 * for (int i = 0; i < 5; i++) { regionsMovement_idle[i] = idleFrames[0][i];
-		 * idleAnimation = new Animation<>(1 / 5f, idleFrames[0]); time = 0f; }
-		 * 
-		 * // CAMINAR HACIA LA IZQUIERDA TextureRegion[][] walkingLeftFrames =
-		 * TextureRegion.split(walkingLeftTexture, walkingLeftTexture.getWidth() / 6,
-		 * walkingLeftTexture.getHeight()); regionsMovement_walking_left = new
-		 * TextureRegion[6];
-		 * 
-		 * for (int i = 0; i < 6; i++) { regionsMovement_walking_left[i] =
-		 * walkingLeftFrames[0][i]; walkingLeftAnimation = new Animation<>(1 / 10f,
-		 * walkingLeftFrames[0]); time = 0f; }
-		 * 
-		 * // CAMINAR HACIA LA DERECHA
-		 * 
-		 * TextureRegion[][] walkingRightFrames =
-		 * TextureRegion.split(walkingRightTexture, walkingRightTexture.getWidth() / 6,
-		 * walkingRightTexture.getHeight()); regionsMovement_walking_right = new
-		 * TextureRegion[6];
-		 * 
-		 * for (int i = 0; i < 6; i++) { regionsMovement_walking_right[i] =
-		 * walkingRightFrames[0][i]; walkingRightAnimation = new Animation<>(1 / 10f,
-		 * walkingRightFrames[0]); time = 0f; }
-		 * 
-		 * // CORRER HACIA LA DERECHA
-		 * 
-		 * TextureRegion[][] runFrames = TextureRegion.split(runTexture,
-		 * runTexture.getWidth() / 6, runTexture.getHeight()); regionsMovement_run = new
-		 * TextureRegion[6];
-		 * 
-		 * for (int i = 0; i < 6; i++) { regionsMovement_run[i] = runFrames[0][i];
-		 * runAnimation = new Animation<>(1 / 10f, runFrames[0]); time = 0f; }
-		 * 
-		 * // CORRER HACIA LA IZQUIERDA
-		 * 
-		 * TextureRegion[][] runLeftFrames = TextureRegion.split(runLeftTexture,
-		 * runLeftTexture.getWidth() / 6, runLeftTexture.getHeight());
-		 * regionsMovement_runLeft = new TextureRegion[6];
-		 * 
-		 * for (int i = 0; i < 6; i++) { regionsMovement_runLeft[i] =
-		 * runLeftFrames[0][i]; runLeftAnimation = new Animation<>(1 / 10f,
-		 * runLeftFrames[0]); time = 0f; }
-		 * 
-		 * // ATACAR
-		 * 
-		 * TextureRegion[][] attackFrames = TextureRegion.split(attackTexture,
-		 * attackTexture.getWidth() / 10, attackTexture.getHeight());
-		 * regionsMovement_attack = new TextureRegion[10];
-		 * 
-		 * for (int i = 0; i < 10; i++) { regionsMovement_attack[i] =
-		 * attackFrames[0][i]; attackAnimation = new Animation<>(1 / 20f,
-		 * attackFrames[0]); time = 0f; }
-		 * 
-		 * // CUBRIR
-		 * 
-		 * TextureRegion[][] coverFrames = TextureRegion.split(coverTexture,
-		 * coverTexture.getWidth() / 5, coverTexture.getHeight()); regionsMovement_cover
-		 * = new TextureRegion[5];
-		 * 
-		 * for (int i = 0; i < 5; i++) { regionsMovement_cover[i] = coverFrames[0][i];
-		 * coverAnimation = new Animation<>(1 / 10f, coverFrames[0]); time = 0f; }
-		 * 
-		 * // CUBRIR CAMINANDO A LA DERECHA
-		 * 
-		 * TextureRegion[][] coverWalkRightFrames =
-		 * TextureRegion.split(coverWalkRightTexture, coverWalkRightTexture.getWidth() /
-		 * 6, coverWalkRightTexture.getHeight()); regionsMovement_coverWalkRight = new
-		 * TextureRegion[6];
-		 * 
-		 * for (int i = 0; i < 6; i++) { regionsMovement_coverWalkRight[i] =
-		 * coverWalkRightFrames[0][i]; coverWalkRightAnimation = new Animation<>(1 /
-		 * 10f, coverWalkRightFrames[0]); time = 0f; }
-		 * 
-		 * // CUBRIR CAMINANDO A LA IZQUIERDA
-		 * 
-		 * TextureRegion[][] coverWalkLeftFrames =
-		 * TextureRegion.split(coverWalkLeftTexture, coverWalkLeftTexture.getWidth() /
-		 * 6, coverWalkLeftTexture.getHeight()); regionsMovement_coverWalkLeft = new
-		 * TextureRegion[6];
-		 * 
-		 * for (int i = 0; i < 6; i++) { regionsMovement_coverWalkLeft[i] =
-		 * coverWalkLeftFrames[0][i]; coverWalkLeftAnimation = new Animation<>(1 / 10f,
-		 * coverWalkLeftFrames[0]); time = 0f; }
-		 * 
-		 * // SALTAR
-		 * 
-		 * TextureRegion[][] jumpFrames = TextureRegion.split(jumpTexture,
-		 * jumpTexture.getWidth() / 4, jumpTexture.getHeight()); regionsMovement_jump =
-		 * new TextureRegion[4];
-		 * 
-		 * for (int i = 0; i < 4; i++) { regionsMovement_jump[i] = jumpFrames[0][i];
-		 * jumpAnimation = new Animation<>(1 / 10f, jumpFrames[0]); time = 0f; }
-		 * 
-		 * // CAER
-		 * 
-		 * TextureRegion[][] fallFrames = TextureRegion.split(fallTexture,
-		 * fallTexture.getWidth() / 4, fallTexture.getHeight()); regionsMovement_fall =
-		 * new TextureRegion[4];
-		 * 
-		 * for (int i = 0; i < 4; i++) { regionsMovement_fall[i] = fallFrames[0][i];
-		 * fallAnimation = new Animation<>(1 / 10f, fallFrames[0]); time = 0f; }
-		 * 
-		 * estadoActual = EstadosKnight.IDLE;
-		 * 
-		 * spr = new Sprite(idleAnimation.getKeyFrame(0, true)); spr.setPosition(x, y);
-		 * spr.setSize(ancho, alto); }
-		 * 
-		 * public void dispose() { // Libera los recursos asociados al sprite, texturas,
-		 * etc. // Aquí deberías realizar cualquier limpieza necesaria. spr = spr2; //
-		 * Por ejemplo, para la textura idleTexture idleTexture.dispose();
-		 * 
-		 * }
-		 * 
-		 * public void render(SpriteBatch batch) { time += Gdx.graphics.getDeltaTime();
-		 * currentFrame = (TextureRegion) idleAnimation.getKeyFrame(time, true);
-		 * 
-		 * spr.draw(batch); float x = spr.getX(); float ANCHO = spr.getWidth(); //
-		 */
 		dibujarAreaInteraccion();
 		delta = Gdx.graphics.getDeltaTime();
 		moverPersonaje();
@@ -253,35 +112,31 @@ public class Knight3 {
 					&& moverse /* && direccion != EstadosKnight.WALKING_LEFT */) {
 
 				cambiarEstado(EstadosKnight.WALKING_LEFT);
-				
-				if(Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
+
+				if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
 					cambiarEstado(EstadosKnight.RUN_LEFT);
-					posicion.x -= 6;
 
 				}
 
 			} else if (Gdx.input.isKeyPressed(Keys.D) && !bloqueando
 					&& moverse /* && direccion != EstadosKnight.WALKING_RIGHT */) {
 				cambiarEstado(EstadosKnight.WALKING_RIGHT);
-				if(Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
+				if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
 					cambiarEstado(EstadosKnight.RUN_RIGHT);
-					posicion.x += 6;
 
 				}
 			} else if (Gdx.input.isKeyJustPressed(Keys.SPACE) && !bloqueando) {
 
-				inciarSalto();
 				cambiarEstado(EstadosKnight.JUMP);
-				
 
 			} else if (Gdx.input.isKeyJustPressed(Keys.E)) {
 				encenderHoguera();
 
 			} else if (Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
 
+				atacando = true;
 				cambiarEstado(EstadosKnight.ATTACK);
 				System.out.println("ataca");
-				
 
 			} else if (Gdx.input.isButtonPressed(Buttons.RIGHT)) {
 				if (Gdx.input.isButtonPressed(Buttons.RIGHT)) {
@@ -293,15 +148,13 @@ public class Knight3 {
 						// spr.setRegion(coverWalkLeftAnimation.getKeyFrame(time, true));
 						cambiarEstado(EstadosKnight.COVER_LEFT);
 						bloqueando = true;
-						posicion.x -= 3;
-						
-					} else if(Gdx.input.isKeyPressed(Keys.D)) {
+
+					} else if (Gdx.input.isKeyPressed(Keys.D)) {
 						cambiarEstado(EstadosKnight.COVER_RIGHT);
 						bloqueando = true;
-						posicion.x += 3;
-						
+
 					}
-					
+
 				} else {
 					// Si el clic derecho no está presionado, detiene la acción de bloqueo
 					bloqueoActivo = false;
@@ -309,8 +162,10 @@ public class Knight3 {
 				}
 
 			} else {
-				estadoActual = EstadosKnight.IDLE;
-				
+				if (!atacando) {
+					estadoActual = EstadosKnight.IDLE;
+				}
+
 			}
 
 			if (!terminoSalto) {
@@ -329,16 +184,55 @@ public class Knight3 {
 
 		} else {
 			// Maneja las entradas del teclado para cambiar el estado del personaje
-			if (Gdx.input.isKeyPressed(Keys.A)) {
+			if (Gdx.input.isKeyPressed(Keys.A) && personaje) {
 				System.out.println("moverse en red izquierda");
-				UtilesRed.hc.enviarMensaje("moverse#izquierda#" + UtilesRed.hc.IdCliente);
+				cambiarEstado(EstadosKnight.WALKING_LEFT);
+				UtilesRed.hc.enviarMensaje("moverse#izquierda" + "#" + UtilesRed.hc.IdCliente);
 
-			} else if (Gdx.input.isKeyPressed(Keys.D)) {
-				System.out.println("moverse en red derecha");
-				UtilesRed.hc.enviarMensaje("moverse#derecha#" + UtilesRed.hc.IdCliente);
+				if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
+					cambiarEstado(EstadosKnight.RUN_LEFT);
+					UtilesRed.hc.enviarMensaje("moverse#correrizquierda" + "#" + UtilesRed.hc.IdCliente);
+				}
 
-			} else if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-				UtilesRed.hc.enviarMensaje("moverse#arriba#" + UtilesRed.hc.IdCliente);
+			} else if (Gdx.input.isKeyPressed(Keys.D) && personaje) {
+				// System.out.println("moverse en red derecha");
+				UtilesRed.hc.enviarMensaje("moverse#derecha" + "#" + UtilesRed.hc.IdCliente);
+				cambiarEstado(EstadosKnight.WALKING_RIGHT);
+
+				if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) && personaje) {
+					cambiarEstado(EstadosKnight.RUN_RIGHT);
+					UtilesRed.hc.enviarMensaje("moverse#correrderecha" + "#" + UtilesRed.hc.IdCliente);
+				}
+
+			} else if (Gdx.input.isKeyPressed(Keys.SPACE) && personaje) {
+				UtilesRed.hc.enviarMensaje("moverse#arriba" + "#" + UtilesRed.hc.IdCliente);
+				cambiarEstado(EstadosKnight.JUMP);
+
+			} else if (Gdx.input.isButtonPressed(Buttons.LEFT) && personaje) {
+				System.out.println("ataca");
+				UtilesRed.hc.enviarMensaje("moverse#atacar" + "#" + UtilesRed.hc.IdCliente);
+				atacando = true;
+				cambiarEstado(EstadosKnight.ATTACK);
+			} else if (Gdx.input.isButtonPressed(Buttons.RIGHT) && personaje) {
+				System.out.println("cubrirse");
+				UtilesRed.hc.enviarMensaje("moverse#cubrirse" + "#" + UtilesRed.hc.IdCliente);
+				cambiarEstado(EstadosKnight.COVER);
+				/*
+				 * if (Gdx.input.isKeyPressed(Keys.A)&&personaje) {
+				 * 
+				 * UtilesRed.hc.enviarMensaje("moverse#cubrirseizquierda"+"#"+
+				 * UtilesRed.hc.IdCliente); cambiarEstado(EstadosKnight.COVER_LEFT); bloqueando
+				 * = true;
+				 * 
+				 * } else if (Gdx.input.isKeyPressed(Keys.D)&&personaje) {
+				 * UtilesRed.hc.enviarMensaje("moverse#cubrirsederecha"+"#"+
+				 * UtilesRed.hc.IdCliente); cambiarEstado(EstadosKnight.COVER_RIGHT); bloqueando
+				 * = true;
+				 * 
+				 * }
+				 */
+			} else {
+				estadoActual = EstadosKnight.IDLE;
 			}
 
 		}
@@ -347,7 +241,7 @@ public class Knight3 {
 
 	public void inciarSalto() {
 		// salto
-		estadoActual = EstadosKnight.JUMP;
+
 		jumping = true;
 		moverse = false;
 		terminoSalto = false;
@@ -389,6 +283,7 @@ public class Knight3 {
 					estadoActual = EstadosKnight.IDLE;
 				}
 			} else {
+				System.out.println("me pare en una plataforma");
 				posicion.y = 285; // aca cuando termino de caer
 				terminoSalto = true;
 				moverse = true;
@@ -400,9 +295,34 @@ public class Knight3 {
 
 	}
 
-	public void actualizarPosicionRed(float x, float y) {
+	public void actualizarPosicionRed(float x, float y, String estado) {
 		posicion.x = x;
 		posicion.y = y;
+
+		System.out.println(estado + " ");
+		if (estado.equals(String.valueOf(EstadosKnight.WALKING_LEFT))) {
+			walkingLeftAnimation.render();
+
+		} else if (estado.equals(String.valueOf(EstadosKnight.WALKING_RIGHT))) {
+			walkingLeftAnimation.render();
+		} else if (estado.equals(String.valueOf(EstadosKnight.RUN_LEFT))) {
+			runLeftAnimation.render();
+		} else if (estado.equals(String.valueOf(EstadosKnight.RUN_RIGHT))) {
+			runAnimation.render();
+		} else if (estado.equals(String.valueOf(EstadosKnight.RUN_RIGHT))) {
+			runAnimation.render();
+		} else if (estado.equals(String.valueOf(EstadosKnight.JUMP))) {
+			jumpAnimation.render();
+		} else if (estado.equals(String.valueOf(EstadosKnight.ATTACK))) {
+			attackAnimation.render();
+		} else if (estado.equals(String.valueOf(EstadosKnight.COVER))) {
+			coverAnimation.render();
+		} else if (estado.equals(String.valueOf(EstadosKnight.COVER_LEFT))) {
+			coverWalkLeftAnimation.render();
+		} else if (estado.equals(String.valueOf(EstadosKnight.COVER_RIGHT))) {
+			coverWalkRightAnimation.render();
+		}
+
 		// spr.setPosition(posicion.x, posicion.y);
 	}
 
@@ -419,22 +339,26 @@ public class Knight3 {
 			terminoSalto = true;
 			moverse = true;
 //			posicion.y = 145;
+			atacando = false;
 			break;
 
 		case WALKING_LEFT:
 			// spr.setRegion(walkingLeftAnimation.getKeyFrame(time, true));
+			atacando = false;
 			posicion.x -= 3;
 			bloqueando = false;
 			if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
 				// spr.setRegion(runLeftAnimation.getKeyFrame(time, true));
 				cambiarEstado(EstadosKnight.RUN_LEFT);
-				posicion.x -= 6;
+				posicion.x -= 3;
 
 			}
 			break;
 
 		case WALKING_RIGHT:
 			// spr.setRegion(walkingRightAnimation.getKeyFrame(time, true));
+
+			atacando = false;
 			posicion.x += 3;
 			bloqueando = false;
 			if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
@@ -447,18 +371,9 @@ public class Knight3 {
 			break;
 
 		case JUMP:
-//			moverse = false;
-//			jumping = true;
-//			terminoSalto = false;
-//
-//			if (posicion.y < ALTURA_SALTO) {// la altura deseada
-//				posicion.y += JUMP_SPEED * delta;
-//
-//				if (posicion.y >= ALTURA_SALTO) {
-//					estadoActual = EstadosKnight.FALL;
-//				}
-//
-//			}
+
+			atacando = false;
+			inciarSalto();
 
 			break;
 
@@ -487,67 +402,59 @@ public class Knight3 {
 //			}
 			break;
 
-		
-		 case RUN_RIGHT: 
-		  
-		  break;
-		  
-		 case RUN_LEFT:
-		
-		 break;
-		 
-		case ATTACK:
+		case RUN_RIGHT:
+			atacando = false;
+			posicion.x += 6;
 
-			
+			break;
+
+		case RUN_LEFT:
+			atacando = false;
+			posicion.x -= 6;
+			break;
+
+		case ATTACK:
+			iniciarAtaque();
+
+			for (int i = 0; i < enemigosEnElMapa.size(); i++) {
+				if (DISTANCIA_ATAQUE > enemigosEnElMapa.get(i).getX() - posicion.x) {
+					enemigosEnElMapa.get(i).restarVidaEnemigo(0.5f);
+
+					if (enemigosEnElMapa.get(i).vida <= 0) {
+						enemigosEnElMapa.get(i).morir();
+						enemigosEnElMapa.remove(i);
+						almas += 30;
+
+						atacando = false;
+					}
+				} else {
+
+				}
+
+			}
+
 			break;
 
 		case COVER:
-			
+
 			bloqueando = true;
 
-			
 			break;
 		case COVER_RIGHT:
-			
+
 			bloqueando = true;
 			posicion.x += 3;
-			
+
 			break;
 		case COVER_LEFT:
-			// spr.setRegion(coverWalkLeftAnimation.getKeyFrame(time, true));			
 			bloqueando = true;
 			posicion.x -= 3;
+
 			break;
 
 		}
 
 		// spr.setPosition(posicion.x, posicion.y);
-
-		/*
-		 * if (ataqueIniciado) { tiempoAtaque += delta; if (tiempoAtaque <
-		 * attackAnimation.getAnimationDuration()) {
-		 * 
-		 * // Guarda las dimensiones originales float tempWidth = spr.getWidth(); float
-		 * tempHeight = spr.getHeight();
-		 * 
-		 * // Establece la región de ataque
-		 * spr.setRegion(attackAnimation.getKeyFrame(tiempoAtaque, false));
-		 * 
-		 * // Restaura las dimensiones originales spr.setSize(tempWidth, tempHeight);
-		 * 
-		 * } else {
-		 * 
-		 * ataqueIniciado = false; tiempoAtaque = 0f; cambiarEstado(EstadosKnight.IDLE);
-		 * 
-		 * } } else {
-		 * 
-		 * // Si no está atacando, actualiza la animación normal
-		 * Animation<TextureRegion> currentAnimation = getAnimationForCurrentState();
-		 * spr.setRegion(currentAnimation.getKeyFrame(time, true));
-		 * 
-		 * }
-		 */
-
 		areaJugador.setPosition(posicion.x, posicion.y);
 	}
 
@@ -555,23 +462,19 @@ public class Knight3 {
 		estadoActual = nuevoEstado;
 		// spr.setRegion(getAnimationForCurrentState().getKeyFrame(0));
 
-		if (nuevoEstado == EstadosKnight.ATTACK) {
-			iniciarAtaque();
-		}
-
 	}
 
-
 	private void iniciarAtaque() {
-		ataqueIniciado = true;
-		tiempoAtaque = 0f;
+		System.out.println("atacando");
 
 	}
 
 	public void restarVida(int cantidad) {
 
 		if (!bloqueando) {
+
 			vida -= cantidad;
+
 		}
 
 	}
@@ -597,6 +500,40 @@ public class Knight3 {
 	 * 
 	 * }
 	 */
+	public void interactuarNpc(Npc npc) {
+
+		if (posicion.x > npc.posicion.x - npc.distancia && posicion.x < npc.posicion.x + npc.distancia) {
+			if (Gdx.input.isKeyJustPressed(Keys.E)) {
+				if (almas >= 100) {
+					vida += 100;
+					almas -= 100;
+				}
+			}
+		}
+	}
+
+	/*
+	 * private void mostrarMenu() { // Aquí mostrarías el menú en la pantalla //
+	 * Puedes utilizar una librería de UI como Scene2D para crear el menú // El
+	 * siguiente código es solo un ejemplo de cómo podrías mostrar el menú: Menu
+	 * menu = new Menu(); menu.mostrar(); // Método ficticio para mostrar el menú //
+	 * Espera la selección del jugador OpcionMenu opcionSeleccionada =
+	 * menu.obtenerSeleccion(); // Realiza la acción correspondiente
+	 * ejecutarAccion(opcionSeleccionada); } private void ejecutarAccion(OpcionMenu
+	 * opcion) { // Dependiendo de la opción seleccionada, realiza la acción
+	 * correspondiente if (opcion == OpcionMenu.SUBIR_VIDA) { // Lógica para subir
+	 * la vida del jugador vida += 50; // Por ejemplo, incrementa la vida en 50
+	 * puntos } else if (opcion == OpcionMenu.AUMENTAR_DAÑO) { // Lógica para
+	 * aumentar el daño del jugador // ... } }
+	 */
+
+	public void getEnemigosMapa(Enemigo... enemigos) {// var args, cantidad de parametros indeterminada
+		enemigosEnElMapa.clear();
+
+		for (int i = 0; i < enemigos.length; i++) {
+			enemigosEnElMapa.add(enemigos[i]);
+		}
+	}
 
 	public void chequearColisionesMapa(Rectangle plataformas) {
 
@@ -616,12 +553,12 @@ public class Knight3 {
 	public void alternarSprites() {
 		switch (estadoActual) {
 		case IDLE:
-				idleAnimation.render();
+			idleAnimation.render();
 			break;
 		case WALKING_LEFT:
 			walkingLeftAnimation.render();
 			break;
-			
+
 		case WALKING_RIGHT:
 			walkingRightAnimation.render();
 			break;
@@ -665,18 +602,25 @@ public class Knight3 {
 
 	private void crearAnimacion() {
 		// Crea animaciones
-		idleAnimation = new Animador(Texturas.KnightSpriteSheet, posicion, 0, 6, 11);
-		walkingLeftAnimation = new Animador(Texturas.KnightSpriteSheet, posicion, 2, 6, 11);
-		walkingRightAnimation = new Animador(Texturas.KnightSpriteSheet, posicion, 1, 6, 11);
-		runAnimation = new Animador(Texturas.KnightSpriteSheet, posicion, 3, 6, 11);
-		runLeftAnimation = new Animador(Texturas.KnightSpriteSheet, posicion, 4, 6, 11);
-		attackAnimation = new Animador(Texturas.KnightSpriteSheet, posicion, 10, 6, 11);
-		coverAnimation = new Animador(Texturas.KnightSpriteSheet, posicion, 7, 6, 11);
-		coverWalkRightAnimation = new Animador(Texturas.KnightSpriteSheet, posicion, 8, 6, 11);
-		coverWalkLeftAnimation = new Animador(Texturas.KnightSpriteSheet, posicion, 9, 6, 11);
-		jumpAnimation = new Animador(Texturas.KnightSpriteSheet, posicion, 5, 6, 11);
-		fallAnimation = new Animador(Texturas.KnightSpriteSheet, posicion, 6, 6, 11);
+		idleAnimation = new Animador(textura, posicion, 0, 6, 11);
+		walkingLeftAnimation = new Animador(textura, posicion, 2, 6, 11);
+		walkingRightAnimation = new Animador(textura, posicion, 1, 6, 11);
+		runAnimation = new Animador(textura, posicion, 3, 6, 11);
+		runLeftAnimation = new Animador(textura, posicion, 4, 6, 11);
+		attackAnimation = new Animador(textura, posicion, 10, 6, 11);
+		coverAnimation = new Animador(textura, posicion, 7, 6, 11);
+		coverWalkRightAnimation = new Animador(textura, posicion, 8, 6, 11);
+		coverWalkLeftAnimation = new Animador(textura, posicion, 9, 6, 11);
+		jumpAnimation = new Animador(textura, posicion, 5, 6, 11);
+		fallAnimation = new Animador(textura, posicion, 6, 6, 11);
 
+	}
+
+	public void verificarEstadoEnemigo() {
+		for (Enemigo enemigo : enemigosEnElMapa) {
+			UtilesRed.hc.enviarMensaje("enemigoMuerto#" + String.valueOf(enemigo.muerto) + "#"
+					+ String.valueOf(enemigosEnElMapa.indexOf(enemigo)) + "#" + UtilesRed.hc.IdCliente);
+		}
 	}
 
 	public void setPosition(float newX, float newY) {
